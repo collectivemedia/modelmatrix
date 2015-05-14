@@ -16,12 +16,21 @@ object Dependencies {
 
   // Project dependencies
 
-  val modelMatrix =
+  val modelmatrixCore =
     spark ++
     test ++
     Seq(
-      scopt
+      slf4jApi
     , scalazCore
     , config
+    , ficus
+    , slick
+    , pgDriver
     )
+
+  val modelmatrixCli =
+    Seq(
+      scopt
+    )
+
 }

@@ -6,14 +6,20 @@ object Dependency {
   // Versions
   object V {
 
-    val Scopt              = "3.3.0"
+    val Slf4j              = "1.7.12"
     val Config             = "1.2.1"
-
-    // Scalaz
-    val Scalaz             = "7.1.1"
+    val Scopt              = "3.3.0"
+    val Ficus              = "1.0.1"
 
     // Spark
     val Spark              = "1.2.0-cdh5.3.3"
+
+    // Database
+    val Slick              = "3.0.0"
+    val PgDriver           = "9.4-1201-jdbc41"
+
+    // Scalaz
+    val Scalaz             = "7.1.1"
 
     // Test libraries
     val ScalaMock          = "3.2.1"
@@ -24,8 +30,12 @@ object Dependency {
 
   // Compile Dependencies
 
+  val slf4jApi            = "org.slf4j"                  % "slf4j-api"                   % V.Slf4j
   val scopt               = "com.github.scopt"          %% "scopt"                       % V.Scopt
   val config              = "com.typesafe"               % "config"                      % V.Config
+  val ficus               = "net.ceedubs"               %% "ficus"                       % V.Ficus
+  val slick               = "com.typesafe.slick"        %% "slick"                       % V.Slick
+  val pgDriver            = "org.postgresql"             % "postgresql"                  % V.PgDriver
 
   // Scalaz
 
