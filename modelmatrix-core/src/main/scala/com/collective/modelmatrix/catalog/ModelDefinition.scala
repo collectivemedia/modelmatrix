@@ -18,6 +18,7 @@ class ModelDefinitions(val driver: JdbcDriver)(implicit val ec: ExecutionContext
 
   import driver.api._
 
+  // scalastyle:off
   private class mmc_definition(tag: Tag) extends Table[(Int, String, String, Instant, String)](tag, "mmc_definition") {
 
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
@@ -28,6 +29,7 @@ class ModelDefinitions(val driver: JdbcDriver)(implicit val ec: ExecutionContext
 
     def * = (id, source, createdBy, createdAt, comment)
   }
+  // scalastyle:on
 
   private val definitions = TableQuery[mmc_definition]
 
