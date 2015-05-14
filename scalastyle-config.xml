@@ -24,11 +24,11 @@
             <parameter name="ignoreImports">true</parameter>
         </parameters>
     </check>
-    <check level="error" class="org.scalastyle.scalariform.ClassNamesChecker" enabled="true">
+    <!--<check level="error" class="org.scalastyle.scalariform.ClassNamesChecker" enabled="true">
         <parameters>
             <parameter name="regex"><![CDATA[[A-Z][A-Za-z]*]]></parameter>
         </parameters>
-    </check>
+    </check>-->
     <check level="error" class="org.scalastyle.scalariform.ObjectNamesChecker" enabled="true">
         <parameters>
             <parameter name="regex"><![CDATA[[A-Z][A-Za-z]*]]></parameter>
@@ -101,7 +101,7 @@
     <!--   <parameter name="maxMethods"><![CDATA[30]]></parameter> -->
     <!--  </parameters> -->
     <!-- </check> -->
-    <check level="error" class="org.scalastyle.scalariform.PublicMethodsHaveTypeChecker" enabled="true"></check>
+    <!--<check level="error" class="org.scalastyle.scalariform.PublicMethodsHaveTypeChecker" enabled="true"></check>-->
     <check level="error" class="org.scalastyle.file.NewLineAtEofChecker" enabled="true"></check>
     <check level="error" class="org.scalastyle.file.NoNewLineAtEofChecker" enabled="false"></check>
     <check level="error" class="org.scalastyle.scalariform.NonASCIICharacterChecker" enabled="true"></check>

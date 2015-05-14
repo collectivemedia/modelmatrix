@@ -22,6 +22,7 @@ object Dependency {
     val Scalaz             = "7.1.1"
 
     // Test libraries
+    val H2                 = "1.4.187"
     val ScalaMock          = "3.2.1"
     val ScalaTest          = "2.2.4"
     val ScalaCheck         = "1.12.2"
@@ -53,6 +54,7 @@ object Dependency {
     val scalaMock         = "org.scalamock"             %% "scalamock-scalatest-support" % V.ScalaMock  % "it,test"
     val scalaTest         = "org.scalatest"             %% "scalatest"                   % V.ScalaTest  % "it,test"
     val scalaCheck        = "org.scalacheck"            %% "scalacheck"                  % V.ScalaCheck % "it,test"
+    val h2                = "com.h2database"             % "h2"                          % V.H2         % "it,test"
 
   }
 

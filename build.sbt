@@ -64,6 +64,7 @@ lazy val root = Project("modelmatrix", file(".")).
 
 lazy val modelmatrixCore =
   ModelMatrixProject("modelmatrix-core")
+    .settings(flywaySettings: _*)
 
 lazy val modelmatrixCli =
   ModelMatrixProject("modelmatrix-cli")

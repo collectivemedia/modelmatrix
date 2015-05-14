@@ -12,6 +12,7 @@ object Dependencies {
       Test.scalaTest
     , Test.scalaMock
     , Test.scalaCheck
+    , Test.h2
   )
 
   // Project dependencies

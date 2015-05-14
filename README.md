@@ -2,7 +2,45 @@
 
 Model Matrix (feature engineering tools)
 
-### Git Workflow
+Model Matrix Configuration catalog is stored in PostgreSQL database
+
+## Developing
+
+Local installation of PostgreSQL required for integration tests
+ 
+#### Default PostrgeSQL database config
+
+    url      = "jdbc:postgresql://localhost/modelmatrix"  
+    user     = "modelmatrix"  
+    password = "modelmatrix"  
+
+#### Install schema
+
+Schema migrations managed by [Flyway](http://flywaydb.org), 
+schema DDL and migrations located in: `modelmatrix-core/src/main/resources/db/migration`
+
+Install schema for development:
+
+    sbt> project modelmatrix-core  
+    sbt> flywayMigrate 
+    
+If you need to install schema into different database, you have to provide flyway properties at sbt startup
+
+    sbt -Dflyway.url=myUrl \
+        -Dflyway.user=myUser \
+        -Dflyway.password=mySecretPwd \
+        -Dflyway.schemas=schema1,schema2,schema3 \
+        -Dflyway.placeholders.keyABC=valueXYZ \
+        -Dflyway.placeholders.otherplaceholder=value123
+
+## Testing
+
+All tests that require Spark or Postgres are running as a part of integration tests
+
+    sbt test
+    sbt it:test
+
+## Git Workflow
 
 This repository workflow is based on [A successful Git branching model](http://nvie.com/posts/a-successful-git-branching-model/) with two main branches with an infinite lifetime:
 
