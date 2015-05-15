@@ -12,11 +12,12 @@ object Dependency {
     val Ficus              = "1.0.1"
 
     // Spark
-    val Spark              = "1.2.0-cdh5.3.3"
+    val Spark              = "1.3.0-cdh5.4.1"
 
     // Database
     val Slick              = "3.0.0"
     val PgDriver           = "9.4-1201-jdbc41"
+    val HikariCP           = "2.3.5"
 
     // Scalaz
     val Scalaz             = "7.1.1"
@@ -35,8 +36,11 @@ object Dependency {
   val scopt               = "com.github.scopt"          %% "scopt"                       % V.Scopt
   val config              = "com.typesafe"               % "config"                      % V.Config
   val ficus               = "net.ceedubs"               %% "ficus"                       % V.Ficus
+
+  // Database
   val slick               = "com.typesafe.slick"        %% "slick"                       % V.Slick
   val pgDriver            = "org.postgresql"             % "postgresql"                  % V.PgDriver
+  val hikariCP            = "com.zaxxer"                 % "HikariCP"                    % V.HikariCP
 
   // Scalaz
 

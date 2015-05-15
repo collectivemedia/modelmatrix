@@ -40,8 +40,8 @@ class ModelDefinitions(val driver: JdbcDriver)(implicit val ec: ExecutionContext
     definitions.result.map(_.map(ModelDefinition.tupled))
   }
 
-  def add(comment: Option[String]): DBIO[Int] = {
-    (definitions returning definitions.map(_.id)) += ((-1, "source", "ebaka", Instant.now(), comment.getOrElse("")))
+  def add(source: String, createdBy: String, createdAt: Instant, comment: Option[String]): DBIO[Int] = {
+    (definitions returning definitions.map(_.id)) += ((-1, source, createdBy, createdAt, comment.getOrElse("")))
   }
 
 }

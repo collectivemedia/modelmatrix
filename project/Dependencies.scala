@@ -27,6 +27,7 @@ object Dependencies {
     , ficus
     , slick
     , pgDriver
+    , hikariCP
     )
 
   val modelmatrixCli =

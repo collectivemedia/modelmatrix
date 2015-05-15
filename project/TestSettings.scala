@@ -7,6 +7,9 @@ object TestSettings {
 
   private[this] lazy val checkScalastyle = taskKey[Unit]("checkScalastyle")
 
+  // Custom IntegrationTest config that shares code with Test
+  val IntegrationTest = config("it") extend Test
+
   def testSettings: Seq[Def.Setting[_]] = Seq(
     // Run Scalastyle as a part of tests
     checkScalastyle := ScalastylePlugin.scalastyle.in(Compile).toTask("").value,

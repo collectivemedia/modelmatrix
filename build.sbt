@@ -40,7 +40,9 @@ resolvers in ThisBuild ++= Seq(
   "Apache Releases"      at "http://repository.apache.org/content/repositories/releases/",
   "Apache Snapshots"     at "http://repository.apache.org/content/repositories/snapshots",
   // Cloudera
-  "Cloudera"             at "https://repository.cloudera.com/artifactory/cloudera-repos/"
+  "Cloudera"             at "https://repository.cloudera.com/artifactory/cloudera-repos/",
+  // Conjars
+  "Conjars"              at "http://conjars.org/repo"
 )
 
 // Model Matrix project
@@ -48,7 +50,7 @@ resolvers in ThisBuild ++= Seq(
 def ModelMatrixProject(path: String) =
   Project(path, file(path))
     .settings(net.virtualvoid.sbt.graph.Plugin.graphSettings: _*)
-    .configs(IntegrationTest)
+    .configs(TestSettings.IntegrationTest)
     .settings(TestSettings.testSettings: _*)
     .settings(TestSettings.integrationTestSettings: _*)
 
