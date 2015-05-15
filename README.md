@@ -2,7 +2,36 @@
 
 Model Matrix (feature engineering tools)
 
-Model Matrix Configuration catalog is stored in PostgreSQL database
+Model Matrix Configuration catalog is stored in PostgreSQL database. 
+Default catalog configuration available in `modelmatrix-cli/src/main/resources/reference.conf`. 
+If you want to use custom locations you can override settings in `application.conf` or using cli options.
+
+## Running Model Matrix CLI
+
+#### Assembling fat-jar
+
+First it's required to prepare assembled jar file. In root directory run:
+
+    sbt assembly
+    
+The cli fat jar will be placed in:
+  - `modelmatrix/modelmatrix-cli/target/scala-2.10/model-matrix-cli.jar`
+    
+#### Supported Commands
+     
+With MM Cli you can control all lifecycle of Model Matrix:
+ - adding MM definition from external configuration 
+ - building MM instance based on definition and input data 
+ - applying MM transformations to input data for building "featurized" dataset 
+ 
+Examples:
+ 
+    # List available model matrix definitions
+    ./mm definitions list
+     
+    # List available model matrix definitions from non-default database
+    ./mm definitions list --dbName=staging-db --dbConfig=./staging-db.conf
+ 
 
 ## Developing
 

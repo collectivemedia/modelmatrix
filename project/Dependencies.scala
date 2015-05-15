@@ -33,6 +33,7 @@ object Dependencies {
   val modelmatrixCli =
     Seq(
       scopt
+    , guava
     )
 
 }

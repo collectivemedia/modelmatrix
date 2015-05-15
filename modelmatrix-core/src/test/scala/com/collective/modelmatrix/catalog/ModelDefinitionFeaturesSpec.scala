@@ -28,6 +28,7 @@ trait ModelDefinitionFeaturesSpec extends FlatSpec with GivenWhenThen with Befor
 
     And("model definition")
     val addModelDefinition = modelDefinitions.add(
+      name = None,
       source = "source",
       createdBy = "ModelDefinitionFeaturesSpec",
       createdAt = now,

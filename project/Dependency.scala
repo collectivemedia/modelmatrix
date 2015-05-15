@@ -10,6 +10,7 @@ object Dependency {
     val Config             = "1.2.1"
     val Scopt              = "3.3.0"
     val Ficus              = "1.0.1"
+    val Guava              = "14.0.1" // match to Spark Guava version
 
     // Spark
     val Spark              = "1.3.0-cdh5.4.1"
@@ -36,6 +37,7 @@ object Dependency {
   val scopt               = "com.github.scopt"          %% "scopt"                       % V.Scopt
   val config              = "com.typesafe"               % "config"                      % V.Config
   val ficus               = "net.ceedubs"               %% "ficus"                       % V.Ficus
+  val guava               = "com.google.guava"           % "guava"                       % V.Guava force()
 
   // Database
   val slick               = "com.typesafe.slick"        %% "slick"                       % V.Slick

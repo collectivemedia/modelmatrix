@@ -2,12 +2,12 @@ package com.collective.modelmatrix.catalog
 
 import com.typesafe.config.ConfigFactory
 import org.scalatest.{BeforeAndAfterAll, FlatSpec}
-import slick.driver.H2Driver
+import slick.driver.PostgresDriver
 
 trait PgDatabase extends CatalogDatabase {
   self: FlatSpec with BeforeAndAfterAll =>
 
-  val driver = H2Driver
+  val driver = PostgresDriver
 
   import driver.api._
 

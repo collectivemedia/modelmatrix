@@ -9,10 +9,11 @@ import scalaz.{Tag, @@}
 
 case class ModelDefinition(
   id: Int,
+  name: Option[String],
   source: String,
   createdBy: String,
   createdAt: Instant,
-  comment: String
+  comment: Option[String]
 )
 
 class ModelDefinitions(val schema: Schema)(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) {
@@ -29,11 +30,11 @@ class ModelDefinitions(val schema: Schema)(implicit val ec: ExecutionContext @@ 
     modelDefinitions.result.map(_.map(ModelDefinition.tupled))
   }
 
-  def add(source: String, createdBy: String, createdAt: Instant, comment: Option[String]): DBIO[Int] = {
+  def add(name: Option[String], source: String, createdBy: String, createdAt: Instant, comment: Option[String]): DBIO[Int] = {
     log.trace(s"Add model definition. Created by: $createdBy @ $createdAt. Comment: ${comment.getOrElse("n/a")}")
 
     (modelDefinitions returning modelDefinitions.map(_.id)) +=
-      ((AutoIncId, source, createdBy, createdAt, comment.getOrElse("")))
+      ((AutoIncId, name, source, createdBy, createdAt, comment))
   }
 
 }

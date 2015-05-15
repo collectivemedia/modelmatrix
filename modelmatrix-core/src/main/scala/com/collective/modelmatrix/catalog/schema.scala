@@ -14,15 +14,16 @@ class Schema(private[catalog] val driver: JdbcProfile) {
 
   // Model Definition
   private[catalog] class mmc_definition(tag: Tag)
-    extends Table[(Int, String, String, Instant, String)](tag, "mmc_definition") {
+    extends Table[(Int, Option[String], String, String, Instant, Option[String])](tag, "mmc_definition") {
 
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
+    def name = column[Option[String]]("name")
     def source = column[String]("source")
     def createdBy = column[String]("created_by")
     def createdAt = column[Instant]("created_at")
-    def comment = column[String]("comment", O.Default(""))
+    def comment = column[Option[String]]("comment")
 
-    def * = (id, source, createdBy, createdAt, comment)
+    def * = (id, name, source, createdBy, createdAt, comment)
   }
 
   // Model Feature Definition

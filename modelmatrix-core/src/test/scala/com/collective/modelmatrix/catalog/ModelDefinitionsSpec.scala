@@ -19,6 +19,7 @@ trait ModelDefinitionsSpec extends FlatSpec with BeforeAndAfterAll with CatalogD
   "Model Definitions" should "add model definition and read it later" in {
 
     val id = await(db.run(modelDefinitions.add(
+      name = None,
       source = "source",
       createdBy = "ModelDefinitionsSpec",
       createdAt = now,
