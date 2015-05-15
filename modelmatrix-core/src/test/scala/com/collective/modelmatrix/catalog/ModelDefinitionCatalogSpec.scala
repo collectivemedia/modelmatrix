@@ -6,9 +6,9 @@ import com.collective.modelmatrix.ModelFeature
 import com.collective.modelmatrix.transform.Transform.{Index, Top, Identity}
 import org.scalatest.{GivenWhenThen, BeforeAndAfterAll, FlatSpec}
 
-class H2ModelDefinitionFeaturesSpec extends ModelDefinitionFeaturesSpec with H2Database
+class H2ModelDefinitionCatalogSpec extends ModelDefinitionCatalogSpec with H2Database
 
-trait ModelDefinitionFeaturesSpec extends FlatSpec with GivenWhenThen with BeforeAndAfterAll with CatalogDatabase {
+trait ModelDefinitionCatalogSpec extends FlatSpec with GivenWhenThen with BeforeAndAfterAll with CatalogDatabase {
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
@@ -19,7 +19,7 @@ trait ModelDefinitionFeaturesSpec extends FlatSpec with GivenWhenThen with Befor
   lazy val modelDefinitions = new ModelDefinitions(schema)
   lazy val modelDefinitionFeatures = new ModelDefinitionFeatures(schema)
 
-  "Model Definition Features" should "add model definition features and read them later" in {
+  "Model Definition Catalog" should "add model definition with features and read them later" in {
 
     Given("model features")
     val identity = ModelFeature(isActive, "Advertisement", "ad_size", "size", Identity)
@@ -28,7 +28,7 @@ trait ModelDefinitionFeaturesSpec extends FlatSpec with GivenWhenThen with Befor
 
     And("model definition")
     val addModelDefinition = modelDefinitions.add(
-      name = None,
+      name = Some(s"name=${now.toEpochMilli}"),
       source = "source",
       createdBy = "ModelDefinitionFeaturesSpec",
       createdAt = now,
@@ -45,14 +45,29 @@ trait ModelDefinitionFeaturesSpec extends FlatSpec with GivenWhenThen with Befor
     val (modelDefinitionId, featuresId) = await(db.run(insert))
     assert(featuresId.size == 3)
 
-    And("read all features back by model definition id")
+    And("read saved model")
 
+    val modelO = await(db.run(modelDefinitions.all)).find(_.id == modelDefinitionId)
+    assert(modelO.isDefined)
+
+    val model = modelO.get
+    assert(model.createdBy == "ModelDefinitionFeaturesSpec")
+    assert(model.createdAt == now)
+    assert(model.features == 3)
+
+    And("find model definitions by id")
+    val foundById = await(db.run(modelDefinitions.findById(modelDefinitionId)))
+    assert(foundById == modelO)
+
+    And("find model definition by name")
+    val foundByName = await(db.run(modelDefinitions.findByName(s"name=${now.toEpochMilli}"))).headOption
+    assert(foundByName == modelO)
+
+    And("read all model features by model definition id")
     val features = await(db.run(modelDefinitionFeatures.modelFeatures(modelDefinitionId)))
-
-    assert(features.size == 3)
-
     val featureMap = features.map(f => f.feature.feature -> f.feature).toMap
 
+    assert(features.size == 3)
     assert(featureMap("ad_size") == identity)
     assert(featureMap("ad_type") == top)
     assert(featureMap("ad_network") == index)

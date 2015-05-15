@@ -13,7 +13,8 @@ case class ModelDefinition(
   source: String,
   createdBy: String,
   createdAt: Instant,
-  comment: Option[String]
+  comment: Option[String],
+  features: Int
 )
 
 class ModelDefinitions(val schema: Schema)(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) {
@@ -24,10 +25,30 @@ class ModelDefinitions(val schema: Schema)(implicit val ec: ExecutionContext @@ 
 
   private implicit val executionContext = Tag.unwrap(ec)
 
+  private def q(definitions: schema.modelDefinitionsT): DBIO[Seq[ModelDefinition]] = {
+    val grouped = (for {
+      m <- definitions
+      f <- featureDefinitions if m.id === f.modelDefinitionId
+    } yield (m, f)).groupBy(t => t._1.*)
+
+    val counted = grouped.map { case (model, features) =>
+      (model._1, model._2, model._3, model._4, model._5, model._6, features.length)
+    }
+
+    counted.result.map(_.map(ModelDefinition.tupled))
+  }
+
   def all: DBIO[Seq[ModelDefinition]] = {
     log.trace(s"Get all model definitions")
+    q(modelDefinitions)
+  }
 
-    modelDefinitions.result.map(_.map(ModelDefinition.tupled))
+  def findById(id: Int): DBIO[Option[ModelDefinition]] = {
+    q(modelDefinitions.filter(_.id === id)).map(_.headOption)
+  }
+
+  def findByName(name: String): DBIO[Seq[ModelDefinition]] = {
+    q(modelDefinitions.filter(_.name like s"%$name%"))
   }
 
   def add(name: Option[String], source: String, createdBy: String, createdAt: Instant, comment: Option[String]): DBIO[Int] = {

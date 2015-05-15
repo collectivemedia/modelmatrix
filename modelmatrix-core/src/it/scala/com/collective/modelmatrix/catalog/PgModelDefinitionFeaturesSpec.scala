@@ -1,3 +1,0 @@
-package com.collective.modelmatrix.catalog
-
-class PgModelDefinitionFeaturesSpec extends ModelDefinitionFeaturesSpec with PgDatabase

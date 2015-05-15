@@ -7,7 +7,7 @@ CREATE SEQUENCE mmc_definition_feature_index_param_seq;
 
 CREATE TABLE mmc_definition (
     id         INT NOT NULL UNIQUE DEFAULT nextval('mmc_definition_seq')
-  , name       TEXT UNIQUE
+  , name       TEXT
   , source     TEXT NOT NULL
   , created_by TEXT NOT NULL
   , created_at TIMESTAMP

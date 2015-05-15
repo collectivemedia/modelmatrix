@@ -3,7 +3,7 @@
 Model Matrix (feature engineering tools)
 
 Model Matrix Configuration catalog is stored in PostgreSQL database. 
-Default catalog configuration available in `modelmatrix-cli/src/main/resources/reference.conf`. 
+Default catalog configuration defined in `modelmatrix-cli/src/main/resources/reference.conf`. 
 If you want to use custom locations you can override settings in `application.conf` or using cli options.
 
 ## Running Model Matrix CLI
@@ -31,6 +31,9 @@ Examples:
      
     # List available model matrix definitions from non-default database
     ./mm definitions list --dbName=staging-db --dbConfig=./staging-db.conf
+    
+    # Find model matrix definition by name (like '%name%' under the hood)
+    ./mm definitions find "viewability optimization"
  
 
 ## Developing

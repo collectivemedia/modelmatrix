@@ -74,6 +74,9 @@ class Schema(private[catalog] val driver: JdbcProfile) {
     def featureDefinition = foreignKey("mmc_definition_feature_index_param_fk", featureDefinitionId, featureDefinitions)(_.id)
   }
 
+  // Type gymnastics
+  private[catalog] type modelDefinitionsT = slick.lifted.Query[mmc_definition,(Int, Option[String], String, String, java.time.Instant, Option[String]),Seq]
+
   // scalastyle:on
 
   private[catalog] val modelDefinitions = TableQuery[mmc_definition]

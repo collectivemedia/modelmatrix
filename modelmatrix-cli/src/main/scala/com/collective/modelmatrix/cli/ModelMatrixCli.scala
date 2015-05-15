@@ -3,6 +3,7 @@ package com.collective.modelmatrix.cli
 import java.util.concurrent.Executors
 
 import com.collective.modelmatrix.catalog.ModelMatrixCatalog
+import com.collective.modelmatrix.cli.definition.ListAll
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.typesafe.config.{Config, ConfigFactory}
 
@@ -31,12 +32,20 @@ object ModelMatrixCli extends App {
     cmd("definitions").text("manipulate model matrix definitions:").children(
 
       cmd("list").text("list available model matrix definitions")
-        .action((_, _) => ListModelDefinitions(defaultDbName, defaultDbConfig))
+        .action((_, _) => definition.ListAll(defaultDbName, defaultDbConfig))
         .children(
-          overrideDbName(dbName => (_: ListModelDefinitions).copy(dbName = dbName)),
-          overrideDbConfig(dbConf => (_: ListModelDefinitions).copy(dbConfig = dbConf))
-        )
+          overrideDbName(dbName => (_: ListAll).copy(dbName = dbName)),
+          overrideDbConfig(dbConf => (_: ListAll).copy(dbConfig = dbConf))
+        ),
 
+      cmd("find").text("find model matrix definitions by name")
+        .action((_, _) => definition.FindByName("", defaultDbName, defaultDbConfig))
+        .children(
+          overrideDbName(dbName => (_: ListAll).copy(dbName = dbName)),
+          overrideDbConfig(dbConf => (_: ListAll).copy(dbConfig = dbConf)),
+          arg[String]("<name>").required().text("model matrix user defined name")
+            .action { (n, s) => s.asInstanceOf[definition.FindByName].copy(name = n) }
+        )
     )
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
