@@ -19,9 +19,9 @@ The cli assembled jar will be placed in:
     
 #### Supported Commands
      
-With MM Cli you can control all lifecycle of Model Matrix:
+With **Model Matrix CLI** you can control all lifecycle of Model Matrix:
  - adding MM definition from external configuration 
- - building MM instance based on definition and input data 
+ - building MM instance based on features definition and input data 
  - applying MM transformations to input data for building "featurized" dataset 
  
 Examples:
