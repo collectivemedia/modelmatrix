@@ -4,7 +4,7 @@ import com.typesafe.config.ConfigFactory
 import org.scalatest.{BeforeAndAfterAll, FlatSpec}
 import slick.driver.H2Driver
 
-trait PgDatabase extends TestDatabase {
+trait PgDatabase extends CatalogDatabase {
   self: FlatSpec with BeforeAndAfterAll =>
 
   val driver = H2Driver

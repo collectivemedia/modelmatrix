@@ -11,6 +11,7 @@ object TestSettings {
   val IntegrationTest = config("it") extend Test
 
   def testSettings: Seq[Def.Setting[_]] = Seq(
+    fork in Test := true,
     // Run Scalastyle as a part of tests
     checkScalastyle := ScalastylePlugin.scalastyle.in(Compile).toTask("").value,
     test in Test <<= (test in Test) dependsOn checkScalastyle,
@@ -23,11 +24,10 @@ object TestSettings {
   )
 
   def integrationTestSettings: Seq[Def.Setting[_]] = Defaults.itSettings ++ Seq(
+    fork in IntegrationTest := true,
     // Run Scalastyle as a part of tests
     checkScalastyle := ScalastylePlugin.scalastyle.in(Compile).toTask("").value,
     test in IntegrationTest <<= (test in IntegrationTest) dependsOn checkScalastyle,
-    // Fork in IT to run Spark Tests
-    fork in IntegrationTest := true,
     // Disable logging in all tests
     javaOptions in IntegrationTest += "-Dlog4j.configuration=log4j-turned-off.properties",
     // Generate JUnit test reports

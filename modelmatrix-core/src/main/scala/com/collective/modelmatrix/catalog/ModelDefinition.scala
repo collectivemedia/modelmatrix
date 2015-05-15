@@ -2,9 +2,10 @@ package com.collective.modelmatrix.catalog
 
 import java.time.Instant
 
-import slick.driver.JdbcDriver
+import org.slf4j.LoggerFactory
 
 import scala.concurrent.ExecutionContext
+import scalaz.{Tag, @@}
 
 case class ModelDefinition(
   id: Int,
@@ -14,34 +15,25 @@ case class ModelDefinition(
   comment: String
 )
 
-class ModelDefinitions(val driver: JdbcDriver)(implicit val ec: ExecutionContext) {
+class ModelDefinitions(val schema: Schema)(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) {
+  private val log = LoggerFactory.getLogger(classOf[ModelDefinitions])
 
+  import schema._
   import driver.api._
 
-  // scalastyle:off
-  private class mmc_definition(tag: Tag) extends Table[(Int, String, String, Instant, String)](tag, "mmc_definition") {
-
-    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
-    def source = column[String]("source")
-    def createdBy = column[String]("created_by")
-    def createdAt = column[Instant]("created_at")
-    def comment = column[String]("comment", O.Default(""))
-
-    def * = (id, source, createdBy, createdAt, comment)
-  }
-  // scalastyle:on
-
-  private val definitions = TableQuery[mmc_definition]
-
-  def createSchema: DBIO[Unit] =
-    definitions.schema.create
+  private implicit val executionContext = Tag.unwrap(ec)
 
   def all: DBIO[Seq[ModelDefinition]] = {
-    definitions.result.map(_.map(ModelDefinition.tupled))
+    log.trace(s"Get all model definitions")
+
+    modelDefinitions.result.map(_.map(ModelDefinition.tupled))
   }
 
   def add(source: String, createdBy: String, createdAt: Instant, comment: Option[String]): DBIO[Int] = {
-    (definitions returning definitions.map(_.id)) += ((-1, source, createdBy, createdAt, comment.getOrElse("")))
+    log.trace(s"Add model definition. Created by: $createdBy @ $createdAt. Comment: ${comment.getOrElse("n/a")}")
+
+    (modelDefinitions returning modelDefinitions.map(_.id)) +=
+      ((AutoIncId, source, createdBy, createdAt, comment.getOrElse("")))
   }
 
 }

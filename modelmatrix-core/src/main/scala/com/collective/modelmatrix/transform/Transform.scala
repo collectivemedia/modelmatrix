@@ -39,6 +39,30 @@ object Transform {
   case class Index(percentage: Double, allOther: Boolean) extends Transform
 
   // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+  // *  Helper functions to get from Transform type to String back and forth   *
+  // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+  def nameOf[T <: Transform : TransformName]: String = implicitly[TransformName[T]].name
+
+  sealed trait TransformName[T <: Transform] {
+    def name: String
+  }
+
+  object TransformName {
+    implicit val identityName = new TransformName[Identity.type] { def name = "identity" }
+    implicit val topName = new TransformName[Top] { def name = "top" }
+    implicit val indexName = new TransformName[Index] { def name = "index" }
+  }
+
+  implicit class TransformOps(val transform: Transform) extends AnyVal {
+    def stringify: String = transform match {
+      case Identity => "identity"
+      case _: Top => "top"
+      case _: Index => "index"
+    }
+  }
+
+  // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
   // *  Parse Transform function from config                                   *
   // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
