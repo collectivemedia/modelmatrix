@@ -14,7 +14,7 @@ First it's required to prepare assembled jar file. In root directory run:
 
     sbt assembly
     
-The cli fat jar will be placed in:
+The cli assembled jar will be placed in:
   - `modelmatrix/modelmatrix-cli/target/scala-2.10/model-matrix-cli.jar`
     
 #### Supported Commands
