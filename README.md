@@ -8,6 +8,11 @@ If you want to use custom locations you can override settings in `application.co
 
 ## Running Model Matrix CLI
 
+With **Model Matrix CLI** you can control all lifecycle of Model Matrix:
+ - adding MM definition from external configuration 
+ - building MM instance based on features definition and input data 
+ - applying MM transformations to input data for building "featurized" dataset 
+
 #### Assembling fat-jar
 
 First it's required to prepare assembled jar file. In root directory run:
@@ -17,15 +22,8 @@ First it's required to prepare assembled jar file. In root directory run:
 The cli assembled jar will be placed in:
   - `modelmatrix/modelmatrix-cli/target/scala-2.10/model-matrix-cli.jar`
     
-#### Supported Commands
-     
-With **Model Matrix CLI** you can control all lifecycle of Model Matrix:
- - adding MM definition from external configuration 
- - building MM instance based on features definition and input data 
- - applying MM transformations to input data for building "featurized" dataset 
- 
-Examples:
- 
+#### Examples
+
     # List available model matrix definitions
     ./mm definitions list
      
@@ -33,8 +31,7 @@ Examples:
     ./mm definitions list --dbName=staging-db --dbConfig=./staging-db.conf
     
     # Find model matrix definition by name (like '%name%' under the hood)
-    ./mm definitions find "viewability optimization"
- 
+    ./mm definitions find "viewability optimization" 
 
 ## Developing
 
