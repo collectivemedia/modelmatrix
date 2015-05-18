@@ -5,6 +5,10 @@ title: Command Line Interface
 
 # <a name="command-line-interface">Command Line Interface</a>
 
+To get list of all available commands simply run `mm` without arguments:
+
+    modelmatrix/mm
+
 ## <a name="specify-database">Specify Catalog Database</a>
     
 If you want to use custom database settings you can provide them in 
@@ -34,3 +38,6 @@ and later pass additional options to CLI:
         
 #### Add model matrix definition
     mm definition add ./model-matrix-v123.conf
+    
+#### Add named model matrix definition with commend
+    mm definition add --name "v123" --comment "testing new model" ./model-matrix-v123.conf
