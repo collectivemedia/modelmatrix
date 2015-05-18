@@ -1,0 +1,46 @@
+#
+# This file contains configuration flags to customize your site
+#
+
+# Name of your site (displayed in the header)
+name: Model Matrix
+
+# Url of your site
+url: "http://collectivemedia.github.io/modelmatrix"
+
+# If you're hosting your site at a Project repository on GitHub pages 
+# (http://yourusername.github.io/repository-name)
+# and NOT your User repository (http://yourusername.github.io)
+# then add in the baseurl here, like this: "/repository-name"
+baseurl: "/modelmatrix"
+
+navigation:
+- title: Home
+  url: index.html
+- title: Getting Started
+  url: doc/getstarted.html
+- title: Releases
+  url: doc/releases.html
+- title: Philosophy
+  url: doc/philosophy.html
+- title: Command Line Interface
+  url: doc/cli.html
+- title: About Us
+  url: doc/about-us.html
+
+latestrelease: 0.0.1-SNAPSHOT
+
+#
+# !! You don't need to change any of the configuration flags below !!
+#
+
+markdown: kramdown
+highlighter: pygments
+permalink: /:title/
+
+# Exclude these files from your production _site
+exclude:
+    - Gemfile
+    - Gemfile.lock
+    - LICENSE
+    - README.md
