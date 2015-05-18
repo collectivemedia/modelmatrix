@@ -2,41 +2,14 @@
 
 Model Matrix (feature engineering tools)
 
-Model Matrix Configuration catalog is stored in PostgreSQL database. 
-Default catalog configuration defined in `modelmatrix-cli/src/main/resources/reference.conf`. 
-If you want to use custom locations you can override settings in `application.conf` or using cli options.
+* Website: https://collectivemedia.github.io/modelmatrix/
+* Source: https://github.com/collectivemedia/modelmatrix/
 
-## Running Model Matrix CLI
-
-With **Model Matrix CLI** you can control all lifecycle of Model Matrix:
- - adding MM definition from external configuration 
- - building MM instance based on features definition and input data 
- - applying MM transformations to input data for building "featurized" dataset 
-
-#### Assembling fat-jar
-
-First it's required to prepare assembled jar file. In root directory run:
-
-    sbt assembly
-    
-The cli assembled jar will be placed in:
-  - `modelmatrix/modelmatrix-cli/target/scala-2.10/model-matrix-cli.jar`
-    
-#### Examples
-
-    # List available model matrix definitions
-    ./mm definitions list
-     
-    # List available model matrix definitions from non-default database
-    ./mm definitions list --dbName=staging-db --dbConfig=./staging-db.conf
-    
-    # Find model matrix definition by name (like '%name%' under the hood)
-    ./mm definitions find "viewability optimization" 
 
 ## Developing
 
-Local installation of PostgreSQL required for integration tests
- 
+Local PostgreSQL database required for integration tests
+
 #### Default PostrgeSQL database config
 
     url      = "jdbc:postgresql://localhost/modelmatrix"  
@@ -68,6 +41,12 @@ All tests that require Spark or Postgres are running as a part of integration te
 
     sbt test
     sbt it:test
+    
+## Assembling CLI jar
+
+To run CLI you need to assembly application jar first
+
+    sbt assembly        
 
 ## Git Workflow
 
