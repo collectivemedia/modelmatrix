@@ -63,7 +63,7 @@ You run simple cli command to ensure that schema installed successfully
 If you want to use custom database settings you can provide them in 
 separate database configuration and pass it to CLI with db options:
     
-    # Inside datasci-db.conf
+    # datasci-db.conf
     datasci-db {
      url = "jdbc:postgresql://localhost/datasci_mm?user=datasci&password=datasci"
      driver = org.postgresql.Driver
