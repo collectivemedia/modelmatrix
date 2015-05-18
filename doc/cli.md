@@ -23,14 +23,14 @@ and later pass additional options to CLI:
 
 ## <a name="mmc-definition">Model Matrix definitions</a>
 
-##### List available model matrix definitions
+#### List available model matrix definitions
     mm definition list
 
-##### Find model matrix definition by name (like '%name%' under the hood)
+#### Find model matrix definition by name (like '%name%' under the hood)
     mm definition find "viewability optimization"
          
-##### Validate model matrix definition config
+#### Validate model matrix definition config
     mm definition validate ./model-matrix-v123.conf
         
-##### Add model matrix definition
+#### Add model matrix definition
     mm definition add ./model-matrix-v123.conf
