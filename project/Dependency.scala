@@ -7,6 +7,7 @@ object Dependency {
   object V {
 
     val Slf4j              = "1.7.12"
+    val Log4j              = "1.2.17"
     val Config             = "1.2.1"
     val Scopt              = "3.3.0"
     val Ficus              = "1.0.1"
@@ -34,6 +35,8 @@ object Dependency {
   // Compile Dependencies
 
   val slf4jApi            = "org.slf4j"                  % "slf4j-api"                   % V.Slf4j
+  val slf4jLog4j          = "org.slf4j"                  % "slf4j-log4j12"               % V.Slf4j
+  val log4j               = "log4j"                      % "log4j"                       % V.Log4j
   val scopt               = "com.github.scopt"          %% "scopt"                       % V.Scopt
   val config              = "com.typesafe"               % "config"                      % V.Config
   val ficus               = "net.ceedubs"               %% "ficus"                       % V.Ficus

@@ -69,19 +69,19 @@ object Transform {
   import scalaz.syntax.validation._
   import scalaz.syntax.apply._
 
-  def identity(feature: String, config: Config): ValidationNel[String, Identity.type] = {
+  def identity(config: Config): ValidationNel[String, Identity.type] = {
     Identity.successNel[String]
   }
 
-  def top(feature: String, config: Config): ValidationNel[String, Top] = {
-    new TopParser(feature).parse(config)
+  def top(config: Config): ValidationNel[String, Top] = {
+    TopParser.parse(config)
   }
 
-  def index(feature: String, config: Config): ValidationNel[String, Index] = {
-    new IndexParser(feature).parse(config)
+  def index(config: Config): ValidationNel[String, Index] = {
+    IndexParser.parse(config)
   }
 
-  private abstract class Parser[T <: Transform](transform: String, feature: String) {
+  private abstract class Parser[T <: Transform](transform: String) {
 
     def parse(config: Config): ValidationNel[String, T]
 
@@ -95,19 +95,19 @@ object Transform {
       Try(f(config)(p)) match {
         case Success(s) => s.successNel
         case Failure(err) =>
-          s"Feature: $feature. Transform: $transform. Failed to load parameter: $p. Error: ${err.getMessage}".failureNel
+          s"Transform: $transform. Failed to load parameter: $p. Error: ${err.getMessage}".failureNel
       }
     }
   }
 
-  private class TopParser(feature: String) extends Parser[Top]("top", feature) {
+  private object TopParser extends Parser[Top]("top") {
     def parse(config: Config): ValidationNel[String, Top] = {
       implicit val cfg = config
       (double("percentage") |@| boolean("allOther"))(Top.apply)
     }
   }
 
-  private class IndexParser(feature: String) extends Parser[Index]("index", feature) {
+  private object IndexParser extends Parser[Index]("index") {
     def parse(config: Config): ValidationNel[String, Index] = {
       implicit val cfg = config
       (double("percentage") |@| boolean("allOther"))(Index.apply)

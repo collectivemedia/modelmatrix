@@ -16,9 +16,9 @@ object H2Database {
   private[H2Database] lazy val db =
     Database.forConfig("h2dev", ConfigFactory.load("./h2.conf"))
 
-  private[H2Database] def installSchema(schema: Schema): Unit = this.synchronized {
+  private[H2Database] def installSchema(catalog: ModelMatrixCatalog): Unit = this.synchronized {
     if (!schemaInstalled) {
-      Await.result(db.run(DBIO.seq(schema.create)), 10.seconds)
+      Await.result(db.run(DBIO.seq(catalog.create)), 10.seconds)
       schemaInstalled = true
     }
   }

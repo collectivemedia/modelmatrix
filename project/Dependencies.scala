@@ -31,8 +31,11 @@ object Dependencies {
     )
 
   val modelmatrixCli =
+    test ++
     Seq(
-      scopt
+      log4j
+    , slf4jLog4j
+    , scopt
     , guava
     )
 

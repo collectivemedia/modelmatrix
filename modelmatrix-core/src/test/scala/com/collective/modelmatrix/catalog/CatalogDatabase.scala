@@ -16,7 +16,7 @@ trait CatalogDatabase {
   
   val db: Database
 
-  lazy val schema = new Schema(H2Driver)
+  lazy val schema = new ModelMatrixCatalog(H2Driver)
 
   protected implicit val catalogExecutionContext =
     Tag[ExecutionContext, ModelMatrixCatalog](ExecutionContext.fromExecutor(Executors.newFixedThreadPool(10)))

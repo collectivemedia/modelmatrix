@@ -18,6 +18,10 @@ case class ModelFeature(
 
 object ModelFeature {
 
+  def parse(feature: String, config: Config, path: String): ValidationNel[String, ModelFeature] = {
+    parse(feature, config.getConfig(path))
+  }
+
   def parse(feature: String, config: Config): ValidationNel[String, ModelFeature] = {
 
     def string(p: String) = parameter(p)(_.getString)
@@ -26,9 +30,9 @@ object ModelFeature {
 
     def transform(p: String): ValidationNel[String, Transform] =
       string(p).fold(_.failure, {
-        case "identity"  => Transform.identity(feature, config)
-        case "top"       => Transform.top(feature, config)
-        case "index"     => Transform.index(feature, config)
+        case "identity"  => Transform.identity(config)
+        case "top"       => Transform.top(config)
+        case "index"     => Transform.index(config)
         case unknown     => s"Unknown transform type: $unknown".failureNel
       })
 
@@ -37,7 +41,7 @@ object ModelFeature {
         case Success(s) =>
           s.successNel
         case Failure(err) =>
-          s"Failed to load feature '$feature'. Error: ${err.getMessage}".failureNel
+          s"Can't parse parameter '$p'. Error: ${err.getMessage}".failureNel
       }
 
     (

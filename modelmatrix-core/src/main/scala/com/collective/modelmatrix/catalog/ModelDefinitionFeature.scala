@@ -12,11 +12,11 @@ case class ModelDefinitionFeature(
   feature: ModelFeature
 )
 
-class ModelDefinitionFeatures(val schema: Schema)(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) {
+class ModelDefinitionFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) {
   private val log = LoggerFactory.getLogger(classOf[ModelDefinitionFeatures])
 
-  import schema._
-  import schema.driver.api._
+  import catalog.tables._
+  import catalog.driver.api._
 
   private implicit val executionContext = Tag.unwrap(ec)
 

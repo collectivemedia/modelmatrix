@@ -17,15 +17,15 @@ case class ModelDefinition(
   features: Int
 )
 
-class ModelDefinitions(val schema: Schema)(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) {
+class ModelDefinitions(val catalog: ModelMatrixCatalog)(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) {
   private val log = LoggerFactory.getLogger(classOf[ModelDefinitions])
 
-  import schema._
-  import driver.api._
+  import catalog.tables._
+  import catalog.driver.api._
 
   private implicit val executionContext = Tag.unwrap(ec)
 
-  private def q(definitions: schema.modelDefinitionsT): DBIO[Seq[ModelDefinition]] = {
+  private def q(definitions: catalog.modelDefinitionsT): DBIO[Seq[ModelDefinition]] = {
     val grouped = (for {
       m <- definitions
       f <- featureDefinitions if m.id === f.modelDefinitionId
