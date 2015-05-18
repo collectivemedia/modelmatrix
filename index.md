@@ -23,7 +23,7 @@ With **Model Matrix CLI** you can control all lifecycle of Model Matrix:
  - applying MM transformations to input data for building "featurized" dataset
 
 
-## Model Matrix Foundation
+## Model Matrix Basics
 
 #### <a href="doc/philosophy.html#model-matrix-catalog" class="icon-circle-arrow-right"><span class="space5"><span class="spec-font-small">Model Matrix Catalog</span></span></a>
 
