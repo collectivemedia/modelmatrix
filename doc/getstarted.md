@@ -16,7 +16,7 @@ Here is a very simple sample to get started with Model Matrix.
 
 ## #1 Create Model Matrix Catalog database in PostreSQL
 
-Model Matrix store it's [catalog](doc/philosophy.html#model-matrix-catalog) in PostgreSQL database, default catalog db configuration 
+Model Matrix store it's [catalog](philosophy.html#model-matrix-catalog) in PostgreSQL database, default catalog db configuration 
 defined in `modelmatrix-cli/src/main/resources/reference.conf`. 
 
     url      = "jdbc:postgresql://localhost/modelmatrix"  
@@ -78,4 +78,4 @@ and later pass additional options to CLI:
 
 ## And much more…
 
-More documentation on Command Line Interface is [here](doc/cli.html).
+More documentation on Command Line Interface is [here](cli.html).
