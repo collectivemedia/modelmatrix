@@ -9,22 +9,26 @@ title: Model Matrix
 
 > For the impatient, head directly to [Getting Started](doc/getstarted.html)
 
-## The philosophy of Model Matrix in a nutshell
+Model Matrix is a framework/tool for solving large scale feature engineering
+problem: building model features for machine learning.
 
-### <a href="doc/philosophy.html#model-matrix-catalog" class="icon-circle-arrow-right"><span class="space5"><span class="spec-font">Model Matrix Catalog</span></span></a>
-Keep all your Model Matrix definitions in one place 
+## Model Matrix Philosophy
 
-### <a href="doc/cli.html" class="icon-circle-arrow-right"><span class="space5"><span class="spec-font">Command Line Tool</span></span></a>
+#### <a href="doc/philosophy.html#model-matrix-catalog" class="icon-circle-arrow-right"><span class="space5"><span class="spec-font-small">Model Matrix Catalog</span></span></a>
+
+#### <a href="doc/philosophy.html#feature-transformations" class="icon-circle-arrow-right"><span class="space5"><span class="spec-font-small">Feature Transformations</span></span></a>
+
+<br/>
+
+## Model Matrix CLI
 
 With **Model Matrix CLI** you can control all lifecycle of Model Matrix:
  
  - adding MM definition from external configuration 
  - building MM instance based on features definition and input data 
  - applying MM transformations to input data for building "featurized" dataset
+ 
+#### <a href="doc/cli.html#specify-database" class="icon-circle-arrow-right"><span class="space5"><span class="spec-font">Specify model matrix database</span></span></a>
 
+#### <a href="doc/cli.html#mmc-definition" class="icon-circle-arrow-right"><span class="space5"><span class="spec-font">Work with model matrix definitions</span></span></a>
 
-## Model Matrix Basics
-
-#### <a href="doc/philosophy.html#model-matrix-catalog" class="icon-circle-arrow-right"><span class="space5"><span class="spec-font-small">Model Matrix Catalog</span></span></a>
-
-#### <a href="doc/philosophy.html#feature-transform" class="icon-circle-arrow-right"><span class="space5"><span class="spec-font-small">Feature Transformations</span></span></a>

@@ -18,13 +18,17 @@ navigation:
 - title: Home
   url: index.html
 - title: Getting Started
-  url: doc/getstarted.html
-- title: Releases
-  url: doc/releases.html
+  url: doc/getstarted.html  
 - title: Philosophy
   url: doc/philosophy.html
+- title: Installing Schema
+  url: doc/installing-schema.html
+- title: Features Configuration
+  url: doc/features-configuration.html
 - title: Command Line Interface
   url: doc/cli.html
+- title: Releases
+  url: doc/releases.html
 - title: About Us
   url: doc/about-us.html
 

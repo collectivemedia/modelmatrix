@@ -9,7 +9,7 @@ To get list of all available commands simply run `mm` without arguments:
 
     modelmatrix/mm
 
-## <a name="specify-database">Specify Catalog Database</a>
+## <a name="specify-database">Specify Model Matrix Database</a>
     
 If you want to use custom database settings you can provide them in 
 separate database configuration and pass it to CLI with db options:
@@ -23,21 +23,21 @@ separate database configuration and pass it to CLI with db options:
     
 and later pass additional options to CLI:
     
-    mm <cli-command> --dbConf ./datasci-db.conf --dbName datasci-db
+    ./mm <cli-command> --dbConf ./datasci-db.conf --dbName datasci-db
 
 ## <a name="mmc-definition">Model Matrix definitions</a>
 
 #### List available model matrix definitions
-    mm definition list
+    ./mm definition list
 
 #### Find model matrix definition by name (like '%name%' under the hood)
-    mm definition find "viewability optimization"
+    ./mm definition find "viewability optimization"
          
 #### Validate model matrix definition config
-    mm definition validate ./model-matrix-v123.conf
+    ./mm definition validate ./model-matrix-v123.conf
         
 #### Add model matrix definition
-    mm definition add ./model-matrix-v123.conf
+    ./mm definition add ./model-matrix-v123.conf
     
 #### Add named model matrix definition with commend
-    mm definition add --name "v123" --comment "testing new model" ./model-matrix-v123.conf
+    ./mm definition add --name "v123" --comment "testing new model" ./model-matrix-v123.conf
