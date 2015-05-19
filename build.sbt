@@ -59,6 +59,7 @@ def ModelMatrixProject(path: String) =
 lazy val root = Project("modelmatrix", file(".")).
   settings(publish :=()).
   settings(publishLocal :=()).
+  settings(unidocSettings: _*).
   aggregate(modelmatrixCore, modelmatrixCli)
 
 
