@@ -3,7 +3,6 @@ package com.collective.modelmatrix.cli.definition
 import com.bethecoder.ascii_table.ASCIITable
 import com.collective.modelmatrix.catalog.ModelMatrixCatalog
 import com.collective.modelmatrix.cli.ModelCatalogScript
-import com.collective.modelmatrix.transform.Transform
 import com.typesafe.config.Config
 
 import scala.concurrent.ExecutionContext
@@ -42,7 +41,7 @@ case class View(
         )
 
         val features =
-          blockOn(db.run(modelDefinitionFeatures.modelFeatures(modelDefinitionId))).map { f =>
+          blockOn(db.run(modelDefinitionFeatures.features(modelDefinitionId))).map { f =>
             Array(
               f.id.toString,
               f.feature.active.toString,

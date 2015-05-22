@@ -2,6 +2,8 @@ package com.collective.modelmatrix.catalog
 
 import java.time.Instant
 
+import org.apache.spark.sql.types.DataType
+import scodec.bits.ByteVector
 import slick.driver.JdbcProfile
 
 
@@ -22,8 +24,9 @@ class ModelMatrixCatalog(private[catalog] val driver: JdbcProfile)
 
     val modelInstances = TableQuery[mmc_instance]
     val featureInstances = TableQuery[mmc_instance_feature]
-    val topValues = TableQuery[mmc_instance_feature_top_value]
-    val indexValues = TableQuery[mmc_instance_feature_index_value]
+    val identityColumns = TableQuery[mmc_instance_feature_identity_columns]
+    val topColumns = TableQuery[mmc_instance_feature_top_columns]
+    val indexColumns = TableQuery[mmc_instance_feature_index_columns]
 
   }
 
@@ -33,7 +36,12 @@ class ModelMatrixCatalog(private[catalog] val driver: JdbcProfile)
     tables.modelDefinitions.schema.create   >>
     tables.featureDefinitions.schema.create >>
     tables.topParameters.schema.create      >>
-    tables.indexParameters.schema.create
+    tables.indexParameters.schema.create    >>
+    tables.modelInstances.schema.create     >>
+    tables.featureInstances.schema.create   >>
+    tables.identityColumns.schema.create    >>
+    tables.topColumns.schema.create         >>
+    tables.indexColumns.schema.create
   }
 
 }
@@ -138,12 +146,12 @@ trait ModelMatrixInstance { self: ModelMatrixCatalog =>
 
   // Model Feature Instance
   private[catalog] class mmc_instance_feature(tag: Tag)
-    extends Table[(Int, Int, Int, String)](tag, "mmc_instance_feature") {
+    extends Table[(Int, Int, Int, DataType)](tag, "mmc_instance_feature") {
 
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def modelInstanceId = column[Int]("model_instance_id")
     def featureDefinitionId = column[Int]("feature_definition_id")
-    def extractType = column[String]("extract_type")
+    def extractType = column[DataType]("extract_type")
 
     def * = (id, modelInstanceId, featureDefinitionId, extractType)
 
@@ -152,40 +160,54 @@ trait ModelMatrixInstance { self: ModelMatrixCatalog =>
     def featureDefinition = foreignKey("mmc_instance_feature_definition_fk", featureDefinitionId, tables.featureDefinitions)(_.id)
   }
 
-  // Top values
-  private[catalog] class mmc_instance_feature_top_value(tag: Tag)
-    extends Table[(Int, Int, Int, String, Array[Byte], Long, Long)](tag, "mmc_instance_feature_top_value") {
+  // Identity columns
+  private[catalog] class mmc_instance_feature_identity_columns(tag: Tag)
+    extends Table[(Int, Int, Int)](tag, "mmc_instance_feature_identity_columns") {
 
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def featureInstanceId = column[Int]("feature_instance_id")
     def columnId = column[Int]("column_id")
-    def sourceName = column[String]("source_name")
-    def sourceValue = column[Array[Byte]]("source_value")
+
+    def * = (id, featureInstanceId, columnId)
+
+    // Foreign kew that can be navigated to crete a join
+    def featureDefinition = foreignKey("mmc_instance_feature_identity_columns_fk", featureInstanceId, tables.featureInstances)(_.id)
+  }
+  
+  // Top columns
+  private[catalog] class mmc_instance_feature_top_columns(tag: Tag)
+    extends Table[(Int, Int, Int, Option[String], Option[ByteVector], Long, Long)](tag, "mmc_instance_feature_top_columns") {
+
+    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
+    def featureInstanceId = column[Int]("feature_instance_id")
+    def columnId = column[Int]("column_id")
+    def sourceName = column[Option[String]]("source_name")
+    def sourceValue = column[Option[ByteVector]]("source_value")
     def count = column[Long]("cnt")
     def cumulativeCount = column[Long]("cumulative_cnt")
 
     def * = (id, featureInstanceId, columnId, sourceName, sourceValue, count, cumulativeCount)
 
     // Foreign kew that can be navigated to crete a join
-    def featureDefinition = foreignKey("mmc_instance_feature_top_value_fk", featureInstanceId, tables.featureInstances)(_.id)
+    def featureDefinition = foreignKey("mmc_instance_feature_top_columns_fk", featureInstanceId, tables.featureInstances)(_.id)
   }
 
-  // Index values
-  private[catalog] class mmc_instance_feature_index_value(tag: Tag)
-    extends Table[(Int, Int, Int, String, Array[Byte], Long, Long)](tag, "mmc_instance_feature_index_value") {
+  // Index columns
+  private[catalog] class mmc_instance_feature_index_columns(tag: Tag)
+    extends Table[(Int, Int, Int, Option[String], Option[ByteVector], Long, Long)](tag, "mmc_instance_feature_index_columns") {
 
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def featureInstanceId = column[Int]("feature_instance_id")
     def columnId = column[Int]("column_id")
-    def sourceName = column[String]("source_name")
-    def sourceValue = column[Array[Byte]]("source_value")
+    def sourceName = column[Option[String]]("source_name")
+    def sourceValue = column[Option[ByteVector]]("source_value")
     def count = column[Long]("cnt")
     def cumulativeCount = column[Long]("cumulative_cnt")
 
     def * = (id, featureInstanceId, columnId, sourceName, sourceValue, count, cumulativeCount)
 
     // Foreign kew that can be navigated to crete a join
-    def featureDefinition = foreignKey("mmc_instance_feature_index_value_fk", featureInstanceId, tables.featureInstances)(_.id)
+    def featureDefinition = foreignKey("mmc_instance_feature_index_columns_fk", featureInstanceId, tables.featureInstances)(_.id)
   }
 
   // Type gymnastics

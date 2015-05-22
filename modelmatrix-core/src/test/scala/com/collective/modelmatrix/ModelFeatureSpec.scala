@@ -1,6 +1,6 @@
 package com.collective.modelmatrix
 
-import com.collective.modelmatrix.transform.Transform.{Index, Top, Identity}
+import com.collective.modelmatrix.transform.{Identity, Index, Top}
 import com.typesafe.config.ConfigFactory
 import org.scalatest.FlatSpec
 

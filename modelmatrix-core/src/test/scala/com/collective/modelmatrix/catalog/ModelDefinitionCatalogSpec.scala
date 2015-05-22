@@ -3,7 +3,7 @@ package com.collective.modelmatrix.catalog
 import java.time.Instant
 
 import com.collective.modelmatrix.ModelFeature
-import com.collective.modelmatrix.transform.Transform.{Index, Top, Identity}
+import com.collective.modelmatrix.transform.{Index, Top, Identity}
 import org.scalatest.{GivenWhenThen, BeforeAndAfterAll, FlatSpec}
 
 class H2ModelDefinitionCatalogSpec extends ModelDefinitionCatalogSpec with H2Database
@@ -16,8 +16,8 @@ trait ModelDefinitionCatalogSpec extends FlatSpec with GivenWhenThen with Before
   val isActive = true
   val addAllOther = true
 
-  lazy val modelDefinitions = new ModelDefinitions(schema)
-  lazy val modelDefinitionFeatures = new ModelDefinitionFeatures(schema)
+  lazy val modelDefinitions = new ModelDefinitions(catalog)
+  lazy val modelDefinitionFeatures = new ModelDefinitionFeatures(catalog)
 
   "Model Definition Catalog" should "add model definition with features and read them later" in {
 
@@ -64,7 +64,7 @@ trait ModelDefinitionCatalogSpec extends FlatSpec with GivenWhenThen with Before
     assert(foundByName == modelO)
 
     And("read all model features by model definition id")
-    val features = await(db.run(modelDefinitionFeatures.modelFeatures(modelDefinitionId)))
+    val features = await(db.run(modelDefinitionFeatures.features(modelDefinitionId)))
     val featureMap = features.map(f => f.feature.feature -> f.feature).toMap
 
     assert(features.size == 3)

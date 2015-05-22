@@ -1,7 +1,7 @@
 package com.collective.modelmatrix.cli
 
 import com.collective.modelmatrix.ModelFeature
-import com.collective.modelmatrix.transform.Transform.{Identity, Index, Top}
+import com.collective.modelmatrix.transform.{Identity, Index, Top}
 import com.typesafe.config.ConfigFactory
 import org.scalatest.{FlatSpec, GivenWhenThen}
 

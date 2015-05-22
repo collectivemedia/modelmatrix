@@ -7,41 +7,36 @@ import scalaz._
 
 sealed trait Transform
 
+/**
+ * Absence of transformation
+ */
+case object Identity extends Transform
+
+/**
+ * For distinct values of the column, find top values
+ * by a quantity that cumulatively cover a given percentage
+ * of this quantity. For example, find the top DMAs that
+ * represent 99% of cookies, or find top sites that
+ * are responsible for 90% of impressions.
+ *
+ * @param percentage cumulative cover percentage
+ * @param allOther   include feature for all other values
+ */
+case class Top(percentage: Double, allOther: Boolean) extends Transform
+
+/**
+ * For distinct values of the column, find the values
+ * with at least the minimum support in the data set.
+ * Support for a value is defined as the percentage of a
+ * total quantity that have that value. For example,
+ * find segments that appear for at least 1% of the cookies.
+ *
+ * @param percentage support percentage
+ * @param allOther   include feature for all other values
+ */
+case class Index(percentage: Double, allOther: Boolean) extends Transform
+
 object Transform {
-
-  /**
-   * Absence of transformation
-   */
-  case object Identity extends Transform
-
-  /**
-   * For distinct values of the column, find top values
-   * by a quantity that cumulatively cover a given percentage
-   * of this quantity. For example, find the top DMAs that
-   * represent 99% of cookies, or find top sites that
-   * are responsible for 90% of impressions.
-   *
-   * @param percentage cumulative cover percentage
-   * @param allOther   include feature for all other values
-   */
-  case class Top(percentage: Double, allOther: Boolean) extends Transform
-
-  /**
-   * For distinct values of the column, find the values
-   * with at least the minimum support in the data set.
-   * Support for a value is defined as the percentage of a
-   * total quantity that have that value. For example,
-   * find segments that appear for at least 1% of the cookies.
-   *
-   * @param percentage support percentage
-   * @param allOther   include feature for all other values
-   */
-  case class Index(percentage: Double, allOther: Boolean) extends Transform
-
-  // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-  // *  Helper functions to get from Transform type to String back and forth   *
-  // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-
   def nameOf[T <: Transform : TransformName]: String = implicitly[TransformName[T]].name
 
   sealed trait TransformName[T <: Transform] {

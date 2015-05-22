@@ -24,13 +24,14 @@ object Dependencies {
       slf4jApi
     , scalazCore
     , config
-    , ficus
+    , scodecBits
     , slick
     , pgDriver
     , hikariCP
     )
 
   val modelmatrixCli =
+    spark ++
     test ++
     Seq(
       log4j

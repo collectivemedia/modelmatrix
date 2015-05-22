@@ -51,8 +51,17 @@ class ModelDefinitions(val catalog: ModelMatrixCatalog)(implicit val ec: Executi
     q(modelDefinitions.filter(_.name like s"%$name%"))
   }
 
-  def add(name: Option[String], source: String, createdBy: String, createdAt: Instant, comment: Option[String]): DBIO[Int] = {
-    log.trace(s"Add model definition. Created by: $createdBy @ $createdAt. Comment: ${comment.getOrElse("n/a")}")
+  def add(
+    name: Option[String],
+    source: String,
+    createdBy: String,
+    createdAt: Instant,
+    comment: Option[String]
+  ): DBIO[Int] = {
+
+    log.trace(s"Add model definition. " +
+      s"Created by: $createdBy @ $createdAt. " +
+      s"Comment: ${comment.getOrElse("n/a")}")
 
     (modelDefinitions returning modelDefinitions.map(_.id)) +=
       ((AutoIncId, name, source, createdBy, createdAt, comment))

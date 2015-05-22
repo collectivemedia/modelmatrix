@@ -2,7 +2,6 @@ package com.collective.modelmatrix.transform
 
 import com.collective.modelmatrix.ModelFeature
 import com.collective.modelmatrix.transform.InputSchemaError.{ExtractColumnNotFound, UnsupportedTransformDataType}
-import com.collective.modelmatrix.transform.Transform.{Identity, Index, Top}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types._
 

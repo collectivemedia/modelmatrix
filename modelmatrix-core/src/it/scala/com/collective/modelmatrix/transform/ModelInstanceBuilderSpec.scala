@@ -26,9 +26,9 @@ class ModelInstanceBuilderSpec extends FlatSpec with TestSparkContext {
   val isActive = true
   val withAllOther = true
 
-  val adId = ModelFeature(isActive, "Ad", "ad_id", "ad_id", Transform.Identity)
-  val adNetwork = ModelFeature(isActive, "Ad", "ad_network", "ad_network", Transform.Top(0.5, withAllOther))
-  val adSite = ModelFeature(isActive, "Ad", "ad_site", "ad_site", Transform.Index(0.5, withAllOther))
+  val adId = ModelFeature(isActive, "Ad", "ad_id", "ad_id", Identity)
+  val adNetwork = ModelFeature(isActive, "Ad", "ad_network", "ad_network", Top(0.5, withAllOther))
+  val adSite = ModelFeature(isActive, "Ad", "ad_site", "ad_site", Index(0.5, withAllOther))
 
   val df: DataFrame = sqlContext.createDataFrame(sc.parallelize(input), schema)
 
@@ -46,14 +46,14 @@ class ModelInstanceBuilderSpec extends FlatSpec with TestSparkContext {
 
   it should "fail on validation string identity feature" in {
     // String identity transformation is not supported
-    val wrongAdSite = ModelFeature(isActive, "Ad", "ad_site", "ad_site", Transform.Identity)
+    val wrongAdSite = ModelFeature(isActive, "Ad", "ad_site", "ad_site", Identity)
     val typed = builder.validateInput(df, wrongAdSite)
-    assert(typed == InputSchemaError.UnsupportedTransformDataType("ad_site", StringType, Transform.Identity).failureNel)
+    assert(typed == InputSchemaError.UnsupportedTransformDataType("ad_site", StringType, Identity).failureNel)
   }
 
   it should "fail on non-existing extract column" in {
     // String identity transformation is not supported
-    val adTitle = ModelFeature(isActive, "Ad", "ad_title", "ad_title", Transform.Identity)
+    val adTitle = ModelFeature(isActive, "Ad", "ad_title", "ad_title", Identity)
     val typed = builder.validateInput(df, adTitle)
     assert(typed == InputSchemaError.ExtractColumnNotFound("ad_title").failureNel)
   }

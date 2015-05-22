@@ -6,7 +6,7 @@ import java.util.Locale
 
 import com.bethecoder.ascii_table.{ASCIITable, ASCIITableHeader}
 import com.collective.modelmatrix.catalog.ModelDefinition
-import com.collective.modelmatrix.transform.Transform
+import com.collective.modelmatrix.transform.{Transform, Identity, Top, Index}
 
 import scala.language.implicitConversions
 
@@ -22,9 +22,9 @@ package object definition {
   }
 
   def printParameters(t: Transform): String = t match {
-    case Transform.Identity => ""
-    case Transform.Top(p, ao) => s"percentage = $p; allOther = $ao"
-    case Transform.Index(p, ao) => s"percentage = $p; allOther = $ao"
+    case Identity => ""
+    case Top(p, ao) => s"percentage = $p; allOther = $ao"
+    case Index(p, ao) => s"percentage = $p; allOther = $ao"
   }
 
   def printDefinitions(definitions: Seq[ModelDefinition]): Unit = {

@@ -33,6 +33,6 @@ trait H2Database extends CatalogDatabase {
   val db = H2Database.db
 
   override protected def beforeAll(): Unit = {
-    H2Database.installSchema(schema)
+    H2Database.installSchema(catalog)
   }
 }
