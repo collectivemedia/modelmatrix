@@ -24,9 +24,9 @@ class ModelMatrixCatalog(private[catalog] val driver: JdbcProfile)
 
     val modelInstances = TableQuery[mmc_instance]
     val featureInstances = TableQuery[mmc_instance_feature]
-    val identityColumns = TableQuery[mmc_instance_feature_identity_columns]
-    val topColumns = TableQuery[mmc_instance_feature_top_columns]
-    val indexColumns = TableQuery[mmc_instance_feature_index_columns]
+    val identityColumns = TableQuery[mmc_instance_feature_identity_column]
+    val topColumns = TableQuery[mmc_instance_feature_top_column]
+    val indexColumns = TableQuery[mmc_instance_feature_index_column]
 
   }
 
@@ -161,8 +161,8 @@ trait ModelMatrixInstance { self: ModelMatrixCatalog =>
   }
 
   // Identity columns
-  private[catalog] class mmc_instance_feature_identity_columns(tag: Tag)
-    extends Table[(Int, Int, Int)](tag, "mmc_instance_feature_identity_columns") {
+  private[catalog] class mmc_instance_feature_identity_column(tag: Tag)
+    extends Table[(Int, Int, Int)](tag, "mmc_instance_feature_identity_column") {
 
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def featureInstanceId = column[Int]("feature_instance_id")
@@ -171,12 +171,12 @@ trait ModelMatrixInstance { self: ModelMatrixCatalog =>
     def * = (id, featureInstanceId, columnId)
 
     // Foreign kew that can be navigated to crete a join
-    def featureDefinition = foreignKey("mmc_instance_feature_identity_columns_fk", featureInstanceId, tables.featureInstances)(_.id)
+    def featureDefinition = foreignKey("mmc_instance_feature_identity_column_fk", featureInstanceId, tables.featureInstances)(_.id)
   }
   
   // Top columns
-  private[catalog] class mmc_instance_feature_top_columns(tag: Tag)
-    extends Table[(Int, Int, Int, Option[String], Option[ByteVector], Long, Long)](tag, "mmc_instance_feature_top_columns") {
+  private[catalog] class mmc_instance_feature_top_column(tag: Tag)
+    extends Table[(Int, Int, Int, Option[String], Option[ByteVector], Long, Long)](tag, "mmc_instance_feature_top_column") {
 
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def featureInstanceId = column[Int]("feature_instance_id")
@@ -189,12 +189,12 @@ trait ModelMatrixInstance { self: ModelMatrixCatalog =>
     def * = (id, featureInstanceId, columnId, sourceName, sourceValue, count, cumulativeCount)
 
     // Foreign kew that can be navigated to crete a join
-    def featureDefinition = foreignKey("mmc_instance_feature_top_columns_fk", featureInstanceId, tables.featureInstances)(_.id)
+    def featureDefinition = foreignKey("mmc_instance_feature_top_column_fk", featureInstanceId, tables.featureInstances)(_.id)
   }
 
   // Index columns
-  private[catalog] class mmc_instance_feature_index_columns(tag: Tag)
-    extends Table[(Int, Int, Int, Option[String], Option[ByteVector], Long, Long)](tag, "mmc_instance_feature_index_columns") {
+  private[catalog] class mmc_instance_feature_index_column(tag: Tag)
+    extends Table[(Int, Int, Int, Option[String], Option[ByteVector], Long, Long)](tag, "mmc_instance_feature_index_column") {
 
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def featureInstanceId = column[Int]("feature_instance_id")
@@ -207,7 +207,7 @@ trait ModelMatrixInstance { self: ModelMatrixCatalog =>
     def * = (id, featureInstanceId, columnId, sourceName, sourceValue, count, cumulativeCount)
 
     // Foreign kew that can be navigated to crete a join
-    def featureDefinition = foreignKey("mmc_instance_feature_index_columns_fk", featureInstanceId, tables.featureInstances)(_.id)
+    def featureDefinition = foreignKey("mmc_instance_feature_index_column_fk", featureInstanceId, tables.featureInstances)(_.id)
   }
 
   // Type gymnastics
