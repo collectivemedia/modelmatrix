@@ -107,15 +107,7 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
         case CategorialValue(columnId, sourceName, sourceValue, count, cumCount) =>
           topColumns +=(AutoIncId, featureInstanceId, columnId, Some(sourceName), Some(sourceValue), count, cumCount)
         case AllOther(columnId, count, cumCount) =>
-          topColumns +=(
-            AutoIncId,
-            featureInstanceId,
-            columnId,
-            Option.empty[String],
-            Option.empty[ByteVector],
-            count,
-            cumCount
-            )
+          topColumns +=(AutoIncId, featureInstanceId, columnId, Option.empty[String], Option.empty[ByteVector], count, cumCount)
       })
     } yield featureInstanceId
   }
@@ -140,15 +132,7 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
         case CategorialValue(columnId, sourceName, sourceValue, count, cumCount) =>
           indexColumns +=(AutoIncId, featureInstanceId, columnId, Some(sourceName), Some(sourceValue), count, cumCount)
         case AllOther(columnId, count, cumCount) =>
-          indexColumns +=(
-            AutoIncId,
-            featureInstanceId,
-            columnId,
-            Option.empty[String],
-            Option.empty[ByteVector],
-            count,
-            cumCount
-            )
+          indexColumns +=(AutoIncId, featureInstanceId, columnId, Option.empty[String], Option.empty[ByteVector], count, cumCount)
       })
     } yield featureInstanceId
   }
@@ -184,8 +168,10 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
   private def toCategorialColumn: CategorialColumnRecord => CategorialColumn = {
     case (_, _, columnId, Some(sourceName), Some(sourceValue), count, cumCount) =>
       CategorialValue(columnId, sourceName, sourceValue, count, cumCount)
+
     case (_, _, columnId, None, None, count, cumCount) =>
       AllOther(columnId, count, cumCount)
+
     case (_, _, _, sourceName, sourceValue, _, _) =>
       sys.error(s"Wrong source name and value pair. Name: $sourceName. Value: $sourceValue")
   }

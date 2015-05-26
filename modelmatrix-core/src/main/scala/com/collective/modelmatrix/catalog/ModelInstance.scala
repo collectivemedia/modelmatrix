@@ -43,8 +43,8 @@ class ModelInstances(val catalog: ModelMatrixCatalog)(implicit val ec: Execution
       val indexColumns = group.map(_._5).length
       (model._1, model._2, model._3, model._4, model._5, model._6, features, identityColumns + topColumns + indexColumns)
     }
-    counted.result.map(_.map(ModelInstance.tupled))
 
+    counted.result.map(_.map(ModelInstance.tupled))
   }
 
   def all: DBIO[Seq[ModelInstance]] = {
