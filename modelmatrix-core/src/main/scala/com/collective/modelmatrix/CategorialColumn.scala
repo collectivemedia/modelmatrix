@@ -22,6 +22,4 @@ object CategorialColumn {
     cumulativeCount: Long
   ) extends CategorialColumn
 
-  ByteVector
-
 }

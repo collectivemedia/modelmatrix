@@ -50,7 +50,7 @@ trait ModelInstanceCatalogSpec extends FlatSpec with GivenWhenThen with BeforeAn
     await(db.run(insert))
   }
 
-  "Model Instances Catalog" should "add identity feature" in {
+  "Model Instances Catalog" should "add model features" in {
 
     Given("model definition")
     val (modelDefinitionId, Seq(identityFeatureId, topFeatureId, indexFeatureId)) = newModelDefinition
@@ -125,6 +125,27 @@ trait ModelInstanceCatalogSpec extends FlatSpec with GivenWhenThen with BeforeAn
     assert(featureMap("ad_network").feature == index)
     assert(featureMap("ad_network").extractType == StringType)
     assert(featureMap("ad_network").asInstanceOf[ModelInstanceIndexFeature].columns == indexColumns)
+  }
+
+  it should "fail to add model feature with incorrect type" in {
+    val (modelDefinitionId, Seq(_, topFeatureId, _)) = newModelDefinition
+
+    val createModelInstance = modelInstances.add(
+      modelDefinitionId,
+      name = Some(s"instance=${now.toEpochMilli}"),
+      createdBy = "ModelInstanceCatalogSpec",
+      createdAt = now,
+      comment = None
+    )
+
+    val insert = for {
+      id <- createModelInstance
+      _ <- modelInstanceFeatures.addIdentityFeature(id, topFeatureId, IntegerType, 1)
+    } yield id
+
+    intercept[IllegalArgumentException] {
+      await(db.run(insert))
+    }
   }
 
 }

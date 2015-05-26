@@ -8,22 +8,6 @@ import org.apache.spark.sql.types._
 import scalaz.ValidationNel
 import scalaz.syntax.validation._
 
-sealed trait InputSchemaError {
-  def errorMessage: String
-}
-
-object InputSchemaError {
-  
-  case class ExtractColumnNotFound(extract: String) extends InputSchemaError {
-    def errorMessage: String = s"Can't find extract column: $extract"
-  }
-
-  case class UnsupportedTransformDataType(extract: String, dataType: DataType, transform: Transform) extends InputSchemaError {
-    def errorMessage: String = s"Unsupported input data type: ${dataType.typeName} for transformation: $transform"
-  }
-  
-}
-
 class ModelInstanceBuilder {
 
   case class TypedModelFeature(feature: ModelFeature, extractType: DataType)

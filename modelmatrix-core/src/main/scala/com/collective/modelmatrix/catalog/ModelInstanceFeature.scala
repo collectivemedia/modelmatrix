@@ -80,7 +80,7 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
 
     for {
       transform <- featureDefinitionTransformType(featureDefinitionId)
-      _ = require(transform == Identity.stringify, s"Wrong feature definition transform type: $transform")
+      _ = require(transform == Identity.stringify, s"Wrong feature definition transform type: $transform. Expected: identity")
       featureInstanceId <- (featureInstances returning featureInstances.map(_.id)) +=
         ((AutoIncId, modelInstanceId, featureDefinitionId, extractType))
       _ <- identityColumns += (AutoIncId, featureInstanceId, columnId)
@@ -100,7 +100,7 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
 
     for {
       transform <- featureDefinitionTransformType(featureDefinitionId)
-      _ = require(transform == Transform.nameOf[Top], s"Wrong feature definition transform type: $transform")
+      _ = require(transform == Transform.nameOf[Top], s"Wrong feature definition transform type: $transform. Expected: top")
       featureInstanceId <- (featureInstances returning featureInstances.map(_.id)) +=
         ((AutoIncId, modelInstanceId, featureDefinitionId, extractType))
       _ <- DBIO.sequence(columns.map {
@@ -125,7 +125,7 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
 
     for {
       transform <- featureDefinitionTransformType(featureDefinitionId)
-      _ = require(transform == Transform.nameOf[Index], s"Wrong feature definition transform type: $transform")
+      _ = require(transform == Transform.nameOf[Index], s"Wrong feature definition transform type: $transform. Expected: index")
       featureInstanceId <- (featureInstances returning featureInstances.map(_.id)) +=
         ((AutoIncId, modelInstanceId, featureDefinitionId, extractType))
       _ <- DBIO.sequence(columns.map {
