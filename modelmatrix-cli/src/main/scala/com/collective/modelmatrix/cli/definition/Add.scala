@@ -5,7 +5,8 @@ import java.time.Instant
 
 import com.bethecoder.ascii_table.{ASCIITableHeader, ASCIITable}
 import com.collective.modelmatrix.catalog.ModelMatrixCatalog
-import com.collective.modelmatrix.cli.{ModelConfigurationParser, ModelCatalogScript}
+import com.collective.modelmatrix.cli.{Script, ModelConfigurationParser, CliModelCatalog}
+import com.collective.modelmatrix.cli._
 import com.typesafe.config.{ConfigResolveOptions, ConfigFactory, Config}
 
 import scala.concurrent.ExecutionContext
@@ -21,7 +22,7 @@ case class Add(
   comment: Option[String],
   dbName: String,
   dbConfig: Config
-)(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) extends ModelCatalogScript {
+)(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) extends Script with CliModelCatalog {
 
   private implicit val unwrap = Tag.unwrap(ec)
 

@@ -5,6 +5,7 @@ import java.nio.file.Path
 import com.bethecoder.ascii_table.{ASCIITableHeader, ASCIITable}
 import com.collective.modelmatrix.ModelFeature
 import com.collective.modelmatrix.cli.{ModelConfigurationParser, Script}
+import com.collective.modelmatrix.cli._
 import com.typesafe.config.{ConfigResolveOptions, ConfigFactory}
 
 import scalaz._

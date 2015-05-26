@@ -2,7 +2,8 @@ package com.collective.modelmatrix.cli.definition
 
 import com.bethecoder.ascii_table.ASCIITable
 import com.collective.modelmatrix.catalog.ModelMatrixCatalog
-import com.collective.modelmatrix.cli.ModelCatalogScript
+import com.collective.modelmatrix.cli.{Script, CliModelCatalog}
+import com.collective.modelmatrix.cli._
 import com.typesafe.config.Config
 
 import scala.concurrent.ExecutionContext
@@ -13,7 +14,7 @@ import scalaz._
  */
 case class View(
   modelDefinitionId: Int, dbName: String, dbConfig: Config
-)(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) extends ModelCatalogScript {
+)(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) extends Script with CliModelCatalog {
 
   def run(): Unit = {
     

@@ -21,18 +21,6 @@ trait Script {
 
 }
 
-trait ModelCatalogScript extends Script {
-
-  def dbName: String
-  def dbConfig: Config
-  implicit def ec: ExecutionContext @@ ModelMatrixCatalog
-
-  protected lazy val db = Database.forConfig(dbName, dbConfig)
-  protected lazy val schema = new ModelMatrixCatalog(PostgresDriver)
-  protected lazy val modelDefinitions = new ModelDefinitions(schema)
-  protected lazy val modelDefinitionFeatures = new ModelDefinitionFeatures(schema)
-}
-
 object Script {
   def noOp[T](parser: OptionParser[T]): Script = new Script {
     def run(): Unit = {

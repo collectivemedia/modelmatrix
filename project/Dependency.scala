@@ -15,6 +15,7 @@ object Dependency {
 
     // Spark
     val Spark              = "1.3.0-cdh5.4.1"
+    val SparkCSV           = "1.0.3"
 
     // Database
     val Slick              = "3.0.0"
@@ -23,6 +24,7 @@ object Dependency {
 
     // Scalaz
     val Scalaz             = "7.1.1"
+    val ScalazStream       = "0.7a"
 
     // Test libraries
     val H2                 = "1.4.187"
@@ -50,11 +52,13 @@ object Dependency {
   // Scalaz
 
   val scalazCore          = "org.scalaz"                %% "scalaz-core"                 % V.Scalaz
+  val scalazStream        = "org.scalaz.stream"         %% "scalaz-stream"               % V.ScalazStream
 
   // Spark
 
   val sparkYarn           = "org.apache.spark"          %% "spark-yarn"                  % V.Spark % "provided"
   val sparkHive           = "org.apache.spark"          %% "spark-hive"                  % V.Spark % "provided"
+  val sparkCSV            = "com.databricks"            %% "spark-csv"                   % V.SparkCSV
 
   // Test Dependencies
 

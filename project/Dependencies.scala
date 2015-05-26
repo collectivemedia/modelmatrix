@@ -38,6 +38,8 @@ object Dependencies {
     , slf4jLog4j
     , scopt
     , guava
+    , sparkCSV
+    , scalazStream
     )
 
 }
