@@ -46,41 +46,41 @@ object ModelMatrixCli extends App {
     cmd("definition").text("manipulate model matrix definitions:").children(
 
       cmd("list").text("list available model matrix definitions")
-        .action((_, _) => definition.List(defaultDbName, defaultDbConfig))
+        .action((_, _) => definition.ViewAll(defaultDbName, defaultDbConfig))
         .children(
-          overrideDbName(dbName => (_: definition.List).copy(dbName = dbName)),
-          overrideDbConfig(dbConf => (_: definition.List).copy(dbConfig = dbConf))
+          overrideDbName(dbName => (_: definition.ViewAll).copy(dbName = dbName)),
+          overrideDbConfig(dbConf => (_: definition.ViewAll).copy(dbConfig = dbConf))
         ),
 
       cmd("find").text("find model matrix definitions by name")
-        .action((_, _) => definition.Find("", defaultDbName, defaultDbConfig))
+        .action((_, _) => definition.FindByName("", defaultDbName, defaultDbConfig))
         .children(
-          overrideDbName(dbName => (_: definition.Find).copy(dbName = dbName)),
-          overrideDbConfig(dbConf => (_: definition.Find).copy(dbConfig = dbConf)),
+          overrideDbName(dbName => (_: definition.FindByName).copy(dbName = dbName)),
+          overrideDbConfig(dbConf => (_: definition.FindByName).copy(dbConfig = dbConf)),
           arg[String]("<name>").required().text("model matrix user defined name")
-            .action { (n, s) => s.asInstanceOf[definition.Find].copy(n) }
+            .action { (n, s) => s.as[definition.FindByName].copy(n) }
         ),
 
       cmd("view").text("find model matrix definitions for given id")
-        .action((_, _) => definition.View(-1, defaultDbName, defaultDbConfig))
+        .action((_, _) => definition.ViewDefinition(-1, defaultDbName, defaultDbConfig))
         .children(
-          overrideDbName(dbName => (_: definition.View).copy(dbName = dbName)),
-          overrideDbConfig(dbConf => (_: definition.View).copy(dbConfig = dbConf)),
+          overrideDbName(dbName => (_: definition.ViewDefinition).copy(dbName = dbName)),
+          overrideDbConfig(dbConf => (_: definition.ViewDefinition).copy(dbConfig = dbConf)),
           arg[Int]("<model-definition-id>").required().text("model matrix definition id")
-            .action { (id, s) => s.asInstanceOf[definition.View].copy(id) }
+            .action { (id, s) => s.as[definition.ViewDefinition].copy(id) }
         ),
 
       cmd("validate").text("validate model matrix configuration")
-        .action((_, _) => definition.Validate(defaultMMConfig, defaultMMFeatures))
+        .action((_, _) => definition.ValidateConfig(defaultMMConfig, defaultMMFeatures))
         .children(
           opt[String]('f', "features").optional().text(s"configuration path of features definitions")
-            .action { (f, s) => s.asInstanceOf[definition.Validate].copy(configPath = f) },
+            .action { (f, s) => s.as[definition.ValidateConfig].copy(configPath = f) },
           arg[File]("<file>").required().text("model matrix configuration file")
-            .action { (f, s) => s.asInstanceOf[definition.Validate].copy(config = f.toPath) }
+            .action { (f, s) => s.as[definition.ValidateConfig].copy(config = f.toPath) }
         ),
 
       cmd("add").text("add model matrix definition from configuration file")
-        .action((_, _) => definition.Add(
+        .action((_, _) => definition.AddDefinition(
         defaultMMConfig,
         defaultMMFeatures,
         defaultMMName,
@@ -88,16 +88,16 @@ object ModelMatrixCli extends App {
         defaultDbName,
         defaultDbConfig))
         .children(
-          overrideDbName(dbName => (_: definition.Add).copy(dbName = dbName)),
-          overrideDbConfig(dbConf => (_: definition.Add).copy(dbConfig = dbConf)),
+          overrideDbName(dbName => (_: definition.AddDefinition).copy(dbName = dbName)),
+          overrideDbConfig(dbConf => (_: definition.AddDefinition).copy(dbConfig = dbConf)),
           opt[String]('n', "name").optional().text("model matrix definition name")
-            .action { (n, s) => s.asInstanceOf[definition.Add].copy(name = Some(n)) },
+            .action { (n, s) => s.as[definition.AddDefinition].copy(name = Some(n)) },
           opt[String]('c', "comment").optional().text("model matrix definition comment")
-            .action { (c, s) => s.asInstanceOf[definition.Add].copy(comment = Some(c)) },
+            .action { (c, s) => s.as[definition.AddDefinition].copy(comment = Some(c)) },
           opt[String]('f', "features").optional().text(s"configuration path of features definitions")
-            .action { (f, s) => s.asInstanceOf[definition.Add].copy(configPath = f) },
+            .action { (f, s) => s.as[definition.AddDefinition].copy(configPath = f) },
           arg[File]("<file>").required().text("model matrix configuration file")
-            .action { (f, s) => s.asInstanceOf[definition.Add].copy(config = f.toPath) }
+            .action { (f, s) => s.as[definition.AddDefinition].copy(config = f.toPath) }
         )
 
     )
@@ -105,52 +105,54 @@ object ModelMatrixCli extends App {
     cmd("instance").text("manipulate model matrix instances:").children(
 
       cmd("list").text("list model matrix instances")
-        .action((_, _) => instance.List(defaultDbName, defaultDbConfig))
+        .action((_, _) => instance.ViewAll(defaultDbName, defaultDbConfig))
         .children(
-          overrideDbName(dbName => (_: instance.List).copy(dbName = dbName)),
-          overrideDbConfig(dbConf => (_: instance.List).copy(dbConfig = dbConf))
+          overrideDbName(dbName => (_: instance.ViewAll).copy(dbName = dbName)),
+          overrideDbConfig(dbConf => (_: instance.ViewAll).copy(dbConfig = dbConf))
         ),
 
       cmd("find").text("find model matrix instances by name")
-        .action((_, _) => instance.Find("", defaultDbName, defaultDbConfig))
+        .action((_, _) => instance.FindByName("", defaultDbName, defaultDbConfig))
         .children(
-          overrideDbName(dbName => (_: instance.Find).copy(dbName = dbName)),
-          overrideDbConfig(dbConf => (_: instance.Find).copy(dbConfig = dbConf)),
+          overrideDbName(dbName => (_: instance.FindByName).copy(dbName = dbName)),
+          overrideDbConfig(dbConf => (_: instance.FindByName).copy(dbConfig = dbConf)),
           arg[String]("<name>").required().text("model matrix user defined name")
-            .action { (n, s) => s.asInstanceOf[instance.Find].copy(n) }
+            .action { (n, s) => s.as[instance.FindByName].copy(n) }
         ),
 
-      cmd("viewFeatures").text("view model instance features")
-        .action((_, _) => instance.ViewFeatures(-1, defaultDbName, defaultDbConfig))
-        .children(
-          overrideDbName(dbName => (_: instance.ViewFeatures).copy(dbName = dbName)),
-          overrideDbConfig(dbConf => (_: instance.ViewFeatures).copy(dbConfig = dbConf)),
-          arg[Int]("<model-instance-id>").required().text("model matrix instance id")
-            .action { (id, s) => s.asInstanceOf[instance.ViewFeatures].copy(id) }
-        ),
+      cmd("view").children(
+        cmd("features").text("view model instance features")
+          .action((_, _) => instance.ViewFeatures(-1, defaultDbName, defaultDbConfig))
+          .children(
+            overrideDbName(dbName => (_: instance.ViewFeatures).copy(dbName = dbName)),
+            overrideDbConfig(dbConf => (_: instance.ViewFeatures).copy(dbConfig = dbConf)),
+            arg[Int]("<model-instance-id>").required().text("model matrix instance id")
+              .action { (id, s) => s.as[instance.ViewFeatures].copy(id) }
+          ),
 
-      cmd("viewColumns").text("view model instance columns")
-        .action((_, _) => instance.ViewColumns(-1, defaultDbName, defaultDbConfig))
-        .children(
-          overrideDbName(dbName => (_: instance.ViewColumns).copy(dbName = dbName)),
-          overrideDbConfig(dbConf => (_: instance.ViewColumns).copy(dbConfig = dbConf)),
-          arg[Int]("<model-instance-id>").required().text("model matrix instance id")
-            .action { (id, s) => s.asInstanceOf[instance.ViewColumns].copy(id) }
-        ),
+        cmd("columns").text("view model instance columns")
+          .action((_, _) => instance.ViewColumns(-1, defaultDbName, defaultDbConfig))
+          .children(
+            overrideDbName(dbName => (_: instance.ViewColumns).copy(dbName = dbName)),
+            overrideDbConfig(dbConf => (_: instance.ViewColumns).copy(dbConfig = dbConf)),
+            arg[Int]("<model-instance-id>").required().text("model matrix instance id")
+              .action { (id, s) => s.as[instance.ViewColumns].copy(id) }
+          )
+      ),
 
       cmd("validate").text("validate model matrix definition against input data")
-        .action((_, _) => instance.Validate(0, NoSource, defaultDbName, defaultDbConfig))
+        .action((_, _) => instance.ValidateInputData(0, NoSource, defaultDbName, defaultDbConfig))
         .children(
-          overrideDbName(dbName => (_: instance.Validate).copy(dbName = dbName)),
-          overrideDbConfig(dbConf => (_: instance.Validate).copy(dbConfig = dbConf)),
+          overrideDbName(dbName => (_: instance.ValidateInputData).copy(dbName = dbName)),
+          overrideDbConfig(dbConf => (_: instance.ValidateInputData).copy(dbConfig = dbConf)),
           arg[Int]("<model-instance-id>").required().text("model matrix instance id")
-            .action { (id, s) => s.asInstanceOf[instance.Validate].copy(id) },
+            .action { (id, s) => s.as[instance.ValidateInputData].copy(id) },
           arg[File]("<input-source>").required().text("inout data source")
-            .action { (f, s) => s.asInstanceOf[instance.Validate].copy(source = CsvSource(f.toPath)) }
+            .action { (f, s) => s.as[instance.ValidateInputData].copy(source = CsvSource(f.toPath)) }
         ),
 
       cmd("create").text("create model matrix instance based on definition and input data")
-        .action((_, _) => instance.Create(
+        .action((_, _) => instance.AddInstance(
         0,
         NoSource,
         defaultMMName,
@@ -159,18 +161,18 @@ object ModelMatrixCli extends App {
         defaultDbName,
         defaultDbConfig))
         .children(
-          overrideDbName(dbName => (_: instance.Create).copy(dbName = dbName)),
-          overrideDbConfig(dbConf => (_: instance.Create).copy(dbConfig = dbConf)),
+          overrideDbName(dbName => (_: instance.AddInstance).copy(dbName = dbName)),
+          overrideDbConfig(dbConf => (_: instance.AddInstance).copy(dbConfig = dbConf)),
           opt[String]('n', "name").optional().text("model matrix instance name")
-            .action { (n, s) => s.asInstanceOf[instance.Create].copy(name = Some(n)) },
+            .action { (n, s) => s.as[instance.AddInstance].copy(name = Some(n)) },
           opt[String]('c', "comment").optional().text("model matrix instance comment")
-            .action { (c, s) => s.asInstanceOf[instance.Create].copy(comment = Some(c)) },
+            .action { (c, s) => s.as[instance.AddInstance].copy(comment = Some(c)) },
           opt[Int]("concurrency").optional().text("concurrency level")
-            .action { (c, s) => s.asInstanceOf[instance.Create].copy(concurrencyLevel = c) },
+            .action { (c, s) => s.as[instance.AddInstance].copy(concurrencyLevel = c) },
           arg[Int]("<model-instance-id>").required().text("model matrix instance id")
-            .action { (id, s) => s.asInstanceOf[instance.Create].copy(id) },
+            .action { (id, s) => s.as[instance.AddInstance].copy(id) },
           arg[File]("<file>").required().text("model matrix configuration file")
-            .action { (f, s) => s.asInstanceOf[instance.Create].copy(source = CsvSource(f.toPath)) }
+            .action { (f, s) => s.as[instance.AddInstance].copy(source = CsvSource(f.toPath)) }
         )
     )
 
@@ -183,14 +185,14 @@ object ModelMatrixCli extends App {
       opt[String]("dbName").
         optional().
         text("Override database configuration name defined in application.conf").
-        action { (dbName, script) => createScriptWithDbName(dbName)(script.asInstanceOf[S]) }
+        action { (dbName, script) => createScriptWithDbName(dbName)(script.as[S]) }
     }
 
     private def overrideDbConfig[S <: Script](createScriptWithDbConfig: Config => (S => S)): scopt.OptionDef[String, Script] = {
       opt[String]("dbConfig").
         optional().
         text("Override database configuration file application.conf").
-        action { (dbConf, script) => createScriptWithDbConfig(ConfigFactory.load(dbConf))(script.asInstanceOf[S]) }
+        action { (dbConf, script) => createScriptWithDbConfig(ConfigFactory.load(dbConf))(script.as[S]) }
     }
 
     override def showUsageAsError: Unit = {

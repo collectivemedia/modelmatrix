@@ -1,19 +1,16 @@
 package com.collective.modelmatrix.cli
 
-import com.collective.modelmatrix.catalog.{ModelDefinitionFeatures, ModelDefinitions, ModelMatrixCatalog}
-import com.typesafe.config.Config
 import scopt.OptionParser
-import slick.driver.PostgresDriver
-import slick.driver.PostgresDriver.api._
 
 import scala.concurrent.duration.{FiniteDuration, _}
-import scala.concurrent.{Await, ExecutionContext, Future}
-import scalaz._
+import scala.concurrent.{Await, Future}
 
 
 trait Script {
 
   def run(): Unit
+
+  def as[T]: T = this.asInstanceOf[T]
 
   protected def blockOn[T](f: Future[T], duration: FiniteDuration = 10.seconds) = {
     Await.result(f, duration)

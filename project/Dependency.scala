@@ -14,7 +14,7 @@ object Dependency {
     val Guava              = "14.0.1" // match to Spark Guava version
 
     // Spark
-    val Spark              = "1.3.0-cdh5.4.1"
+    val Spark              = "1.3.0-cdh5.4.2"
     val SparkCSV           = "1.0.3"
 
     // Database

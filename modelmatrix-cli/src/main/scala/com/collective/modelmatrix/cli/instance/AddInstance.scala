@@ -3,7 +3,6 @@ package com.collective.modelmatrix.cli.instance
 import java.time.Instant
 import java.util.concurrent.atomic.AtomicInteger
 
-import com.bethecoder.ascii_table.{ASCIITable, ASCIITableHeader}
 import com.collective.modelmatrix.catalog.{ModelDefinitionFeature, ModelMatrixCatalog}
 import com.collective.modelmatrix.cli.{CliModelCatalog, CliSparkContext, Script, Source, _}
 import com.collective.modelmatrix.transform._
@@ -11,6 +10,7 @@ import com.collective.modelmatrix.{CategorialColumn, ModelFeature}
 import com.typesafe.config.Config
 import org.apache.spark.sql.SQLContext
 import org.apache.spark.sql.types.DataType
+import org.slf4j.LoggerFactory
 import slick.dbio.DBIO
 
 import scala.concurrent.ExecutionContext
@@ -19,7 +19,7 @@ import scalaz.stream._
 import scalaz.{-\/, @@, Tag}
 
 
-case class Create(
+case class AddInstance(
   modelDefinitionId: Int,
   source: Source,
   name: Option[String],
@@ -29,47 +29,67 @@ case class Create(
   dbConfig: Config
 )(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) extends Script with CliModelCatalog with CliSparkContext {
 
+  private val log = LoggerFactory.getLogger(classOf[AddInstance])
+
   private implicit val unwrap = Tag.unwrap(ec)
 
+  import com.collective.modelmatrix.cli.ASCIITableFormat._
+  import com.collective.modelmatrix.cli.ASCIITableFormats._
+
+  // Add instance feature commands
+  sealed trait AddInstanceFeatureCommand
+
+  case class AddIdentityFeature(
+    extractType: DataType
+  ) extends AddInstanceFeatureCommand
+
+  case class AddTopFeature(
+    extractType: DataType,
+    columns: Seq[CategorialColumn]
+  ) extends AddInstanceFeatureCommand
+
+  case class AddIndexFeature(
+    extractType: DataType,
+    columns: Seq[CategorialColumn]
+  ) extends AddInstanceFeatureCommand
+
+  // Supported transformations
   private object Transformers {
-    implicit val sqlContext = new SQLContext(sc)
-    val input = source.asDataFrame
+    private implicit val sqlContext = new SQLContext(sc)
+    private val input = source.asDataFrame
 
     val identity = new IdentityTransformer(input)
     val top = new TopTransformer(input)
     val index = new IndexTransformer(input)
   }
 
-  // Add instance feature operations
-  sealed trait AddInstanceFeature
-
-  case class AddIdentityFeature(
-    extractType: DataType
-  ) extends AddInstanceFeature
-
-  case class AddTopFeature(
-    extractType: DataType,
-    columns: Seq[CategorialColumn]
-  ) extends AddInstanceFeature
-
-  case class AddIndexFeature(
-    extractType: DataType,
-    columns: Seq[CategorialColumn]
-  ) extends AddInstanceFeature
-
   def run(): Unit = {
+    log.info(s"Add Model Matrix instance. " +
+      s"Model definition id: $modelDefinitionId. " +
+      s"Source: $source" +
+      s"Name: $name. " +
+      s"Comment: $comment. " +
+      s"Concurrency: $concurrencyLevel" +
+      s"Database: $dbName @ ${dbConfig.origin().filename()}")
+
     val features = blockOn(db.run(modelDefinitionFeatures.features(modelDefinitionId))).filter(_.feature.active == true)
     require(features.nonEmpty, s"No active features are defined for model definition: $modelDefinitionId. " +
       s"Ensure that this model definition exists")
 
     val validate = features.map { case mdf@ModelDefinitionFeature(_, _, feature) =>
-      mdf -> (Transformers.identity.validate orElse Transformers.top.validate orElse Transformers.index.validate)(feature)
+      mdf -> (
+        Transformers.identity.validate         orElse
+        Transformers.top.validate              orElse
+        Transformers.index.validate
+     )(feature)
     }
 
     // Check that input schema match with model definition
     val invalidFeatures = validate.collect { case (mdf, -\/(error)) => mdf -> error }
     if (invalidFeatures.nonEmpty) {
-      printInputSchemaErrors(invalidFeatures)
+      Console.err.println(s"Can't create model instance for definition id: $modelDefinitionId from input: $source")
+      Console.err.println(s"Input schema errors:")
+      invalidFeatures.printASCIITable()
       return
     }
 
@@ -97,6 +117,7 @@ case class Create(
     )
 
     val columnId: AtomicInteger = new AtomicInteger(0)
+
     val insert = for {
       modelInstanceId <- addModelInstance
       featureId <- DBIO.sequence(transformed.map {
@@ -116,13 +137,14 @@ case class Create(
     } yield (modelInstanceId, featureId)
 
     val (modelInstanceId, featuresId) = blockOn(db.run(insert))
+
     Console.out.println(s"Successfully created new model instance")
     Console.out.println(s"Matrix Model instance id: $modelInstanceId")
     Console.out.println(s"Matrix Model instance features count: ${featuresId.length}")
   }
 
   private type In = (ModelDefinitionFeature, TypedModelFeature)
-  private type Out = (ModelDefinitionFeature, AddInstanceFeature)
+  private type Out = (ModelDefinitionFeature, AddInstanceFeatureCommand)
 
   private val transformerChannel: Channel[Task, In, Out] = channel.lift[Task, In, Out] {
     case (mdf, TypedModelFeature(ModelFeature(_, _, _, _, Identity), extractType)) =>
@@ -135,27 +157,4 @@ case class Create(
       Task.apply(mdf -> AddTopFeature(extractType, Transformers.index.transform(typed)))
   }
 
-  private def printInputSchemaErrors(invalidFeatures: Seq[(ModelDefinitionFeature, InputSchemaError)]): Unit = {
-    val inputSchemaErrorHeader: Array[ASCIITableHeader] = Array(
-      "Id", "Active", "Group", "Feature", "Extract", "Transform", "Transform Parameters", "Error"
-    )
-
-    val inputSchemaErrorCols: Seq[Array[String]] = invalidFeatures.map {
-      case (ModelDefinitionFeature(id, _, feature), error) =>
-        Array(
-          id.toString,
-          feature.active.toString,
-          feature.group,
-          feature.feature,
-          feature.extract,
-          feature.transform.stringify,
-          printParameters(feature.transform),
-          error.errorMessage
-        )
-    }
-
-    Console.err.println(s"Can't create model instance for definition id: $modelDefinitionId from input: $source")
-    Console.err.println(s"Input schema errors:")
-    ASCIITable.getInstance().printTable(inputSchemaErrorHeader, inputSchemaErrorCols.toArray)
-  }
 }
