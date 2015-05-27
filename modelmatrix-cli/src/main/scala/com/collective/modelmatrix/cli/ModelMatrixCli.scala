@@ -46,10 +46,10 @@ object ModelMatrixCli extends App {
     cmd("definition").text("manipulate model matrix definitions:").children(
 
       cmd("list").text("list available model matrix definitions")
-        .action((_, _) => definition.ViewAll(defaultDbName, defaultDbConfig))
+        .action((_, _) => definition.ListDefinitions(defaultDbName, defaultDbConfig))
         .children(
-          overrideDbName(dbName => (_: definition.ViewAll).copy(dbName = dbName)),
-          overrideDbConfig(dbConf => (_: definition.ViewAll).copy(dbConfig = dbConf))
+          overrideDbName(dbName => (_: definition.ListDefinitions).copy(dbName = dbName)),
+          overrideDbConfig(dbConf => (_: definition.ListDefinitions).copy(dbConfig = dbConf))
         ),
 
       cmd("find").text("find model matrix definitions by name")
@@ -105,10 +105,12 @@ object ModelMatrixCli extends App {
     cmd("instance").text("manipulate model matrix instances:").children(
 
       cmd("list").text("list model matrix instances")
-        .action((_, _) => instance.ViewAll(defaultDbName, defaultDbConfig))
+        .action((_, _) => instance.ListInstances(None, defaultDbName, defaultDbConfig))
         .children(
-          overrideDbName(dbName => (_: instance.ViewAll).copy(dbName = dbName)),
-          overrideDbConfig(dbConf => (_: instance.ViewAll).copy(dbConfig = dbConf))
+          overrideDbName(dbName => (_: instance.ListInstances).copy(dbName = dbName)),
+          overrideDbConfig(dbConf => (_: instance.ListInstances).copy(dbConfig = dbConf)),
+          opt[Int]('d', "definition").optional().text("model definition id")
+            .action { (d, s) => s.asInstanceOf[instance.ListInstances].copy(modelDefinitionId = Some(d)) }
         ),
 
       cmd("find").text("find model matrix instances by name")
@@ -131,10 +133,12 @@ object ModelMatrixCli extends App {
           ),
 
         cmd("columns").text("view model instance columns")
-          .action((_, _) => instance.ViewColumns(-1, defaultDbName, defaultDbConfig))
+          .action((_, _) => instance.ViewColumns(-1, None, defaultDbName, defaultDbConfig))
           .children(
             overrideDbName(dbName => (_: instance.ViewColumns).copy(dbName = dbName)),
             overrideDbConfig(dbConf => (_: instance.ViewColumns).copy(dbConfig = dbConf)),
+            opt[String]('f', "feature").optional().text("filter by feature name")
+              .action { (f, s) => s.as[instance.ViewColumns].copy(feature = Some(f)) },
             arg[Int]("<model-instance-id>").required().text("model matrix instance id")
               .action { (id, s) => s.as[instance.ViewColumns].copy(id) }
           )
@@ -145,7 +149,7 @@ object ModelMatrixCli extends App {
         .children(
           overrideDbName(dbName => (_: instance.ValidateInputData).copy(dbName = dbName)),
           overrideDbConfig(dbConf => (_: instance.ValidateInputData).copy(dbConfig = dbConf)),
-          arg[Int]("<model-instance-id>").required().text("model matrix instance id")
+          arg[Int]("<model-definition-id>").required().text("model matrix definition id")
             .action { (id, s) => s.as[instance.ValidateInputData].copy(id) },
           arg[File]("<input-source>").required().text("inout data source")
             .action { (f, s) => s.as[instance.ValidateInputData].copy(source = CsvSource(f.toPath)) }

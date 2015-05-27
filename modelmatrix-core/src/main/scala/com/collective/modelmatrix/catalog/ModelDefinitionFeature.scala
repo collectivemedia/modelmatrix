@@ -23,11 +23,13 @@ class ModelDefinitionFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: 
   def features(modelDefinitionId: Int): DBIO[Seq[ModelDefinitionFeature]] = {
     log.trace(s"Get model definition features. Model definition id: $modelDefinitionId")
 
-    for {
+    val features = for {
       id <- identityFeatures(modelDefinitionId)
       top <- topFeatures(modelDefinitionId)
       idx <- indexFeatures(modelDefinitionId)
     } yield id ++ top ++ idx
+
+    features.map(_.sortBy(_.id))
   }
   
   def addFeatures(modelDefinitionId: Int, features: ModelFeature*): DBIO[Seq[Int]] = {
@@ -42,14 +44,14 @@ class ModelDefinitionFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: 
         for {
           featureId <- (featureDefinitions returning featureDefinitions.map(_.id)) +=
             ((AutoIncId, modelDefinitionId, active, group, feature, extract, top.stringify))
-          _ <- topParameters += (AutoIncId, featureId, top.percentage, top.allOther)
+          _ <- topParameters += (AutoIncId, featureId, top.cover, top.allOther)
         } yield featureId
 
       case ModelFeature(active, group, feature, extract, index: Index) =>
         for {
           featureId <- (featureDefinitions returning featureDefinitions.map(_.id)) +=
             ((AutoIncId, modelDefinitionId, active, group, feature, extract, index.stringify))
-          _ <- indexParameters += (AutoIncId, featureId, index.percentage, index.allOther)
+          _ <- indexParameters += (AutoIncId, featureId, index.support, index.allOther)
         } yield featureId
     }
 
@@ -84,7 +86,7 @@ class ModelDefinitionFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: 
         .filter(_.modelDefinitionId === modelDefinitionId)
         .filter(_.transform === Transform.nameOf[Top])
       p <- topParameters if f.id === p.featureDefinitionId
-    } yield (f.id, f.modelDefinitionId, f.active, f.group, f.feature, f.extract, f.transform, p.percentage, p.allOther)
+    } yield (f.id, f.modelDefinitionId, f.active, f.group, f.feature, f.extract, f.transform, p.cover, p.allOther)
 
     q.result.map(_.map(extract))
   }
@@ -102,7 +104,7 @@ class ModelDefinitionFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: 
         .filter(_.modelDefinitionId === modelDefinitionId)
         .filter(_.transform === Transform.nameOf[Index])
       p <- indexParameters if f.id === p.featureDefinitionId
-    } yield (f.id, f.modelDefinitionId, f.active, f.group, f.feature, f.extract, f.transform, p.percentage, p.allOther)
+    } yield (f.id, f.modelDefinitionId, f.active, f.group, f.feature, f.extract, f.transform, p.support, p.allOther)
 
     q.result.map(_.map(extract))
   }

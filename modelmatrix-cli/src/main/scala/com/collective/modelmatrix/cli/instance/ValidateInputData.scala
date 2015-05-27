@@ -33,15 +33,17 @@ case class ValidateInputData(
   }
 
   def run(): Unit = {
-    log.info(s"Validate input data against Model Matrix definition: $modelDefinitionFeatureFormat. " +
+    log.info(s"Validate input data against Model Matrix definition: $modelDefinitionId. " +
       s"Data source: $source. " +
-      s"Database: $dbName @ ${dbConfig.origin().filename()}")
+      s"Database: $dbName @ ${dbConfig.origin()}")
 
     val features = blockOn(db.run(modelDefinitionFeatures.features(modelDefinitionId))).filter(_.feature.active == true)
     require(features.nonEmpty, s"No active features are defined for model definition: $modelDefinitionId. " +
       s"Ensure that this model definition exists")
 
-    val validate = features.map { case mdf@ModelDefinitionFeature(_, _, feature) =>
+
+
+    val validate = features.filter(_.feature.active).map { case mdf@ModelDefinitionFeature(_, _, feature) =>
       mdf -> (Transformers.identity.validate orElse Transformers.top.validate orElse Transformers.index.validate)(feature)
     }
 

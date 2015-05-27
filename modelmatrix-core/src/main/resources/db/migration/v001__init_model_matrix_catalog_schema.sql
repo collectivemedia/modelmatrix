@@ -27,14 +27,14 @@ CREATE TABLE mmc_definition_feature (
 CREATE TABLE mmc_definition_feature_top_param (
     id                    INT NOT NULL UNIQUE DEFAULT nextval('mmc_definition_feature_top_param_seq')
   , feature_definition_id INT REFERENCES mmc_definition_feature (id)
-  , percentage            DECIMAL NOT NULL
+  , cover                 DECIMAL NOT NULL
   , all_other             BOOLEAN NOT NULL
 );
 
 CREATE TABLE mmc_definition_feature_index_param (
     id                    INT NOT NULL UNIQUE DEFAULT nextval('mmc_definition_feature_index_param_seq')
   , feature_definition_id INT REFERENCES mmc_definition_feature (id)
-  , percentage            DECIMAL NOT NULL
+  , support               DECIMAL NOT NULL
   , all_other             BOOLEAN NOT NULL
 );
 

@@ -19,7 +19,7 @@ case class ValidateConfig(
 
   private lazy val parser = new ModelConfigurationParser(
     ConfigFactory.parseFile(config.toFile)
-      .resolve(ConfigResolveOptions.defaults().setAllowUnresolved(true)),
+      .resolve(ConfigResolveOptions.defaults()),
     configPath
   )
 

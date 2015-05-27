@@ -5,11 +5,14 @@ import com.collective.modelmatrix.{CategorialColumn, ModelFeature}
 import com.collective.modelmatrix.transform.InputSchemaError.{UnsupportedTransformDataType, ExtractColumnNotFound}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types._
+import org.slf4j.LoggerFactory
 
 import scalaz.\/
 import scalaz.syntax.either._
 
 class IndexTransformer(input: DataFrame) extends CategorialTransformer(input) {
+
+  private val log = LoggerFactory.getLogger(classOf[IndexTransformer])
 
   private val supportedDataTypes = Seq(ShortType, IntegerType, LongType, DoubleType, StringType)
 
@@ -28,7 +31,12 @@ class IndexTransformer(input: DataFrame) extends CategorialTransformer(input) {
   def transform(feature: TypedModelFeature): Seq[CategorialColumn] = {
     require(feature.feature.transform.isInstanceOf[Index], s"Illegal transform type: ${feature.feature.transform}")
 
-    val ModelFeature(_, _, _, e, Index(percentage, allOther)) = feature.feature
+    val ModelFeature(_, _, _, e, Index(support, allOther)) = feature.feature
+
+    log.info(s"Calculate index transformation for feature: ${feature.feature.feature}. " +
+      s"Support: $support. " +
+      s"All other: $allOther. " +
+      s"Extract type: ${feature.extractType}")
 
     // Group and count by extract value
     val values: Seq[Value] = input.groupBy(e).count().collect().toSeq.map { row =>
@@ -37,10 +45,12 @@ class IndexTransformer(input: DataFrame) extends CategorialTransformer(input) {
       Value(value, cnt)
     }
 
+    log.debug(s"Collected support values: ${values.size}")
+
     val topValues = values.sortBy(_.count)(implicitly[Ordering[Long]].reverse)
 
     // Get support threshold
-    val threshold = (percentage / 100) * topValues.map(_.count).sum
+    val threshold = (support / 100) * topValues.map(_.count).sum
 
     // Transform categorial values
     val valueColumns = topValues.filter(_.count > threshold).foldLeft(Scan()) {

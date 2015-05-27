@@ -61,11 +61,14 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
 
   def features(modelInstanceId: Int): DBIO[Seq[ModelInstanceFeature]] = {
     log.trace(s"Get model instance features. Model instance id: $modelInstanceId")
-    for {
+
+    val features = for {
       id <- identityFeatures(modelInstanceId)
       top <- topFeatures(modelInstanceId)
       idx <- indexFeatures(modelInstanceId)
     } yield id ++ top ++ idx
+
+    features.map(_.sortBy(_.id))
   }
 
   def addIdentityFeature(
@@ -75,12 +78,11 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
     columnId: Int
   ): DBIO[Int] = {
 
-    log.trace(s"Add identity feature to model instance id: $modelInstanceId. " +
-      s"Feature definition id: $featureDefinitionId")
-
     for {
       transform <- featureDefinitionTransformType(featureDefinitionId)
       _ = require(transform == Identity.stringify, s"Wrong feature definition transform type: $transform. Expected: identity")
+      name <- featureDefinitionName(featureDefinitionId)
+      _ = log.trace(s"Add identity feature: $name")
       featureInstanceId <- (featureInstances returning featureInstances.map(_.id)) +=
         ((AutoIncId, modelInstanceId, featureDefinitionId, extractType))
       _ <- identityColumns += (AutoIncId, featureInstanceId, columnId)
@@ -94,13 +96,11 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
     columns: Seq[CategorialColumn]
   ): DBIO[Int] = {
 
-    log.trace(s"Add top feature to model instance id: $modelInstanceId. " +
-      s"Feature definition id: $featureDefinitionId. " +
-      s"Columns: ${columns.size}")
-
     for {
       transform <- featureDefinitionTransformType(featureDefinitionId)
       _ = require(transform == Transform.nameOf[Top], s"Wrong feature definition transform type: $transform. Expected: top")
+      name <- featureDefinitionName(featureDefinitionId)
+      _ = log.trace(s"Add top feature: $name. Columns: ${columns.size}")
       featureInstanceId <- (featureInstances returning featureInstances.map(_.id)) +=
         ((AutoIncId, modelInstanceId, featureDefinitionId, extractType))
       _ <- DBIO.sequence(columns.map {
@@ -119,13 +119,11 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
     columns: Seq[CategorialColumn]
   ): DBIO[Int] = {
 
-    log.trace(s"Add top feature to model instance id: $modelInstanceId. " +
-      s"Feature definition id: $featureDefinitionId. " +
-      s"Columns: ${columns.size}")
-
     for {
       transform <- featureDefinitionTransformType(featureDefinitionId)
       _ = require(transform == Transform.nameOf[Index], s"Wrong feature definition transform type: $transform. Expected: index")
+      name <- featureDefinitionName(featureDefinitionId)
+      _ = log.trace(s"Add index feature: $name. Columns: ${columns.size}")
       featureInstanceId <- (featureInstances returning featureInstances.map(_.id)) +=
         ((AutoIncId, modelInstanceId, featureDefinitionId, extractType))
       _ <- DBIO.sequence(columns.map {
@@ -135,6 +133,13 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
           indexColumns +=(AutoIncId, featureInstanceId, columnId, Option.empty[String], Option.empty[ByteVector], count, cumCount)
       })
     } yield featureInstanceId
+  }
+
+  private def featureDefinitionName(featureDefinitionId: Int): DBIO[String] = {
+    featureDefinitions.filter(_.id === featureDefinitionId).map(_.feature).result.headOption.map {
+      case None => sys.error(s"Can't find feature definition by id: $featureDefinitionId")
+      case Some(s) => s
+    }
   }
 
   private def featureDefinitionTransformType(featureDefinitionId: Int): DBIO[String] = {
@@ -182,11 +187,11 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
       fd <- fi.featureDefinition
       if fd.transform === Transform.nameOf[Top]
       fp <- topParameters if fp.featureDefinitionId === fd.id
-    } yield (fi.id, fd.active, fd.group, fd.feature, fd.extract, fp.percentage, fp.allOther, fi.extractType)
+    } yield (fi.id, fd.active, fd.group, fd.feature, fd.extract, fp.cover, fp.allOther, fi.extractType)
 
     features.result.flatMap { features =>
-      DBIO.sequence(features.map { case (featureInstanceId, active, group, feature, extract, percent, allOther, extractTime) =>
-        val modelFeature = ModelFeature(active, group, feature, extract, Top(percent, allOther))
+      DBIO.sequence(features.map { case (featureInstanceId, active, group, feature, extract, cover, allOther, extractTime) =>
+        val modelFeature = ModelFeature(active, group, feature, extract, Top(cover, allOther))
         val columns = topColumns.filter(_.featureInstanceId === featureInstanceId).result.map(_.map(toCategorialColumn))
         columns.map(ModelInstanceTopFeature(featureInstanceId, modelInstanceId, modelFeature, extractTime, _))
       })
@@ -199,11 +204,11 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
       fd <- fi.featureDefinition
       if fd.transform === Transform.nameOf[Index]
       fp <- indexParameters if fp.featureDefinitionId === fd.id
-    } yield (fi.id, fd.active, fd.group, fd.feature, fd.extract, fp.percentage, fp.allOther, fi.extractType)
+    } yield (fi.id, fd.active, fd.group, fd.feature, fd.extract, fp.support, fp.allOther, fi.extractType)
 
     features.result.flatMap { features =>
-      DBIO.sequence(features.map { case (featureInstanceId, active, group, feature, extract, percent, allOther, extractTime) =>
-        val modelFeature = ModelFeature(active, group, feature, extract, Index(percent, allOther))
+      DBIO.sequence(features.map { case (featureInstanceId, active, group, feature, extract, support, allOther, extractTime) =>
+        val modelFeature = ModelFeature(active, group, feature, extract, Index(support, allOther))
         val columns = indexColumns.filter(_.featureInstanceId === featureInstanceId).result.map(_.map(toCategorialColumn))
         columns.map(ModelInstanceIndexFeature(featureInstanceId, modelInstanceId, modelFeature, extractTime, _))
       })

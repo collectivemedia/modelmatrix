@@ -18,7 +18,7 @@ case class ViewDefinition(
   import com.collective.modelmatrix.cli.ASCIITableFormats._
 
   def run(): Unit = {
-    log.info(s"View Model Matrix definition: $modelDefinitionId. Database: $dbName @ ${dbConfig.origin().filename()}")
+    log.info(s"View Model Matrix definition: $modelDefinitionId. Database: $dbName @ ${dbConfig.origin()}")
 
     blockOn(db.run(modelDefinitions.findById(modelDefinitionId))) match {
       case Some(modelDefinition) =>

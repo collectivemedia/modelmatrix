@@ -11,7 +11,7 @@ import scalaz._
 
 
 case class ViewColumns(
-  modelInstanceId: Int, dbName: String, dbConfig: Config
+  modelInstanceId: Int, feature: Option[String], dbName: String, dbConfig: Config
 )(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) extends Script with CliModelCatalog {
 
   private val log = LoggerFactory.getLogger(classOf[ViewColumns])
@@ -20,12 +20,18 @@ case class ViewColumns(
   import com.collective.modelmatrix.cli.ASCIITableFormats._
 
   def run(): Unit = {
-    log.info(s"View Model Matrix instance columns: $modelInstanceId. Database: $dbName @ ${dbConfig.origin().filename()}")
+    log.info(s"View Model Matrix instance columns: $modelInstanceId. " +
+      s"Feature filter: ${feature.getOrElse("")}. " +
+      s"Database: $dbName @ ${dbConfig.origin()}")
 
     blockOn(db.run(modelInstances.findById(modelInstanceId))) match {
       case Some(modelInstance) =>
 
+        val featureFilter = if (feature.isDefined) (_: String) == feature.get else (_: String) => true
+
         val features = blockOn(db.run(modelInstanceFeatures.features(modelInstanceId)))
+          .filter(f => featureFilter(f.feature.feature))
+
         val columns: Seq[(ModelInstanceFeature, Option[CategorialColumn])] = features flatMap {
           case f: ModelInstanceIdentityFeature => Seq((f, None))
           case f: ModelInstanceTopFeature => f.columns.map(c => (f, Some(c)))

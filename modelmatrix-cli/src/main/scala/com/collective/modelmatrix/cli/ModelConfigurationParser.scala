@@ -5,7 +5,7 @@ import java.util.function.BiConsumer
 import com.collective.modelmatrix.ModelFeature
 import com.typesafe.config.{Config, ConfigValue}
 
-import scalaz.ValidationNel
+import scalaz.{Success, Failure, ValidationNel}
 
 class ModelConfigurationParser(config: Config, path: String = "features") {
 
@@ -21,6 +21,9 @@ class ModelConfigurationParser(config: Config, path: String = "features") {
       }
     })
 
-    builder.toSeq
+    builder.toSeq.sortBy {
+      case (f, Success(feature)) => (true, feature.group, feature.feature)
+      case (f, Failure(_)) => (false, "", f)
+    }
   }
 }

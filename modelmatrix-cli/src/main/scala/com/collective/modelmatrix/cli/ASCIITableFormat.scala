@@ -11,6 +11,7 @@ abstract class ASCIITableFormat[T](val header: Array[ASCIITableHeader]) {
   def row(obj: T): Array[String]
 
   def noData: Array[Array[String]] = Array(Array.empty)
+
 }
 
 object ASCIITableFormat {
@@ -44,10 +45,14 @@ object ASCIITableFormat {
 
 object ASCIITableFormats {
 
+  implicit class StringFormattingOps(val s: String) extends AnyVal {
+    def bounded(n: Int): String = if (s.length > n) s"${s.take(n-4)} ..." else s
+  }
+
   private def printParameters(t: Transform): String = t match {
     case Identity => ""
-    case Top(p, ao) => s"percentage = $p; allOther = $ao"
-    case Index(p, ao) => s"percentage = $p; allOther = $ao"
+    case Top(p, ao) => s"cover = $p; allOther = $ao"
+    case Index(p, ao) => s"support = $p; allOther = $ao"
   }
 
   implicit val modelFeatureFormat: ASCIITableFormat[ModelFeature] =
@@ -70,20 +75,19 @@ object ASCIITableFormats {
     ) { definition =>
       Array(
         definition.id.toString,
-        definition.name.getOrElse("n/a"),
+        definition.name.getOrElse(""),
         definition.createdBy,
         timeFormatter.format(definition.createdAt),
-        definition.comment.getOrElse("n/a"),
+        definition.comment.getOrElse(""),
         definition.features.toString
       )
     }
 
   implicit val modelDefinitionFeatureFormat: ASCIITableFormat[ModelDefinitionFeature] =
     ASCIITableFormat[ModelDefinitionFeature](
-      "Id", "Active", "Group", "Feature", "Extract", "Transform", "Transform Parameters"
+      "Active", "Group", "Feature", "Extract", "Transform", "Transform Parameters"
     ) { definitionFeature =>
       Array(
-        definitionFeature.id.toString,
         definitionFeature.feature.active.toString,
         definitionFeature.feature.group,
         definitionFeature.feature.feature,
@@ -95,14 +99,15 @@ object ASCIITableFormats {
 
   implicit val modelInstanceFormat: ASCIITableFormat[ModelInstance] =
     ASCIITableFormat[ModelInstance](
-      "Id", "Name", "Created By", "Created At", "Comment", "Features", "Columns"
+      "Id", "Definition Id", "Name", "Created By", "Created At", "Comment", "Features", "Columns"
     ) { instance =>
       Array(
         instance.id.toString,
-        instance.name.getOrElse("n/a"),
+        instance.modelDefinitionId.toString,
+        instance.name.getOrElse(""),
         instance.createdBy,
         timeFormatter.format(instance.createdAt),
-        instance.comment.getOrElse("n/a"),
+        instance.comment.getOrElse(""),
         instance.features.toString,
         instance.columns.toString
       )
@@ -110,17 +115,21 @@ object ASCIITableFormats {
 
   implicit val modelInstanceFeatureFormat: ASCIITableFormat[ModelInstanceFeature] =
     ASCIITableFormat[ModelInstanceFeature](
-      "Id", "Active", "Group", "Feature", "Extract", "Transform", "Transform Parameters", "Extract Type", "Columns"
+      "Active", "Group", "Feature", "Extract", "Transform", "Transform Parameters", "Extract Type", "Columns"
     ) { f =>
       Array(
-        f.id.toString,
         f.feature.active.toString,
         f.feature.group,
         f.feature.feature,
         f.feature.extract,
         f.feature.transform.stringify,
         printParameters(f.feature.transform),
-        f.extractType.toString
+        f.extractType.toString,
+        f match {
+          case f: ModelInstanceIdentityFeature => "1"
+          case f: ModelInstanceTopFeature => f.columns.size.toString
+          case f: ModelInstanceIndexFeature => f.columns.size.toString
+        }
       )
     }
 
@@ -130,7 +139,7 @@ object ASCIITableFormats {
         value.columnId.toString,
         feature.feature,
         feature.transform.stringify,
-        value.sourceName,
+        value.sourceName.bounded(50),
         value.count.toString,
         value.cumulativeCount.toString
       )
@@ -148,7 +157,7 @@ object ASCIITableFormats {
 
   implicit val modelInstanceFeatureColumnsFormat: ASCIITableFormat[(ModelInstanceFeature, Option[CategorialColumn])] =
     ASCIITableFormat[(ModelInstanceFeature, Option[CategorialColumn])](
-      "Columns Id", "Feature", "Transform", "Source Name", "Count", "Cumulative Count"
+      "Columns Id", "Feature", "Transform", "Source Name".dataLeftAligned, "Count", "Cumulative Count"
     ) {
       case (f@ModelInstanceIdentityFeature(_, _, _, _, columnId), None) =>
         Array(
@@ -156,7 +165,7 @@ object ASCIITableFormats {
           f.feature.feature,
           f.feature.transform.stringify,
           f.feature.extract,
-          "n/a", "n/a"
+          "", ""
         )
       case (f@ModelInstanceTopFeature(_, _, _, _, _), Some(col)) => formatCategorialColumn(f.feature)(col)
       case (f@ModelInstanceIndexFeature(_, _, _, _, _), Some(col)) => formatCategorialColumn(f.feature)(col)
@@ -165,11 +174,10 @@ object ASCIITableFormats {
 
   implicit val inputSchemaErrorFormat: ASCIITableFormat[(ModelDefinitionFeature, InputSchemaError)] =
     ASCIITableFormat[(ModelDefinitionFeature, InputSchemaError)](
-      "Id", "Active", "Group", "Feature", "Extract", "Transform", "Transform Parameters", "Error"
+      "Active", "Group", "Feature", "Extract", "Transform", "Transform Parameters", "Error".dataLeftAligned
     ) { inputSchemaError =>
       val (ModelDefinitionFeature(id, _, feature), error) = inputSchemaError
       Array(
-        id.toString,
         feature.active.toString,
         feature.group,
         feature.feature,
@@ -182,11 +190,10 @@ object ASCIITableFormats {
 
   implicit val inputSchemaTypedFeatureFormat: ASCIITableFormat[(ModelDefinitionFeature, TypedModelFeature)] =
     ASCIITableFormat[(ModelDefinitionFeature, TypedModelFeature)](
-      "Id", "Active", "Group", "Feature", "Extract", "Transform", "Transform Parameters", "Extract Type"
+      "Active", "Group", "Feature", "Extract", "Transform", "Transform Parameters", "Extract Type"
     ) { inputSchemaTyped =>
       val (ModelDefinitionFeature(id, _, feature), typed) = inputSchemaTyped
       Array(
-        id.toString,
         feature.active.toString,
         feature.group,
         feature.feature,

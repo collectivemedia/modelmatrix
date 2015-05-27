@@ -18,7 +18,7 @@ case class FindByName(
   import com.collective.modelmatrix.cli.ASCIITableFormats._
 
   def run(): Unit = {
-    log.info(s"Find Model Matrix definition by name: $name. Database: $dbName @ ${dbConfig.origin().filename()}")
+    log.info(s"Find Model Matrix definition by name: $name. Database: $dbName @ ${dbConfig.origin()}")
     blockOn(db.run(modelDefinitions.findByName(name))).printASCIITable()
   }
 }

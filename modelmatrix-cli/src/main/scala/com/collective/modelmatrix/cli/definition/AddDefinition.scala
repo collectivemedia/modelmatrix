@@ -3,11 +3,10 @@ package com.collective.modelmatrix.cli.definition
 import java.nio.file.Path
 import java.time.Instant
 
-import com.bethecoder.ascii_table.{ASCIITableHeader, ASCIITable}
+import com.bethecoder.ascii_table.{ASCIITable, ASCIITableHeader}
 import com.collective.modelmatrix.catalog.ModelMatrixCatalog
-import com.collective.modelmatrix.cli.{Script, ModelConfigurationParser, CliModelCatalog}
-import com.collective.modelmatrix.cli._
-import com.typesafe.config.{ConfigResolveOptions, ConfigFactory, Config}
+import com.collective.modelmatrix.cli.{CliModelCatalog, ModelConfigurationParser, Script, _}
+import com.typesafe.config.{Config, ConfigFactory, ConfigResolveOptions}
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.ExecutionContext
@@ -28,7 +27,7 @@ case class AddDefinition(
 
   private lazy val parser = new ModelConfigurationParser(
     ConfigFactory.parseFile(config.toFile)
-      .resolve(ConfigResolveOptions.defaults().setAllowUnresolved(true)),
+      .resolve(ConfigResolveOptions.defaults()),
     configPath
   )
 
@@ -41,7 +40,7 @@ case class AddDefinition(
       s"Config: $configPath @ $config. " +
       s"Name: $name. " +
       s"Comment: $comment. " +
-      s"Database: $dbName @ ${dbConfig.origin().filename()}")
+      s"Database: $dbName @ ${dbConfig.origin()}")
 
     val (failed, success) = parser.features().partition(_._2.isFailure)
 
@@ -78,7 +77,9 @@ case class AddDefinition(
       featureId <- modelDefinitionFeatures.addFeatures(id, success.map(_._2.toOption.get):_*)
     } yield (id, featureId)
 
-    val (modelDefinitionId, featuresId) = blockOn(db.run(insert))
+    import driver.api._
+    val (modelDefinitionId, featuresId) = blockOn(db.run(insert.transactionally))
+
     Console.out.println(s"Successfully created new model definition")
     Console.out.println(s"Matrix Model definition id: $modelDefinitionId")
     Console.out.println(s"Matrix Model features count: ${featuresId.length}")

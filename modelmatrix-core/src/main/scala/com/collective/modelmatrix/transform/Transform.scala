@@ -19,10 +19,10 @@ case object Identity extends Transform
  * represent 99% of cookies, or find top sites that
  * are responsible for 90% of impressions.
  *
- * @param percentage cumulative cover percentage
+ * @param cover      cumulative cover percentage
  * @param allOther   include feature for all other values
  */
-case class Top(percentage: Double, allOther: Boolean) extends Transform
+case class Top(cover: Double, allOther: Boolean) extends Transform
 
 /**
  * For distinct values of the column, find the values
@@ -31,10 +31,10 @@ case class Top(percentage: Double, allOther: Boolean) extends Transform
  * total quantity that have that value. For example,
  * find segments that appear for at least 1% of the cookies.
  *
- * @param percentage support percentage
+ * @param support    support percentage
  * @param allOther   include feature for all other values
  */
-case class Index(percentage: Double, allOther: Boolean) extends Transform
+case class Index(support: Double, allOther: Boolean) extends Transform
 
 object Transform {
   def nameOf[T <: Transform : TransformName]: String = implicitly[TransformName[T]].name
@@ -98,14 +98,14 @@ object Transform {
   private object TopParser extends Parser[Top]("top") {
     def parse(config: Config): ValidationNel[String, Top] = {
       implicit val cfg = config
-      (double("percentage") |@| boolean("allOther"))(Top.apply)
+      (double("cover") |@| boolean("allOther"))(Top.apply)
     }
   }
 
   private object IndexParser extends Parser[Index]("index") {
     def parse(config: Config): ValidationNel[String, Index] = {
       implicit val cfg = config
-      (double("percentage") |@| boolean("allOther"))(Index.apply)
+      (double("support") |@| boolean("allOther"))(Index.apply)
     }
   }
 

@@ -35,7 +35,7 @@ class ModelDefinitions(val catalog: ModelMatrixCatalog)(implicit val ec: Executi
       (model._1, model._2, model._3, model._4, model._5, model._6, features.length)
     }
 
-    counted.result.map(_.map(ModelDefinition.tupled))
+    counted.result.map(_.map(ModelDefinition.tupled)).map(_.sortBy(_.id))
   }
 
   def all: DBIO[Seq[ModelDefinition]] = {
@@ -61,7 +61,7 @@ class ModelDefinitions(val catalog: ModelMatrixCatalog)(implicit val ec: Executi
 
     log.trace(s"Add model definition. " +
       s"Created by: $createdBy @ $createdAt. " +
-      s"Comment: ${comment.getOrElse("n/a")}")
+      s"Comment: ${comment.getOrElse("")}")
 
     (modelDefinitions returning modelDefinitions.map(_.id)) +=
       ((AutoIncId, name, source, createdBy, createdAt, comment))

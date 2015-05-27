@@ -8,7 +8,7 @@ object Dependency {
 
     val Slf4j              = "1.7.12"
     val Log4j              = "1.2.17"
-    val Config             = "1.2.1"
+    val Config             = "1.3.0"
     val Scopt              = "3.3.0"
     val ScodecBits         = "1.0.6"
     val Guava              = "14.0.1" // match to Spark Guava version

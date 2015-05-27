@@ -3,12 +3,14 @@ package com.collective.modelmatrix.cli
 import com.collective.modelmatrix.catalog._
 import com.typesafe.config.Config
 import slick.driver.PostgresDriver
-import slick.driver.PostgresDriver.api._
 
 import scala.concurrent.ExecutionContext
 import scalaz._
 
 trait CliModelCatalog {
+
+  protected val driver = slick.driver.PostgresDriver
+  import driver.api._
 
   def dbName: String
   def dbConfig: Config

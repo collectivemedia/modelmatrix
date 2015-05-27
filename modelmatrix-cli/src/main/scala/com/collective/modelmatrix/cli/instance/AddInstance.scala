@@ -1,7 +1,6 @@
 package com.collective.modelmatrix.cli.instance
 
 import java.time.Instant
-import java.util.concurrent.atomic.AtomicInteger
 
 import com.collective.modelmatrix.catalog.{ModelDefinitionFeature, ModelMatrixCatalog}
 import com.collective.modelmatrix.cli.{CliModelCatalog, CliSparkContext, Script, Source, _}
@@ -64,19 +63,20 @@ case class AddInstance(
   }
 
   def run(): Unit = {
+
     log.info(s"Add Model Matrix instance. " +
       s"Model definition id: $modelDefinitionId. " +
       s"Source: $source" +
       s"Name: $name. " +
       s"Comment: $comment. " +
-      s"Concurrency: $concurrencyLevel" +
-      s"Database: $dbName @ ${dbConfig.origin().filename()}")
+      s"Concurrency: $concurrencyLevel. " +
+      s"Database: $dbName @ ${dbConfig.origin()}")
 
     val features = blockOn(db.run(modelDefinitionFeatures.features(modelDefinitionId))).filter(_.feature.active == true)
     require(features.nonEmpty, s"No active features are defined for model definition: $modelDefinitionId. " +
       s"Ensure that this model definition exists")
 
-    val validate = features.map { case mdf@ModelDefinitionFeature(_, _, feature) =>
+    val validate = features.filter(_.feature.active).map { case mdf@ModelDefinitionFeature(_, _, feature) =>
       mdf -> (
         Transformers.identity.validate         orElse
         Transformers.top.validate              orElse
@@ -116,27 +116,31 @@ case class AddInstance(
       comment = comment
     )
 
-    val columnId: AtomicInteger = new AtomicInteger(0)
+    var columnId: Int = 0
 
     val insert = for {
       modelInstanceId <- addModelInstance
       featureId <- DBIO.sequence(transformed.map {
         case (ModelDefinitionFeature(featureDefinitionId, _, _), AddIdentityFeature(extractType)) =>
-          modelInstanceFeatures.addIdentityFeature(modelInstanceId, featureDefinitionId, extractType, columnId.incrementAndGet())
+          columnId += 1
+          modelInstanceFeatures.addIdentityFeature(modelInstanceId, featureDefinitionId, extractType, columnId)
 
         case (ModelDefinitionFeature(featureDefinitionId, _, _), AddTopFeature(extractType, columns)) =>
-          val baseColumnId = columnId.getAndIncrement()
+          val baseColumnId = columnId
+          columnId += columns.size
           val rebased = columns.map(_.rebaseColumnId(baseColumnId))
           modelInstanceFeatures.addTopFeature(modelInstanceId, featureDefinitionId, extractType, rebased)
 
         case (ModelDefinitionFeature(featureDefinitionId, _, _), AddIndexFeature(extractType, columns)) =>
-          val baseColumnId = columnId.getAndIncrement()
+          val baseColumnId = columnId
+          columnId += columns.size
           val rebased = columns.map(_.rebaseColumnId(baseColumnId))
           modelInstanceFeatures.addIndexFeature(modelInstanceId, featureDefinitionId, extractType, rebased)
       })
     } yield (modelInstanceId, featureId)
 
-    val (modelInstanceId, featuresId) = blockOn(db.run(insert))
+    import driver.api._
+    val (modelInstanceId, featuresId) = blockOn(db.run(insert.transactionally))
 
     Console.out.println(s"Successfully created new model instance")
     Console.out.println(s"Matrix Model instance id: $modelInstanceId")
@@ -154,7 +158,7 @@ case class AddInstance(
       Task.apply(mdf -> AddTopFeature(extractType, Transformers.top.transform(typed)))
 
     case (mdf, typed@TypedModelFeature(ModelFeature(_, _, _, _, index: Index), extractType)) =>
-      Task.apply(mdf -> AddTopFeature(extractType, Transformers.index.transform(typed)))
+      Task.apply(mdf -> AddIndexFeature(extractType, Transformers.index.transform(typed)))
   }
 
 }

@@ -92,10 +92,10 @@ trait ModelMatrixDefinition { self: ModelMatrixCatalog =>
 
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def featureDefinitionId = column[Int]("feature_definition_id")
-    def percentage = column[Double]("percentage")
+    def cover = column[Double]("cover")
     def allOther = column[Boolean]("all_other")
 
-    def * = (id, featureDefinitionId, percentage, allOther)
+    def * = (id, featureDefinitionId, cover, allOther)
 
     // Foreign kew that can be navigated to crete a join
     def featureDefinition = foreignKey("mmc_definition_feature_top_param_fk", featureDefinitionId, tables.featureDefinitions)(_.id)
@@ -107,10 +107,10 @@ trait ModelMatrixDefinition { self: ModelMatrixCatalog =>
 
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def featureDefinitionId = column[Int]("feature_definition_id")
-    def percentage = column[Double]("percentage")
+    def support = column[Double]("support")
     def allOther = column[Boolean]("all_other")
 
-    def * = (id, featureDefinitionId, percentage, allOther)
+    def * = (id, featureDefinitionId, support, allOther)
 
     // Foreign kew that can be navigated to crete a join
     def featureDefinition = foreignKey("mmc_definition_feature_index_param_fk", featureDefinitionId, tables.featureDefinitions)(_.id)

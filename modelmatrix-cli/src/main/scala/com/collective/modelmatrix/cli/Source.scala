@@ -31,5 +31,5 @@ case class CsvSource(
   }
 
   override def toString: String =
-    s"CSV file: $file. Use header: $useHeader. Delimiter: $delimiter. Quote: $quote. Escape: $escape"
+    s"CSV file: $file"
 }

@@ -44,7 +44,7 @@ class ModelInstances(val catalog: ModelMatrixCatalog)(implicit val ec: Execution
       (model._1, model._2, model._3, model._4, model._5, model._6, features, identityColumns + topColumns + indexColumns)
     }
 
-    counted.result.map(_.map(ModelInstance.tupled))
+    counted.result.map(_.map(ModelInstance.tupled)).map(_.sortBy(_.id))
   }
 
   def all: DBIO[Seq[ModelInstance]] = {
@@ -68,9 +68,9 @@ class ModelInstances(val catalog: ModelMatrixCatalog)(implicit val ec: Execution
     comment: Option[String]
   ): DBIO[Int] = {
 
-    log.trace(s"Add model instance of [$modelDefinitionId]. " +
+    log.trace(s"Add model instance of mode definition id: $modelDefinitionId. " +
       s"Created by: $createdBy @ $createdAt. " +
-      s"Comment: ${comment.getOrElse("n/a")}")
+      s"Comment: ${comment.getOrElse("")}")
 
     (modelInstances returning modelInstances.map(_.id)) +=
       ((AutoIncId, modelDefinitionId, name, createdBy, createdAt, comment))

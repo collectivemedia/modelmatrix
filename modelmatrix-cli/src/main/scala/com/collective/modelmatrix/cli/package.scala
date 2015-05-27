@@ -16,16 +16,6 @@ package object cli {
       .withLocale(Locale.US)
       .withZone(ZoneId.systemDefault())
 
-  def printSeparator(n: Int = 3): Unit = {
-    Console.out.print(Seq.fill(n)(System.lineSeparator()).mkString(""))
-  }
-
-  def printParameters(t: Transform): String = t match {
-    case Identity => ""
-    case Top(p, ao) => s"percentage = $p; allOther = $ao"
-    case Index(p, ao) => s"percentage = $p; allOther = $ao"
-  }
-
   implicit def stringToASCIITableHeader(s: String): ASCIITableHeader =
     new ASCIITableHeader(s)
 
