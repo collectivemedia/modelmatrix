@@ -58,6 +58,7 @@ object Dependency {
 
   val sparkYarn           = "org.apache.spark"          %% "spark-yarn"                  % V.Spark % "provided"
   val sparkHive           = "org.apache.spark"          %% "spark-hive"                  % V.Spark % "provided"
+  val sparkMLLib          = "org.apache.spark"          %% "spark-mllib"                 % V.Spark % "provided"
   val sparkCSV            = "com.databricks"            %% "spark-csv"                   % V.SparkCSV
 
   // Test Dependencies

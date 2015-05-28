@@ -6,6 +6,7 @@ object Dependencies {
   val spark = Seq(
       sparkYarn
     , sparkHive
+    , sparkMLLib
   )
 
   val test = Seq(

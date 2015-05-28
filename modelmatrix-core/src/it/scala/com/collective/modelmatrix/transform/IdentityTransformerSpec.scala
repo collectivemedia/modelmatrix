@@ -38,12 +38,12 @@ class IdentityTransformerSpec extends FlatSpec with TestSparkContext {
 
   it should "fail if column doesn't exists" in {
     val failed = transformer.validate(adSite.copy(extract = "ad_site_name"))
-    assert(failed == InputSchemaError.ExtractColumnNotFound("ad_site_name").left)
+    assert(failed == TransformSchemaError.ExtractColumnNotFound("ad_site_name").left)
   }
 
   it should "fail if column type is not supported" in {
     val failed = transformer.validate(adSite)
-    assert(failed == InputSchemaError.UnsupportedTransformDataType("ad_site", StringType, Identity).left)
+    assert(failed == TransformSchemaError.UnsupportedTransformDataType("ad_site", StringType, Identity).left)
   }
 
 }

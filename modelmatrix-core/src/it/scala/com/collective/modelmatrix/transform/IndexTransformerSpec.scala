@@ -44,7 +44,7 @@ class IndexTransformerSpec extends FlatSpec with TestSparkContext {
 
   it should "fail if column doesn't exists" in {
     val failed = transformer.validate(adSite.copy(extract = "ad_site_name"))
-    assert(failed == InputSchemaError.ExtractColumnNotFound("ad_site_name").left)
+    assert(failed == TransformSchemaError.ExtractColumnNotFound("ad_site_name").left)
   }
 
   it should "calculate correct categorial columns with all other" in {

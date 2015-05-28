@@ -10,7 +10,7 @@ object TestSparkContext {
 
   private[this] val conf =
     new SparkConf()
-      .setMaster("local[2]")
+      .setMaster("local[1]")
       .set("spark.local.ip","localhost")
       .set("spark.driver.host","localhost")
       .setAppName("Model Matrix Integration Tests")

@@ -172,8 +172,8 @@ object ASCIITableFormats {
       case (f, col) => sys.error(s"Unsupported feature: $f column: $col")
     }
 
-  implicit val inputSchemaErrorFormat: ASCIITableFormat[(ModelDefinitionFeature, InputSchemaError)] =
-    ASCIITableFormat[(ModelDefinitionFeature, InputSchemaError)](
+  implicit val inputSchemaErrorFormat: ASCIITableFormat[(ModelDefinitionFeature, TransformSchemaError)] =
+    ASCIITableFormat[(ModelDefinitionFeature, TransformSchemaError)](
       "Active", "Group", "Feature", "Extract", "Transform", "Transform Parameters", "Error".dataLeftAligned
     ) { inputSchemaError =>
       val (ModelDefinitionFeature(id, _, feature), error) = inputSchemaError

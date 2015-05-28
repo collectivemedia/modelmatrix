@@ -8,21 +8,25 @@ import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types._
 import scodec.bits.ByteVector
 
-import scalaz.{\/, ValidationNel}
+import scalaz.\/
 
 case class TypedModelFeature(feature: ModelFeature, extractType: DataType)
 
-sealed trait InputSchemaError {
+sealed trait TransformSchemaError {
   def errorMessage: String
 }
 
-object InputSchemaError {
+object TransformSchemaError {
 
-  case class ExtractColumnNotFound(extract: String) extends InputSchemaError {
+  case class ExtractColumnNotFound(extract: String) extends TransformSchemaError {
     def errorMessage: String = s"Can't find extract column: $extract"
   }
 
-  case class UnsupportedTransformDataType(extract: String, dataType: DataType, transform: Transform) extends InputSchemaError {
+  case class UnsupportedTransformDataType(
+    extract: String,
+    dataType: DataType,
+    transform: Transform
+  ) extends TransformSchemaError {
     def errorMessage: String = s"Unsupported input data type: ${dataType.typeName} for transformation: $transform"
   }
 
@@ -30,7 +34,7 @@ object InputSchemaError {
 
 abstract class Transformer(input: DataFrame) {
 
-  def validate: PartialFunction[ModelFeature, InputSchemaError \/ TypedModelFeature]
+  def validate: PartialFunction[ModelFeature, TransformSchemaError \/ TypedModelFeature]
 
   protected def inputDataType(expression: String): Option[DataType] = {
     input.schema.find(_.name == expression).map(_.dataType)
