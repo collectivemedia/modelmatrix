@@ -23,8 +23,8 @@ navigation:
   url: doc/philosophy.html
 - title: Installing Schema
   url: doc/installing-schema.html
-- title: Features Configuration
-  url: doc/features-configuration.html
+- title: Feature Matrix Config
+  url: doc/feature-matrix-config.html
 - title: Command Line Interface
   url: doc/cli.html
 - title: Releases

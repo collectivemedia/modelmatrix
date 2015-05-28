@@ -35,9 +35,11 @@ Run simple cli command to ensure that schema installed successfully
     # List available model matrix definitions
     ./mm definition list [--dbConf your.conf --dbName your-db-name]
     
+For next steps I'll skip custom database config, just be aware that `dbConf` and `dbName` options supported by all CLI commands.       
+    
 ## #4 Add new model matrix definition from config file
 
-Using [example configuration](features-configuration.html#example-configuration) stored in features.conf:
+Using [example configuration](feature-matrix-config.html#example-configuration) stored in features.conf:
    
     ./mm definition add features.conf
         

@@ -8,7 +8,7 @@ title: Features Configuration
 Model Matrix use [Typesafe Config](https://github.com/typesafehub/config) library for 
 defining model matrix features and transformations.
 
-Feature transformations documentations available in [Model Matrix philosophy](philosophy.html#feature-transformations) page.
+Feature transformations documentations available in [Model Matrix philosophy](philosophy.html#feature-matrix) page.
 
 ## <a name="identity-feature">Identity feature</a>
 
@@ -26,7 +26,7 @@ Feature transformations documentations available in [Model Matrix philosophy](ph
       group = <feature group>
       extract = <extract column>
       transform = "top"
-      percentage = <percentage>
+      cover = <cover percentage>
       allOther = <include all other>
     }
       
@@ -37,7 +37,7 @@ Feature transformations documentations available in [Model Matrix philosophy](ph
       group = <feature group>
       extract = <extract column>
       transform = "index"
-      percentage = <percentage>
+      support = <support percentage>
       allOther = <include all other>
     }
    
@@ -51,12 +51,12 @@ Feature transformations documentations available in [Model Matrix philosophy](ph
     }
     top = ${feature} { 
       transform = "top",
-      percentage = 95.0
+      cover = 95.0
       allOther = true
     }
     index = ${feature} { 
       transform = "index"
-      percentage = 0.5
+      support = 0.5
       allOther = true
     }
 

@@ -14,9 +14,12 @@ problem: building model features for machine learning.
 
 ## Model Matrix Philosophy
 
-#### <a href="doc/philosophy.html#model-matrix-catalog" class="icon-circle-arrow-right"><span class="space5"><span class="spec-font-small">Model Matrix Catalog</span></span></a>
+
+#### <a href="doc/philosophy.html#feature-matrix" class="icon-circle-arrow-right"><span class="space5"><span class="spec-font-small">Feature Matrix</span></span></a>
 
 #### <a href="doc/philosophy.html#feature-transformations" class="icon-circle-arrow-right"><span class="space5"><span class="spec-font-small">Feature Transformations</span></span></a>
+
+#### <a href="doc/philosophy.html#model-matrix-catalog" class="icon-circle-arrow-right"><span class="space5"><span class="spec-font-small">Model Matrix Catalog</span></span></a>
 
 <br/>
 
