@@ -10,4 +10,10 @@ class SourceSpec extends FlatSpec {
     assert(parsed == CsvSource("file://temp/data/input.csv"))
   }
 
+  it should "parse hive source" in {
+    val source = "hive://mm.input"
+    val parsed = Source(source)
+    assert(parsed == HiveSource("mm.input"))
+  }
+
 }

@@ -10,6 +10,7 @@ sealed trait Source {
 
 object Source {
   private val csv = "csv://(.*)".r
+  private val hive = "hive://(.*)".r
 
   def validate(source: String): Either[String, Unit] = {
     Try(apply(source)) match {
@@ -20,6 +21,7 @@ object Source {
 
   def apply(source: String): Source = source match {
     case csv(path) => CsvSource(path)
+    case hive(path) => HiveSource(path)
   }
 }
 
@@ -45,6 +47,22 @@ case class CsvSource(
     sqlContext.csvFile(path, useHeader, delimiter, quote, escape)
   }
 
-  override def toString: String =
+  override def toString: String = {
     s"CSV file: $path"
+  }
+
+}
+
+case class HiveSource(
+  tableName: String
+) extends Source {
+
+  def asDataFrame(implicit sqlContext: SQLContext): DataFrame = {
+    sqlContext.sql(s"SELECT * FROM $tableName")
+  }
+
+  override def toString: String = {
+    s"Hive table: $tableName"
+  }
+
 }

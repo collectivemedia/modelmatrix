@@ -10,4 +10,10 @@ class SinkSpec extends FlatSpec {
     assert(parsed == CsvSink("file://temp/data/output.csv"))
   }
 
+  it should "parse hive sink" in {
+    val sink = "hive://mm.featurized"
+    val parsed = Sink(sink)
+    assert(parsed == HiveSink("mm.featurized"))
+  }
+
 }

@@ -1,6 +1,6 @@
 package com.collective.modelmatrix.cli
 
-import org.apache.spark.sql.{DataFrame, SQLContext}
+import org.apache.spark.sql.{SaveMode, DataFrame, SQLContext}
 
 import scala.util.{Failure, Success, Try}
 
@@ -10,6 +10,7 @@ sealed trait Sink {
 
 object Sink {
   private val csv = "csv://(.*)".r
+  private val hive = "hive://(.*)".r
 
   def validate(sink: String): Either[String, Unit] = {
     Try(apply(sink)) match {
@@ -20,6 +21,7 @@ object Sink {
 
   def apply(sink: String): Sink = sink match {
     case csv(path) => CsvSink(path)
+    case hive(table) => HiveSink(table)
   }
 }
 
@@ -53,4 +55,16 @@ case class CsvSink(
 
   override def toString: String =
     s"CSV file: $path"
+}
+
+case class HiveSink(
+  tableName: String
+) extends Sink {
+
+  def saveDataFrame(df: DataFrame)(implicit sqlContext: SQLContext): Unit = {
+    df.saveAsTable(tableName, SaveMode.Overwrite)
+  }
+
+  override def toString: String =
+    s"Hive table: $tableName"
 }
