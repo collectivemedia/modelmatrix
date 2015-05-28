@@ -2,7 +2,7 @@ package com.collective.modelmatrix.cli
 
 import com.bethecoder.ascii_table.{ASCIITable, ASCIITableHeader}
 import com.collective.modelmatrix.CategorialColumn.{AllOther, CategorialValue}
-import com.collective.modelmatrix.{CategorialColumn, ModelFeature}
+import com.collective.modelmatrix.{FeatureSchemaError, CategorialColumn, ModelFeature}
 import com.collective.modelmatrix.catalog._
 import com.collective.modelmatrix.transform._
 
@@ -201,6 +201,16 @@ object ASCIITableFormats {
         feature.transform.stringify,
         printParameters(feature.transform),
         typed.extractType.toString
+      )
+    }
+
+  implicit val featureSchemaErrorFormat: ASCIITableFormat[FeatureSchemaError] =
+    ASCIITableFormat[FeatureSchemaError](
+      "Feature", "Error".dataLeftAligned
+    ) { error =>
+      Array(
+        error.feature,
+        error.errorMessage
       )
     }
 

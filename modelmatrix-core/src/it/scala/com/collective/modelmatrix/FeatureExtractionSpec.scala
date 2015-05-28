@@ -78,7 +78,7 @@ class FeatureExtractionSpec extends FlatSpec with TestSparkContext {
 
   it should "featurize input data frame" in {
 
-    val featurized = featureExtraction.featurize(df, "auction_id").collect().toSeq.map(p => p.id -> p.features).toMap
+    val featurized = featureExtraction.featurize(df, "auction_id")._2.collect().toSeq.map(p => p.id.asInstanceOf[Long] -> p.features).toMap
     assert(featurized.size == 4)
 
     // Columns:

@@ -11,7 +11,7 @@ import scalaz._
 
 
 case class ViewColumns(
-  modelInstanceId: Int, feature: Option[String], dbName: String, dbConfig: Config
+  modelInstanceId: Int, group: Option[String], feature: Option[String], dbName: String, dbConfig: Config
 )(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) extends Script with CliModelCatalog {
 
   private val log = LoggerFactory.getLogger(classOf[ViewColumns])
@@ -27,10 +27,11 @@ case class ViewColumns(
     blockOn(db.run(modelInstances.findById(modelInstanceId))) match {
       case Some(modelInstance) =>
 
+        val groupFilter = if (group.isDefined) (_: String) == group.get else (_: String) => true
         val featureFilter = if (feature.isDefined) (_: String) == feature.get else (_: String) => true
 
         val features = blockOn(db.run(modelInstanceFeatures.features(modelInstanceId)))
-          .filter(f => featureFilter(f.feature.feature))
+          .filter(f => featureFilter(f.feature.feature) && groupFilter(f.feature.group))
 
         val columns: Seq[(ModelInstanceFeature, Option[CategorialColumn])] = features flatMap {
           case f: ModelInstanceIdentityFeature => Seq((f, None))

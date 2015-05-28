@@ -1,6 +1,5 @@
 package com.collective.modelmatrix.cli.instance
 
-import com.bethecoder.ascii_table.{ASCIITable, ASCIITableHeader}
 import com.collective.modelmatrix.catalog.{ModelDefinitionFeature, ModelMatrixCatalog}
 import com.collective.modelmatrix.cli.{Source, _}
 import com.collective.modelmatrix.transform._

@@ -1,11 +1,26 @@
 package com.collective.modelmatrix.cli
 
-import java.nio.file.Path
+import org.apache.spark.sql.{DataFrame, SQLContext}
 
-import org.apache.spark.sql.{SQLContext, DataFrame}
+import scala.util.{Failure, Success, Try}
 
 sealed trait Source {
   def asDataFrame(implicit sqlContext: SQLContext): DataFrame
+}
+
+object Source {
+  private val csv = "csv://(.*)".r
+
+  def validate(source: String): Either[String, Unit] = {
+    Try(apply(source)) match {
+      case Success(s) => Right(())
+      case Failure(err) => Left(s"Unsupported source type: $source")
+    }
+  }
+
+  def apply(source: String): Source = source match {
+    case csv(path) => CsvSource(path)
+  }
 }
 
 object NoSource extends Source {
@@ -17,7 +32,7 @@ object NoSource extends Source {
 }
 
 case class CsvSource(
-  file: Path,
+  path: String,
   useHeader: Boolean = true,
   delimiter: Char = ',',
   quote: Char = '"',
@@ -27,9 +42,9 @@ case class CsvSource(
   import com.databricks.spark.csv._
 
   def asDataFrame(implicit sqlContext: SQLContext): DataFrame = {
-    sqlContext.csvFile(file.toString, useHeader, delimiter, quote, escape)
+    sqlContext.csvFile(path, useHeader, delimiter, quote, escape)
   }
 
   override def toString: String =
-    s"CSV file: $file"
+    s"CSV file: $path"
 }

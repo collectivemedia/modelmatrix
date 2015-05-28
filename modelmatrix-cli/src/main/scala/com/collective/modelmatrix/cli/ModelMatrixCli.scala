@@ -29,6 +29,8 @@ object ModelMatrixCli extends App {
   private val defaultDbName = "modelmatrix.catalog.db"
   private val defaultDbConfig = ConfigFactory.load()
 
+  private val defaultIdColumn = "id"
+
   private var verbose: Boolean = false
 
   val parser = new scopt.OptionParser[Script]("Model Matrix CLI") {
@@ -36,7 +38,7 @@ object ModelMatrixCli extends App {
     head("Model Matrix CLI")
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
-    // * * *  Define Model Matrix Command Line Interface                                                                 * * *
+    // * * *  Matrix Model Definition CLI                                                                                * * *
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
 
     opt[Unit]('v', "verbose")
@@ -102,6 +104,10 @@ object ModelMatrixCli extends App {
 
     )
 
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    // * * *  Matrix Model Instance CLI                                                                                  * * *
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
     cmd("instance").text("manipulate model matrix instances:").children(
 
       cmd("list").text("list model matrix instances")
@@ -133,12 +139,14 @@ object ModelMatrixCli extends App {
           ),
 
         cmd("columns").text("view model instance columns")
-          .action((_, _) => instance.ViewColumns(-1, None, defaultDbName, defaultDbConfig))
+          .action((_, _) => instance.ViewColumns(-1, None, None, defaultDbName, defaultDbConfig))
           .children(
             overrideDbName(dbName => (_: instance.ViewColumns).copy(dbName = dbName)),
             overrideDbConfig(dbConf => (_: instance.ViewColumns).copy(dbConfig = dbConf)),
             opt[String]('f', "feature").optional().text("filter by feature name")
               .action { (f, s) => s.as[instance.ViewColumns].copy(feature = Some(f)) },
+            opt[String]('g', "group").optional().text("filter by feature group")
+              .action { (g, s) => s.as[instance.ViewColumns].copy(group = Some(g)) },
             arg[Int]("<model-instance-id>").required().text("model matrix instance id")
               .action { (id, s) => s.as[instance.ViewColumns].copy(id) }
           )
@@ -151,8 +159,9 @@ object ModelMatrixCli extends App {
           overrideDbConfig(dbConf => (_: instance.ValidateInputData).copy(dbConfig = dbConf)),
           arg[Int]("<model-definition-id>").required().text("model matrix definition id")
             .action { (id, s) => s.as[instance.ValidateInputData].copy(id) },
-          arg[File]("<input-source>").required().text("inout data source")
-            .action { (f, s) => s.as[instance.ValidateInputData].copy(source = CsvSource(f.toPath)) }
+          arg[String]("<input-source>").required().text("input data source")
+            .validate(Source.validate)
+            .action { (f, s) => s.as[instance.ValidateInputData].copy(source = Source(f)) }
         ),
 
       cmd("create").text("create model matrix instance based on definition and input data")
@@ -175,11 +184,47 @@ object ModelMatrixCli extends App {
             .action { (c, s) => s.as[instance.AddInstance].copy(concurrencyLevel = c) },
           arg[Int]("<model-instance-id>").required().text("model matrix instance id")
             .action { (id, s) => s.as[instance.AddInstance].copy(id) },
-          arg[File]("<file>").required().text("model matrix configuration file")
-            .action { (f, s) => s.as[instance.AddInstance].copy(source = CsvSource(f.toPath)) }
+          arg[String]("<file>").required().text("model matrix configuration file")
+            .validate(Source.validate)
+            .action { (f, s) => s.as[instance.AddInstance].copy(source = Source(f)) }
         )
     )
 
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+    // * * *  Matrix Model Feature Extraction CLI                                                                        * * *
+    // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+
+    cmd("featurize").text("featurize input data with model matrix instance:").children(
+
+      cmd("validate").text("validate input data against model matrix instance")
+        .action((_, _) => featurize.ValidateInputData(0, NoSource, defaultDbName, defaultDbConfig))
+        .children(
+          overrideDbName(dbName => (_: featurize.ValidateInputData).copy(dbName = dbName)),
+          overrideDbConfig(dbConf => (_: featurize.ValidateInputData).copy(dbConfig = dbConf)),
+          arg[Int]("<model-instance-id>").required().text("model matrix instance id")
+            .action { (id, s) => s.as[featurize.ValidateInputData].copy(id) },
+          arg[String]("<input-source>").required().text("input data source")
+            .validate(Source.validate)
+            .action { (f, s) => s.as[featurize.ValidateInputData].copy(source = Source(f)) }
+        ),
+
+      cmd("sparse").text("featurize input data to sparse feature representation")
+        .action((_, _) => featurize.SparseFeaturization(0, NoSource, NoSink, defaultIdColumn, defaultDbName, defaultDbConfig))
+        .children(
+          overrideDbName(dbName => (_: featurize.SparseFeaturization).copy(dbName = dbName)),
+          overrideDbConfig(dbConf => (_: featurize.SparseFeaturization).copy(dbConfig = dbConf)),
+          arg[Int]("<model-instance-id>").required().text("model matrix instance id")
+            .action { (id, s) => s.as[featurize.SparseFeaturization].copy(id) },
+          arg[String]("<input-source>").required().text("input data source")
+            .validate(Source.validate)
+            .action { (f, s) => s.as[featurize.SparseFeaturization].copy(source = Source(f)) },
+          arg[String]("<output-sink>").required().text("output featurized data sink")
+            .validate(Sink.validate)
+            .action { (f, s) => s.as[featurize.SparseFeaturization].copy(sink = Sink(f)) },
+          arg[String]("<id-column>").required().text("id column name")            
+            .action { (c, s) => s.as[featurize.SparseFeaturization].copy(idColumn = c) }
+        )
+    )
 
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
     // * * *  End Of Matrix Command Line Interface                                                                       * * *

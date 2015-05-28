@@ -14,7 +14,7 @@ import scodec.bits.ByteVector
 import scalaz.{\/-, -\/, \/}
 import scalaz.syntax.either._
 
-case class IdentifiedPoint(id: Long, features: Vector)
+case class IdentifiedPoint(id: Any, features: Vector)
 
 sealed trait FeatureSchemaError {
   def feature: String
@@ -84,7 +84,12 @@ class FeatureExtraction(features: Seq[ModelInstanceFeature]) extends Serializabl
     }
   }
 
-  def featurize(input: DataFrame, idColumn: String): RDD[IdentifiedPoint] = {
+  /**
+   * Featurize input dataset
+   *
+   * @return id data type and featurized rows
+   */
+  def featurize(input: DataFrame, idColumn: String): (DataType, RDD[IdentifiedPoint]) = {
     log.info(s"Extract features from input DataFrame with id column: $idColumn. Total number of columns: $totalNumberOfColumns")
 
     // Check that schema satisfies input data
@@ -93,8 +98,8 @@ class FeatureExtraction(features: Seq[ModelInstanceFeature]) extends Serializabl
       s"\nFound ${validationErrors.size} input data errors: \n ${formatFeatureErrors(validationErrors)}")
 
     // Check that id columns exists and has correct type
-    require(input.schema.fields.exists(field => field.name == idColumn && field.dataType == LongType),
-      s"Can't find id column: $idColumn with compatible type")
+    require(input.schema.fields.exists(_.name == idColumn), s"Can't find id column: $idColumn")
+    val idType = input.schema.fields.find(_.name == idColumn).get.dataType
 
     // Select only columns that are used in feature building
     val columns = validate(input).collect { case \/-(column) => column }
@@ -102,8 +107,8 @@ class FeatureExtraction(features: Seq[ModelInstanceFeature]) extends Serializabl
     val featuresColumnIdx: Map[ModelFeature, Int] =
       features.zipWithIndex.map { case (f, idx) => (f.feature, idx + 1) }.toMap
 
-    input.select(new Column(idColumn) +: columns:_*).map { row =>
-      val id = row.getLong(0)
+    val rdd = input.select(new Column(idColumn) +: columns:_*).map { row =>
+      val id = row.get(0)
       val columnValues = features.flatMap {
         case ModelInstanceIdentityFeature(_, _, f, tpe, columnId) => 
           identityColumn(row)(f, featuresColumnIdx(f), tpe, columnId) :: Nil
@@ -118,6 +123,8 @@ class FeatureExtraction(features: Seq[ModelInstanceFeature]) extends Serializabl
 
       IdentifiedPoint(id, Vectors.sparse(totalNumberOfColumns, vectorValues))
     }
+
+    (idType, rdd)
   }
 
 
