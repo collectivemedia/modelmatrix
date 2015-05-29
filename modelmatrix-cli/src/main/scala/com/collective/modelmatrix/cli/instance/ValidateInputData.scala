@@ -4,7 +4,7 @@ import com.collective.modelmatrix.catalog.{ModelDefinitionFeature, ModelMatrixCa
 import com.collective.modelmatrix.cli.{Source, _}
 import com.collective.modelmatrix.transform._
 import com.typesafe.config.Config
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.hive.HiveContext
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.ExecutionContext
@@ -23,7 +23,7 @@ case class ValidateInputData(
   import com.collective.modelmatrix.cli.ASCIITableFormats._
 
   private object Transformers {
-    implicit val sqlContext = new SQLContext(sc)
+    implicit val sqlContext = new HiveContext(sc)
     val input = source.asDataFrame
 
     val identity = new IdentityTransformer(input)

@@ -1,12 +1,12 @@
 package com.collective.modelmatrix.cli.featurize
 
-import com.collective.modelmatrix.{IdentifiedPoint, FeatureExtraction}
 import com.collective.modelmatrix.catalog.ModelMatrixCatalog
-import com.collective.modelmatrix.cli.Source
-import com.collective.modelmatrix.cli._
+import com.collective.modelmatrix.cli.{Source, _}
+import com.collective.modelmatrix.{FeatureExtraction, IdentifiedPoint}
 import com.typesafe.config.Config
 import org.apache.spark.mllib.linalg.{DenseVector, SparseVector}
-import org.apache.spark.sql.{Row, SQLContext}
+import org.apache.spark.sql.Row
+import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.sql.types._
 import org.slf4j.LoggerFactory
 
@@ -38,7 +38,7 @@ case class SparseFeaturization(
       s"Id column: $idColumn" +
       s"Database: $dbName @ ${dbConfig.origin()}")
 
-    implicit val sqlContext = new SQLContext(sc)
+    implicit val sqlContext = new HiveContext(sc)
 
     val features = blockOn(db.run(modelInstanceFeatures.features(modelInstanceId)))
     require(features.nonEmpty, s"No active features are defined for model instance: $modelInstanceId. " +

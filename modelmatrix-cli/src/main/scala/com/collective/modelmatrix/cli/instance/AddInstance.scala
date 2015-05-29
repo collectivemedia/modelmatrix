@@ -7,7 +7,7 @@ import com.collective.modelmatrix.cli.{CliModelCatalog, CliSparkContext, Script,
 import com.collective.modelmatrix.transform._
 import com.collective.modelmatrix.{CategorialColumn, ModelFeature}
 import com.typesafe.config.Config
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.sql.types.DataType
 import org.slf4j.LoggerFactory
 import slick.dbio.DBIO
@@ -54,7 +54,7 @@ case class AddInstance(
 
   // Supported transformations
   private object Transformers {
-    private implicit val sqlContext = new SQLContext(sc)
+    private implicit val sqlContext = new HiveContext(sc)
     private val input = source.asDataFrame
 
     val identity = new IdentityTransformer(input)

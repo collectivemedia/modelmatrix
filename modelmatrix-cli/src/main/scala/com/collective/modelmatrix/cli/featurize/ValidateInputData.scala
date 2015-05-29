@@ -4,7 +4,7 @@ import com.collective.modelmatrix.FeatureExtraction
 import com.collective.modelmatrix.catalog.ModelMatrixCatalog
 import com.collective.modelmatrix.cli.{CliModelCatalog, CliSparkContext, Script, Source}
 import com.typesafe.config.Config
-import org.apache.spark.sql.SQLContext
+import org.apache.spark.sql.hive.HiveContext
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.ExecutionContext
@@ -27,7 +27,7 @@ case class ValidateInputData(
       s"Data source: $source. " +
       s"Database: $dbName @ ${dbConfig.origin()}")
 
-    implicit val sqlContext = new SQLContext(sc)
+    implicit val sqlContext = new HiveContext(sc)
 
     val features = blockOn(db.run(modelInstanceFeatures.features(modelInstanceId)))
     require(features.nonEmpty, s"No active features are defined for model instance: $modelInstanceId. " +

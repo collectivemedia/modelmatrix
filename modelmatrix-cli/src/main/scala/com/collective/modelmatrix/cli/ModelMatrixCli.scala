@@ -180,11 +180,11 @@ object ModelMatrixCli extends App {
             .action { (n, s) => s.as[instance.AddInstance].copy(name = Some(n)) },
           opt[String]('c', "comment").optional().text("model matrix instance comment")
             .action { (c, s) => s.as[instance.AddInstance].copy(comment = Some(c)) },
-          opt[Int]("concurrency").optional().text("concurrency level")
+          opt[Int]('t', "concurrency").optional().text("concurrency level")
             .action { (c, s) => s.as[instance.AddInstance].copy(concurrencyLevel = c) },
-          arg[Int]("<model-instance-id>").required().text("model matrix instance id")
+          arg[Int]("<model-definition-id>").required().text("model matrix definition id")
             .action { (id, s) => s.as[instance.AddInstance].copy(id) },
-          arg[String]("<file>").required().text("model matrix configuration file")
+          arg[String]("<input-source>").required().text("input data source")
             .validate(Source.validate)
             .action { (f, s) => s.as[instance.AddInstance].copy(source = Source(f)) }
         )
