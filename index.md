@@ -35,3 +35,6 @@ With **Model Matrix CLI** you can control all lifecycle of Model Matrix:
 
 #### <a href="doc/cli.html#mmc-definition" class="icon-circle-arrow-right"><span class="space5"><span class="spec-font">Work with model matrix definitions</span></span></a>
 
+#### <a href="doc/cli.html#mmc-instance" class="icon-circle-arrow-right"><span class="space5"><span class="spec-font">Work with model matrix instances</span></span></a>
+
+#### <a href="doc/cli.html#feature-extraction" class="icon-circle-arrow-right"><span class="space5"><span class="spec-font">Feature extraction</span></span></a>

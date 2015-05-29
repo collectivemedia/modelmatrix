@@ -41,15 +41,45 @@ For next steps I'll skip custom database config, just be aware that `dbConf` and
 
 Using [example configuration](feature-matrix-config.html#example-configuration) stored in features.conf:
    
-    ./mm definition add features.conf
-        
-## #5 View new model definition
-       
-At previous step you'll get id of newly created model definition, you can check what is stored in model matrix
-database
-       
-       ./mm definition view <model-definition-id>
+    ./mm definition add ./model.conf
     
+This command will return model definition id, going forward I'm assuming that it is `1`    
+                
+## #5 View new model definition
+
+    ./mm definition view 1
+    
+## #6 Check that definition can be used to build model instance from Hive
+    
+    ./mm instance validate 1 hive://mm.clicks_2015_05_05
+     
+## #7 Create model instance by applying definition to input data
+     
+It will calculate categorial and continuous features transformations based on shape of input data
+     
+     ./ mm instance create 1 hive://mm.clicks_2015_05_05 --name clicks --comment "getting started"
+     
+This command will return model instance id, going forward I'm assuming that it is `123`
+
+## #8 View instance feature transformations
+
+You can view what categorial and continuous transformations were computed from input data.
+
+    ./mm instance view features 123
+    ./mm instance view columns 123
+    
+## #9 Check that instance can be used for feature extraction
+
+Check that model instance computed at previous step compatible with next day input data
+    
+    ./mm featurize validate 123 hive://mm.clicks_2015_05_06
+    
+## #10 Build sparse feature table in Hive
+   
+Apply model instance transformation to input data and build "featurized" sparse table in Hive
+   
+    ./mm featurize sparse 123 hive://mm.clicks_2015_05_06 hive://mm.clicks_sparse_features_2015_05_06 AUCTION_ID
+   
 
 ## And much more…
 
