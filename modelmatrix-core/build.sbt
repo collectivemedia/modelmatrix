@@ -11,3 +11,5 @@ flywayUser := "modelmatrix"
 flywayPassword := "modelmatrix"
 
 flywayTable := "mmc_schema_version"
+
+flywaySqlMigrationPrefix := "v"
