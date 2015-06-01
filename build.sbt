@@ -25,8 +25,6 @@ maxErrors in ThisBuild := 5
 
 shellPrompt in ThisBuild := ShellPrompt.buildShellPrompt
 
-libraryDependencies ++= Dependencies.modelMatrix
-
 resolvers in ThisBuild ++= Seq(
   // Typesafe
   Resolver.typesafeRepo("releases"),
@@ -42,13 +40,35 @@ resolvers in ThisBuild ++= Seq(
   "Apache Releases"      at "http://repository.apache.org/content/repositories/releases/",
   "Apache Snapshots"     at "http://repository.apache.org/content/repositories/snapshots",
   // Cloudera
-  "Cloudera"             at "https://repository.cloudera.com/artifactory/cloudera-repos/"
+  "Cloudera"             at "https://repository.cloudera.com/artifactory/cloudera-repos/",
+  // Conjars
+  "Conjars"              at "http://conjars.org/repo"
 )
 
 // Model Matrix project
 
-lazy val modelmatrix = (project in file("."))
-  .settings(net.virtualvoid.sbt.graph.Plugin.graphSettings: _*)
-  .configs(IntegrationTest)
-  .settings(TestSettings.testSettings:_*)
-  .settings(TestSettings.integrationTestSettings:_*)
+def ModelMatrixProject(path: String) =
+  Project(path, file(path))
+    .settings(net.virtualvoid.sbt.graph.Plugin.graphSettings: _*)
+    .configs(TestSettings.IntegrationTest)
+    .settings(TestSettings.testSettings: _*)
+    .settings(TestSettings.integrationTestSettings: _*)
+
+// Aggregate all projects & disable publishing root project
+
+lazy val root = Project("modelmatrix", file(".")).
+  settings(publish :=()).
+  settings(publishLocal :=()).
+  settings(unidocSettings: _*).
+  aggregate(modelmatrixCore, modelmatrixCli)
+
+
+// Model Matrix projects
+
+lazy val modelmatrixCore =
+  ModelMatrixProject("modelmatrix-core")
+    .settings(flywaySettings: _*)
+
+lazy val modelmatrixCli =
+  ModelMatrixProject("modelmatrix-cli")
+    .dependsOn(modelmatrixCore)
