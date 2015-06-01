@@ -2,8 +2,13 @@
 
 # Run Model Matrix in Spark on Yarn mode
 
+if [ -z ${SPARK_HOME} ]; then
+    echo 'SPARK_HOME environment variable is not defined'
+    exit 1
+fi
+
 # Prepare Model Matrix cmd
-spark-submit \
+$SPARK_HOME/bin/spark-submit \
 --master yarn-client \
 --num-executors 5 \
 --executor-memory 10g \
