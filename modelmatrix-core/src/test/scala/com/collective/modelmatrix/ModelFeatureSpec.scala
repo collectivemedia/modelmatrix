@@ -1,6 +1,6 @@
 package com.collective.modelmatrix
 
-import com.collective.modelmatrix.transform.{Identity, Index, Top}
+import com.collective.modelmatrix.transform.{Bins, Identity, Index, Top}
 import com.typesafe.config.ConfigFactory
 import org.scalatest.FlatSpec
 
@@ -44,6 +44,17 @@ class ModelFeatureSpec extends FlatSpec {
       "ad_size",
       "size",
       Index(0.5, isAllOther)
+    ).successNel)
+  }
+
+  it should "parse 'bins' feature" in {
+    val adPerformance = ModelFeature.parse("ad_performance", features.getConfig("ad_performance"))
+    assert(adPerformance == ModelFeature(
+      isActive,
+      "performance",
+      "ad_performance",
+      "pct_clicks",
+      Bins(10, 100, 1.0)
     ).successNel)
   }
 

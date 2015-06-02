@@ -2,9 +2,9 @@ package com.collective.modelmatrix.catalog
 
 import java.time.Instant
 
-import com.collective.modelmatrix.{CategorialColumn, ModelFeature}
-import com.collective.modelmatrix.transform.{Index, Top, Identity}
-import org.apache.spark.sql.types.{StringType, IntegerType}
+import com.collective.modelmatrix.{BinColumn, CategorialColumn, ModelFeature}
+import com.collective.modelmatrix.transform.{Bins, Index, Top, Identity}
+import org.apache.spark.sql.types.{DoubleType, StringType, IntegerType}
 import org.scalatest.{BeforeAndAfterAll, GivenWhenThen, FlatSpec}
 import scodec.bits.ByteVector
 
@@ -22,6 +22,7 @@ trait ModelInstanceCatalogSpec extends FlatSpec with GivenWhenThen with BeforeAn
   val identity = ModelFeature(isActive, "Advertisement", "ad_size", "size", Identity)
   val top = ModelFeature(isActive, "Advertisement", "ad_type", "type", Top(95, addAllOther))
   val index = ModelFeature(isActive, "Advertisement", "ad_network", "network", Index(0.5, addAllOther))
+  val bins = ModelFeature(isActive, "Advertisement", "ad_performance", "pct_clicks", Bins(5, 0, 0))
 
   // Definitions
   lazy val modelDefinitions = new ModelDefinitions(catalog)
@@ -44,7 +45,7 @@ trait ModelInstanceCatalogSpec extends FlatSpec with GivenWhenThen with BeforeAn
 
     val insert = for {
       id <- createModelDefinition
-      featureId <- modelDefinitionFeatures.addFeatures(id, identity, top, index)
+      featureId <- modelDefinitionFeatures.addFeatures(id, identity, top, index, bins)
     } yield (id, featureId)
 
     await(db.run(insert))
@@ -53,7 +54,7 @@ trait ModelInstanceCatalogSpec extends FlatSpec with GivenWhenThen with BeforeAn
   "Model Instances Catalog" should "add model features" in {
 
     Given("model definition")
-    val (modelDefinitionId, Seq(identityFeatureId, topFeatureId, indexFeatureId)) = newModelDefinition
+    val (modelDefinitionId, Seq(identityFeatureId, topFeatureId, indexFeatureId, binsFeatureId)) = newModelDefinition
 
     Then("should create model instance")
 
@@ -77,11 +78,18 @@ trait ModelInstanceCatalogSpec extends FlatSpec with GivenWhenThen with BeforeAn
       CategorialColumn.AllOther(7, 100, 400)
     )
 
+    val binsColumns = Seq(
+      BinColumn.LowerBin(8, 0.8, 100, 300),
+      BinColumn.BinValue(9, 0.8, 2.4, 100, 300),
+      BinColumn.UpperBin(10, 2.4, 100, 300)
+    )
+
     val insert = for {
       id <- createModelInstance
       _ <- modelInstanceFeatures.addIdentityFeature(id, identityFeatureId, IntegerType, 1)
       _ <- modelInstanceFeatures.addTopFeature(id, topFeatureId, StringType, topColumns)
       _ <- modelInstanceFeatures.addIndexFeature(id, indexFeatureId, StringType, indexColumns)
+      _ <- modelInstanceFeatures.addBinsFeature(id, binsFeatureId, DoubleType, binsColumns)
     } yield id
 
     val modelInstanceId = await(db.run(insert))
@@ -92,21 +100,25 @@ trait ModelInstanceCatalogSpec extends FlatSpec with GivenWhenThen with BeforeAn
 
     val instance = instanceO.get
     assert(instance.createdAt == now)
-    assert(instance.features == 3)
-    assert(instance.columns == 7)
+    assert(instance.features == 4)
+    assert(instance.columns == 10)
 
     And("find model instance by id")
     val foundById = await(db.run(modelInstances.findById(modelInstanceId)))
     assert(foundById == instanceO)
 
     And("find model instance by name")
-    val foundByName = await(db.run(modelInstances.findByName(s"instance=${now.toEpochMilli}"))).headOption
+    val foundByName = await(db.run(modelInstances.list(name = Some(s"instance=${now.toEpochMilli}")))).headOption
     assert(foundByName == instanceO)
+
+    And("find model instance by definition id")
+    val foundByDefinition = await(db.run(modelInstances.list(definitionId = Some(modelDefinitionId)))).headOption
+    assert(foundByDefinition == instanceO)
 
     And("read model instance columns")
     val features = await(db.run(modelInstanceFeatures.features(modelInstanceId)))
     val featureMap = features.map(f => f.feature.feature -> f).toMap
-    assert(features.size == 3)
+    assert(features.size == 4)
 
     And("get valid identity columns")
     assert(featureMap("ad_size").isInstanceOf[ModelInstanceIdentityFeature])
@@ -125,10 +137,17 @@ trait ModelInstanceCatalogSpec extends FlatSpec with GivenWhenThen with BeforeAn
     assert(featureMap("ad_network").feature == index)
     assert(featureMap("ad_network").extractType == StringType)
     assert(featureMap("ad_network").asInstanceOf[ModelInstanceIndexFeature].columns == indexColumns)
+
+    And("get valid bins columns")
+    assert(featureMap("ad_performance").isInstanceOf[ModelInstanceBinsFeature])
+    assert(featureMap("ad_performance").feature == bins)
+    assert(featureMap("ad_performance").extractType == DoubleType)
+    assert(featureMap("ad_performance").asInstanceOf[ModelInstanceBinsFeature].columns == binsColumns)
+
   }
 
   it should "fail to add model feature with incorrect type" in {
-    val (modelDefinitionId, Seq(_, topFeatureId, _)) = newModelDefinition
+    val (modelDefinitionId, Seq(_, topFeatureId, _, _)) = newModelDefinition
 
     val createModelInstance = modelInstances.add(
       modelDefinitionId,

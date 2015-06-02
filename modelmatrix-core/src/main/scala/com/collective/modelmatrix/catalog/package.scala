@@ -20,11 +20,13 @@ package object catalog {
       case ShortType => "short"
       case IntegerType => "integer"
       case LongType => "long"
+      case DoubleType => "double"
       case StringType => "string"
     }, {
       case "short" => ShortType
       case "integer" => IntegerType
       case "long" => LongType
+      case "double" => DoubleType
       case "string" => StringType
     })
 

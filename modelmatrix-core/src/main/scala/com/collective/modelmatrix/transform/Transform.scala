@@ -36,6 +36,16 @@ case class Top(cover: Double, allOther: Boolean) extends Transform
  */
 case class Index(support: Double, allOther: Boolean) extends Transform
 
+/**
+ * Break the values in the column into bins with roughly the same number of points.
+ *
+ * @param nbins target number of bins
+ * @param minPoints minimum number of points in single bin
+ * @param minPercents minimum percent of points in a bin (0-100).
+ *                    The larger of absolute number and percent points is used.
+ */
+case class Bins(nbins: Int, minPoints: Int = 0, minPercents: Double = 0.0) extends Transform
+
 object Transform {
   def nameOf[T <: Transform : TransformName]: String = implicitly[TransformName[T]].name
 
@@ -47,6 +57,7 @@ object Transform {
     implicit val identityName = new TransformName[Identity.type] { def name = "identity" }
     implicit val topName = new TransformName[Top] { def name = "top" }
     implicit val indexName = new TransformName[Index] { def name = "index" }
+    implicit val binsName = new TransformName[Bins] { def name = "bins"}
   }
 
   implicit class TransformOps(val transform: Transform) extends AnyVal {
@@ -54,6 +65,7 @@ object Transform {
       case Identity => "identity"
       case _: Top => "top"
       case _: Index => "index"
+      case _: Bins => "bins"
     }
   }
 
@@ -76,9 +88,19 @@ object Transform {
     IndexParser.parse(config)
   }
 
+  def bins(config: Config): ValidationNel[String, Bins] = {
+    BinsParser.parse(config)
+  }
+
   private abstract class Parser[T <: Transform](transform: String) {
 
     def parse(config: Config): ValidationNel[String, T]
+
+    protected def integer(p: String)(implicit cfg: Config) =
+      parameter(cfg, p)(_.getInt)
+
+    protected def long(p: String)(implicit cfg: Config) =
+      parameter(cfg, p)(_.getLong)
 
     protected def double(p: String)(implicit cfg: Config) =
       parameter(cfg, p)(_.getDouble)
@@ -106,6 +128,13 @@ object Transform {
     def parse(config: Config): ValidationNel[String, Index] = {
       implicit val cfg = config
       (double("support") |@| boolean("allOther"))(Index.apply)
+    }
+  }
+
+  private object BinsParser extends Parser[Bins]("bins") {
+    def parse(config: Config): ValidationNel[String, Bins] = {
+      implicit val cfg = config
+      (integer("nbins") |@| integer("minpts") |@| double("minpct"))(Bins.apply)
     }
   }
 

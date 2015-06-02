@@ -9,7 +9,7 @@ import scala.concurrent.ExecutionContext
 import scalaz.@@
 
 case class ListDefinitions(
-  dbName: String, dbConfig: Config
+  name: Option[String], dbName: String, dbConfig: Config
 )(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) extends Script with CliModelCatalog {
 
   private val log = LoggerFactory.getLogger(classOf[ListDefinitions])
@@ -18,7 +18,9 @@ case class ListDefinitions(
   import com.collective.modelmatrix.cli.ASCIITableFormats._
 
   def run(): Unit = {
-    log.info(s"View all Model Matrix definitions. Database: $dbName @ ${dbConfig.origin()}")
-    blockOn(db.run(modelDefinitions.all)).printASCIITable()
+    log.info(s"List Model Matrix definitions. " +
+      s"Name: ${name.getOrElse("-")}. " +
+      s"Database: $dbName @ ${dbConfig.origin()}")
+    blockOn(db.run(modelDefinitions.list(name))).printASCIITable()
   }
 }

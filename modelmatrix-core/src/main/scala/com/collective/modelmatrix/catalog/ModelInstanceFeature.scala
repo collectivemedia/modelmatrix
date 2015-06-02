@@ -1,8 +1,8 @@
 package com.collective.modelmatrix.catalog
 
 import com.collective.modelmatrix.CategorialColumn.{AllOther, CategorialValue}
-import com.collective.modelmatrix.{CategorialColumn, ModelFeature}
-import com.collective.modelmatrix.transform.{Transform, Identity, Index, Top}
+import com.collective.modelmatrix.{BinColumn, CategorialColumn, ModelFeature}
+import com.collective.modelmatrix.transform._
 import org.apache.spark.sql.types.DataType
 import org.slf4j.LoggerFactory
 import scodec.bits.ByteVector
@@ -51,6 +51,17 @@ case class ModelInstanceIndexFeature(
     s"Wrong model feature transform function: $feature. Expected 'index'")
 }
 
+case class ModelInstanceBinsFeature(
+  id: Int,
+  modelInstanceId: Int,
+  feature: ModelFeature,
+  extractType: DataType,
+  columns: Seq[BinColumn]
+) extends ModelInstanceFeature {
+  assert(feature.transform.isInstanceOf[Bins],
+    s"Wrong model feature transform function: $feature. Expected 'bins'")
+}
+
 class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) {
   private val log = LoggerFactory.getLogger(classOf[ModelInstanceFeatures])
 
@@ -66,7 +77,8 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
       id <- identityFeatures(modelInstanceId)
       top <- topFeatures(modelInstanceId)
       idx <- indexFeatures(modelInstanceId)
-    } yield id ++ top ++ idx
+      bins <- binsFeatures(modelInstanceId)
+    } yield id ++ top ++ idx ++ bins
 
     features.map(_.sortBy(_.id))
   }
@@ -135,6 +147,32 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
     } yield featureInstanceId
   }
 
+  def addBinsFeature(
+    modelInstanceId: Int,
+    featureDefinitionId: Int,
+    extractType: DataType,
+    columns: Seq[BinColumn]
+  ): DBIO[Int] = {
+
+    for {
+      transform <- featureDefinitionTransformType(featureDefinitionId)
+      _ = require(transform == Transform.nameOf[Bins], s"Wrong feature definition transform type: $transform. Expected: bins")
+      name <- featureDefinitionName(featureDefinitionId)
+      _ = log.trace(s"Add bins feature: $name. Columns: ${columns.size}")
+      featureInstanceId <- (featureInstances returning featureInstances.map(_.id)) +=
+        ((AutoIncId, modelInstanceId, featureDefinitionId, extractType))
+      _ <- DBIO.sequence(columns.map {
+        case BinColumn.LowerBin(columnId, high, count, sampleSize) =>
+          binsColumns +=(AutoIncId, featureInstanceId, columnId, None, Some(high), count, sampleSize)
+        case BinColumn.UpperBin(columnId, low, count, sampleSize) =>
+          binsColumns +=(AutoIncId, featureInstanceId, columnId, Some(low), None, count, sampleSize)
+        case BinColumn.BinValue(columnId, low, high, count, sampleSize) =>
+          binsColumns +=(AutoIncId, featureInstanceId, columnId, Some(low), Some(high), count, sampleSize)
+      })
+    } yield featureInstanceId
+  }
+
+
   private def featureDefinitionName(featureDefinitionId: Int): DBIO[String] = {
     featureDefinitions.filter(_.id === featureDefinitionId).map(_.feature).result.headOption.map {
       case None => sys.error(s"Can't find feature definition by id: $featureDefinitionId")
@@ -168,7 +206,7 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
     q.result.map(_.map(toFeature))
   }
 
-  type CategorialColumnRecord = (Int, Int, Int, Option[String], Option[ByteVector], Long, Long)
+  private type CategorialColumnRecord = (Int, Int, Int, Option[String], Option[ByteVector], Long, Long)
   
   private def toCategorialColumn: CategorialColumnRecord => CategorialColumn = {
     case (_, _, columnId, Some(sourceName), Some(sourceValue), count, cumCount) =>
@@ -179,6 +217,19 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
 
     case (_, _, _, sourceName, sourceValue, _, _) =>
       sys.error(s"Wrong source name and value pair. Name: $sourceName. Value: $sourceValue")
+  }
+
+  private type BinsColumnRecord = (Int, Int, Int, Option[Double], Option[Double], Long, Long)
+
+  private def toBinColumn: BinsColumnRecord => BinColumn = {
+    case (_, _, columnId, None, Some(high), count, sampleSize) =>
+      BinColumn.LowerBin(columnId, high, count, sampleSize)
+    case (_, _, columnId, Some(low), None, count, sampleSize) =>
+      BinColumn.UpperBin(columnId, low, count, sampleSize)
+    case (_, _, columnId, Some(low), Some(high), count, sampleSize) =>
+      BinColumn.BinValue(columnId, low, high, count, sampleSize)
+    case error =>
+      sys.error(s"Usupported bins columns record: $error")
   }
   
   private def topFeatures(modelInstanceId: Int): DBIO[Seq[ModelInstanceTopFeature]] = {
@@ -214,4 +265,22 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
       })
     }
   }
+
+  private def binsFeatures(modelInstanceId: Int): DBIO[Seq[ModelInstanceBinsFeature]] = {
+    val features = for {
+      fi <- featureInstances.filter(_.modelInstanceId === modelInstanceId)
+      fd <- fi.featureDefinition
+      if fd.transform === Transform.nameOf[Bins]
+      fp <- binsParameters if fp.featureDefinitionId === fd.id
+    } yield (fi.id, fd.active, fd.group, fd.feature, fd.extract, fp.nbins, fp.min_points, fp.min_pct, fi.extractType)
+
+    features.result.flatMap { features =>
+      DBIO.sequence(features.map { case (ftrInstanceId, active, group, feature, extract, nbins, minPts, minPct, extractTime) =>
+        val modelFeature = ModelFeature(active, group, feature, extract, Bins(nbins, minPts, minPct))
+        val columns = binsColumns.filter(_.featureInstanceId === ftrInstanceId).result.map(_.map(toBinColumn))
+        columns.map(ModelInstanceBinsFeature(ftrInstanceId, modelInstanceId, modelFeature, extractTime, _))
+      })
+    }
+  }
+
 }

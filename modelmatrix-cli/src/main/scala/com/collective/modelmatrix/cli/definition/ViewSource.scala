@@ -8,17 +8,17 @@ import org.slf4j.LoggerFactory
 import scala.concurrent.ExecutionContext
 import scalaz._
 
-case class ViewDefinition(
+case class ViewSource(
   modelDefinitionId: Int, dbName: String, dbConfig: Config
 )(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) extends Script with CliModelCatalog {
 
-  private val log = LoggerFactory.getLogger(classOf[ViewDefinition])
+  private val log = LoggerFactory.getLogger(classOf[ViewFeatures])
 
   import com.collective.modelmatrix.cli.ASCIITableFormat._
   import com.collective.modelmatrix.cli.ASCIITableFormats._
 
   def run(): Unit = {
-    log.info(s"View Model Matrix definition: $modelDefinitionId. Database: $dbName @ ${dbConfig.origin()}")
+    log.info(s"View Model Matrix definition source: $modelDefinitionId. Database: $dbName @ ${dbConfig.origin()}")
 
     blockOn(db.run(modelDefinitions.findById(modelDefinitionId))) match {
       case Some(modelDefinition) =>
@@ -27,8 +27,8 @@ case class ViewDefinition(
         Console.out.println(s"Model definition:")
         modelDefinition.printASCIITable()
 
-        Console.out.println(s"Model Matrix features: ${features.length}")
-        features.printASCIITable()
+        Console.out.println("Model Matrix definition source: \n\n")
+        Console.out.println(modelDefinition.source)
 
       case None =>
         Console.out.println(s"Can't find model definition by id: $modelDefinitionId")
