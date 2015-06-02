@@ -18,8 +18,8 @@ sealed trait TransformSchemaError {
 
 object TransformSchemaError {
 
-  case class ExtractColumnNotFound(extract: String) extends TransformSchemaError {
-    def errorMessage: String = s"Can't find extract column: $extract"
+  case class FeatureColumnNotFound(feature: String) extends TransformSchemaError {
+    def errorMessage: String = s"Can't find feature column: $feature"
   }
 
   case class UnsupportedTransformDataType(
@@ -27,22 +27,46 @@ object TransformSchemaError {
     dataType: DataType,
     transform: Transform
   ) extends TransformSchemaError {
-    def errorMessage: String = s"Unsupported input data type: ${dataType.typeName} for transformation: $transform"
+    def errorMessage: String = s"Unsupported feature data type: ${dataType.typeName} for transformation: $transform"
   }
 
 }
 
-abstract class Transformer(input: DataFrame) {
+abstract class Transformer(features: DataFrame) {
 
   def validate: PartialFunction[ModelFeature, TransformSchemaError \/ TypedModelFeature]
 
-  protected def inputDataType(expression: String): Option[DataType] = {
-    input.schema.find(_.name == expression).map(_.dataType)
+  protected def featureDataType(feature: String): Option[DataType] = {
+    features.schema.find(_.name == feature).map(_.dataType)
   }
 
 }
 
-abstract class CategorialTransformer(input: DataFrame) extends Transformer(input) {
+object Transformer {
+
+  /** Select expressions associated with each feature
+    *
+    * @param df       source data frame
+    * @param features model features
+    * @return data frame with column for each feature
+    */
+  def selectFeatures(df: DataFrame, features: Seq[ModelFeature]): DataFrame = {
+    val expressions = features.map { f =>
+      s"${f.extract} as ${f.feature}"
+    }
+    df.selectExpr(expressions:_*)        
+  }
+
+  def selectFeaturesWithId(df: DataFrame, idColumn: String, features: Seq[ModelFeature]): DataFrame = {
+    val expressions = features.map { f =>
+      s"${f.extract} as ${f.feature}"
+    }
+    df.selectExpr(idColumn +: expressions:_*)
+  }
+  
+}
+
+abstract class CategorialTransformer(features: DataFrame) extends Transformer(features) {
 
   def transform(feature: TypedModelFeature): Seq[CategorialColumn]
 

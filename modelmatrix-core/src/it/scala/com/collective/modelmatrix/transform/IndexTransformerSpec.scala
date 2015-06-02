@@ -15,7 +15,7 @@ class IndexTransformerSpec extends FlatSpec with TestSparkContext {
   val sqlContext = new SQLContext(sc)
 
   val schema = StructType(Seq(
-    StructField("ad_site", StringType)
+    StructField("adv_site", StringType)
   ))
 
   val input = new Random().shuffle(
@@ -33,18 +33,19 @@ class IndexTransformerSpec extends FlatSpec with TestSparkContext {
   val isActive = true
   val withAllOther = true
 
-  val adSite = ModelFeature(isActive, "Ad", "ad_site", "ad_site", Index(2, withAllOther))
+  val adSite = ModelFeature(isActive, "Ad", "ad_site", "adv_site", Index(2, withAllOther))
 
-  val transformer = new IndexTransformer(sqlContext.createDataFrame(sc.parallelize(input), schema))
+  val df = sqlContext.createDataFrame(sc.parallelize(input), schema)
+  val transformer = new IndexTransformer(Transformer.selectFeatures(df, Seq(adSite)))
 
   "Index Transformer" should "support string typed model feature" in {
     val valid = transformer.validate(adSite)
     assert(valid == TypedModelFeature(adSite, StringType).right)
   }
 
-  it should "fail if column doesn't exists" in {
-    val failed = transformer.validate(adSite.copy(extract = "ad_site_name"))
-    assert(failed == TransformSchemaError.ExtractColumnNotFound("ad_site_name").left)
+  it should "fail if feature column doesn't exists" in {
+    val failed = transformer.validate(adSite.copy(feature = "adv_site"))
+    assert(failed == TransformSchemaError.FeatureColumnNotFound("adv_site").left)
   }
 
   it should "calculate correct categorial columns with all other" in {

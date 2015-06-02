@@ -23,17 +23,16 @@ sealed trait FeatureSchemaError {
 
 object FeatureSchemaError {
 
-  case class ExtractColumnNotFound(feature: String, extract: String) extends FeatureSchemaError {
-    def errorMessage: String = s"Can't find extract column: $extract"
+  case class FeatureColumnNotFound(feature: String) extends FeatureSchemaError {
+    def errorMessage: String = s"Can't find feature column: $feature"
   }
 
-  case class ExtractColumnTypeDoesNotMatch(
+  case class FeatureColumnTypeDoesNotMatch(
     feature: String,
-    extract: String,
     expected: DataType,
     found: DataType
   ) extends FeatureSchemaError {
-    def errorMessage: String = s"Extract column: $extract type: $found doesn't match expected: $expected"
+    def errorMessage: String = s"Feature column: $feature type: $found doesn't match expected: $expected"
   }
 }
 
@@ -58,28 +57,26 @@ class FeatureExtraction(features: Seq[ModelInstanceFeature]) extends Serializabl
   type FeatureColumnId = (ModelFeature, Int)
 
   def validate(input: DataFrame): Seq[FeatureSchemaError \/ Column] = {
-
-    def inputDataType(expression: String): Option[DataType] = {
-      input.schema.find(_.name == expression).map(_.dataType)
+    def featureDataType(feature: String): Option[DataType] = {
+      input.schema.find(_.name == feature).map(_.dataType)
     }
 
     features.map {
       // Valid features
       case ModelInstanceIdentityFeature(_, _, feature, extractType, _)
-        if inputDataType(feature.extract).exists(_ == extractType) => new Column(feature.extract).right
+        if featureDataType(feature.feature).exists(_ == extractType) => new Column(feature.feature).right
       case ModelInstanceTopFeature(_, _, feature, extractType, _)
-        if inputDataType(feature.extract).exists(_ == extractType) => new Column(feature.extract).right
+        if featureDataType(feature.feature).exists(_ == extractType) => new Column(feature.feature).right
       case ModelInstanceIndexFeature(_, _, feature, extractType, _)
-        if inputDataType(feature.extract).exists(_ == extractType) => new Column(feature.extract).right
+        if featureDataType(feature.feature).exists(_ == extractType) => new Column(feature.feature).right
 
       // Validation errors
-      case f: ModelInstanceFeature if inputDataType(f.feature.extract).isEmpty =>
-        ExtractColumnNotFound(f.feature.feature, f.feature.extract).left
+      case f: ModelInstanceFeature if featureDataType(f.feature.feature).isEmpty =>
+        FeatureColumnNotFound(f.feature.feature).left
       case f: ModelInstanceFeature =>
-        ExtractColumnTypeDoesNotMatch(
-          f.feature.feature, 
-          f.feature.extract, 
-          inputDataType(f.feature.extract).get, 
+        FeatureColumnTypeDoesNotMatch(
+          f.feature.feature,
+          featureDataType(f.feature.feature).get,
           f.extractType
         ).left
     }
@@ -102,9 +99,9 @@ class FeatureExtraction(features: Seq[ModelInstanceFeature]) extends Serializabl
     require(input.schema.fields.exists(_.name == idColumn), s"Can't find id column: $idColumn")
     val idType = input.schema.fields.find(_.name == idColumn).get.dataType
 
-    // Select only columns that are used in feature building
+    // Collect feature columns
     val columns = validate(input).collect { case \/-(column) => column }
-    
+
     val featuresColumnIdx: Map[ModelFeature, Int] =
       features.zipWithIndex.map { case (f, idx) => (f.feature, idx + 1) }.toMap
 

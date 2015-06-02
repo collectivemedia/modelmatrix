@@ -1,7 +1,7 @@
 package com.collective.modelmatrix.transform
 
 import com.collective.modelmatrix.BinColumn.BinValue
-import com.collective.modelmatrix.transform.TransformSchemaError.{ExtractColumnNotFound, UnsupportedTransformDataType}
+import com.collective.modelmatrix.transform.TransformSchemaError.{FeatureColumnNotFound, UnsupportedTransformDataType}
 import com.collective.modelmatrix.{BinColumn, ModelFeature}
 import com.typesafe.config.ConfigFactory
 import org.apache.spark.sql.DataFrame
@@ -24,22 +24,22 @@ class BinsTransformer(input: DataFrame) extends Transformer(input) with Binner {
   protected case class Scan(columnId: Int = 0, columns: Seq[BinValue] = Seq.empty)
 
   def validate: PartialFunction[ModelFeature, TransformSchemaError \/ TypedModelFeature] = {
-    case f@ModelFeature(_, _, _, e, Bins(_, _, _)) if inputDataType(e).isEmpty =>
-      ExtractColumnNotFound(e).left
+    case f@ModelFeature(_, _, _, _, Bins(_, _, _)) if featureDataType(f.feature).isEmpty =>
+      FeatureColumnNotFound(f.feature).left
 
-    case f@ModelFeature(_, _, _, e, Bins(_, _, _))
-      if inputDataType(e).isDefined && supportedDataTypes.contains(inputDataType(e).get) =>
-      TypedModelFeature(f, inputDataType(e).get).right
+    case f@ModelFeature(_, _, _, _, Bins(_, _, _))
+      if featureDataType(f.feature).isDefined && supportedDataTypes.contains(featureDataType(f.feature).get) =>
+      TypedModelFeature(f, featureDataType(f.feature).get).right
 
-    case f@ModelFeature(_, _, _, e, b@Bins(_, _, _)) =>
-      UnsupportedTransformDataType(e, inputDataType(e).get, b).left
+    case f@ModelFeature(_, _, _, _, b@Bins(_, _, _)) =>
+      UnsupportedTransformDataType(f.feature, featureDataType(f.feature).get, b).left
   }
 
   def transform(feature: TypedModelFeature): Seq[BinColumn] = {
     require(feature.feature.transform.isInstanceOf[Bins],
       s"Illegal transform type: ${feature.feature.transform}")
 
-    val ModelFeature(_, _, _, e, Bins(nbins, minPoints, minPct)) = feature.feature
+    val ModelFeature(_, _, f, _, Bins(nbins, minPoints, minPct)) = feature.feature
 
     log.info(s"Calculate bins transformation for feature: ${feature.feature.feature}. " +
       s"Bins: $nbins. " +
@@ -49,7 +49,7 @@ class BinsTransformer(input: DataFrame) extends Transformer(input) with Binner {
 
     val inputSize = input.count()
     val fraction = if (sampleSize >= inputSize) 1.0D else sampleSize / inputSize
-    val sample = input.select(e).sample(withReplacement = false, fraction)
+    val sample = input.select(f).sample(withReplacement = false, fraction)
 
     // Collect sample values
     val x = sample.collect().map {

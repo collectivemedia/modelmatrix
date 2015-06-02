@@ -12,7 +12,7 @@ class BinsTransformerSpec extends FlatSpec with TestSparkContext {
   val sqlContext = new SQLContext(sc)
 
   val schema = StructType(Seq(
-    StructField("ad_site", StringType),
+    StructField("adv_site", StringType),
     StructField("pct_click", DoubleType)
   ))
 
@@ -28,10 +28,11 @@ class BinsTransformerSpec extends FlatSpec with TestSparkContext {
   val isActive = true
   val withAllOther = true
 
-  val adSite = ModelFeature(isActive, "Ad", "ad_site", "ad_site", Bins(3, 0, 0))
+  val adSite = ModelFeature(isActive, "Ad", "ad_site", "adv_site", Bins(3, 0, 0))
   val sitePerformance = ModelFeature(isActive, "Site", "site_performance", "pct_click", Bins(3, 0, 0))
 
-  val transformer = new BinsTransformer(sqlContext.createDataFrame(sc.parallelize(input), schema))
+  val df = sqlContext.createDataFrame(sc.parallelize(input), schema)
+  val transformer = new BinsTransformer(Transformer.selectFeatures(df, Seq(adSite, sitePerformance)))
 
   "Bins Transformer" should "support integer typed model feature" in {
     val valid = transformer.validate(sitePerformance)
@@ -42,9 +43,9 @@ class BinsTransformerSpec extends FlatSpec with TestSparkContext {
     assert(columns.size == 3)
   }
 
-  it should "fail if column doesn't exists" in {
-    val failed = transformer.validate(sitePerformance.copy(extract = "site_ctr"))
-    assert(failed == TransformSchemaError.ExtractColumnNotFound("site_ctr").left)
+  it should "fail if feature column doesn't exists" in {
+    val failed = transformer.validate(sitePerformance.copy(feature = "site_clicks"))
+    assert(failed == TransformSchemaError.FeatureColumnNotFound("site_clicks").left)
   }
 
   it should "fail if column type is not supported" in {

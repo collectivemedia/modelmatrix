@@ -2,6 +2,8 @@ package com.collective.modelmatrix
 
 import com.collective.modelmatrix.transform.{Bins, Identity, Index, Top}
 import com.typesafe.config.ConfigFactory
+import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.catalyst.SqlParser
 import org.scalatest.FlatSpec
 
 import scalaz.syntax.validation._
@@ -56,6 +58,16 @@ class ModelFeatureSpec extends FlatSpec {
       "pct_clicks",
       Bins(10, 100, 1.0)
     ).successNel)
+  }
+
+  it should "parse extract expression" in {
+    val popDensity = ModelFeature.parse("pop_density", features.getConfig("pop_density"))
+    assert(popDensity.isSuccess)
+  }
+
+  it should "fail to parse bad extract expression" in {
+    val popDensity = ModelFeature.parse("pop_density_err", features.getConfig("pop_density_err"))
+    assert(popDensity.isFailure)
   }
 
   it should "parse deactivated feature" in {

@@ -1,9 +1,11 @@
 package com.collective.modelmatrix.cli.instance
 
+import com.collective.modelmatrix.ModelFeature
 import com.collective.modelmatrix.catalog.{ModelDefinitionFeature, ModelMatrixCatalog}
 import com.collective.modelmatrix.cli.{Source, _}
 import com.collective.modelmatrix.transform._
 import com.typesafe.config.Config
+import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.hive.HiveContext
 import org.slf4j.LoggerFactory
 
@@ -19,19 +21,34 @@ case class ValidateInputData(
 
   private val log = LoggerFactory.getLogger(classOf[ValidateInputData])
 
+  private implicit lazy val sqlContext = new HiveContext(sc)
+
   import com.collective.modelmatrix.cli.ASCIITableFormat._
   import com.collective.modelmatrix.cli.ASCIITableFormats._
 
-  private object Transformers {
-    implicit val sqlContext = new HiveContext(sc)
-    val input = source.asDataFrame
+  private class Transformers(input: DataFrame) {
+    private implicit val sqlContext = new HiveContext(sc)
 
-    val identity = new IdentityTransformer(input)
-    val top = new TopTransformer(input)
-    val index = new IndexTransformer(input)
+    private val identity = new IdentityTransformer(input)
+    private val top = new TopTransformer(input)
+    private val index = new IndexTransformer(input)
+    private val bins = new BinsTransformer(input)
+
+    private val unknownFeature: PartialFunction[ModelFeature, TransformSchemaError \/ TypedModelFeature] = {
+      case feature => sys.error(s"Feature can't be validated by any of transformers: $feature")
+    }
+
+    def validate(feature: ModelFeature): TransformSchemaError \/ TypedModelFeature =
+      (identity.validate orElse
+       top.validate orElse
+       index.validate orElse
+       bins.validate orElse
+       unknownFeature
+      )(feature)
   }
 
   def run(): Unit = {
+
     log.info(s"Validate input data against Model Matrix definition: $modelDefinitionId. " +
       s"Data source: $source. " +
       s"Database: $dbName @ ${dbConfig.origin()}")
@@ -40,10 +57,13 @@ case class ValidateInputData(
     require(features.nonEmpty, s"No active features are defined for model definition: $modelDefinitionId. " +
       s"Ensure that this model definition exists")
 
+    // Cache feature columns
+    val input = Transformer.selectFeatures(source.asDataFrame, features.map(_.feature)).cache()
+    val transformers = new Transformers(input)
 
-
+    // Validate each feature
     val validate = features.filter(_.feature.active).map { case mdf@ModelDefinitionFeature(_, _, feature) =>
-      mdf -> (Transformers.identity.validate orElse Transformers.top.validate orElse Transformers.index.validate)(feature)
+      mdf -> transformers.validate(feature)
     }
 
     // Print schema errors
