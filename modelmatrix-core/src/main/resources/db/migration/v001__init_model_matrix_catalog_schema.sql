@@ -102,8 +102,8 @@ CREATE TABLE mmc_instance_feature_bins_column (
     id                    INT NOT NULL UNIQUE DEFAULT nextval('mmc_instance_feature_bins_column_seq')
   , feature_instance_id   INT REFERENCES mmc_instance_feature (id)
   , column_id             INT NOT NULL
-  , low                   NUMERIC NOT NULL
-  , high                  NUMERIC NOT NULL
+  , low                   NUMERIC
+  , high                  NUMERIC
   , cnt                   INT NOT NULL
   , sample_size           INT NOT NULL
 );

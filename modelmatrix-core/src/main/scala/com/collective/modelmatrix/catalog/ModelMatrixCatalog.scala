@@ -233,13 +233,13 @@ trait ModelMatrixInstance { self: ModelMatrixCatalog =>
 
   // Bins columns
   private[catalog] class mmc_instance_feature_bins_column(tag: Tag)
-    extends Table[(Int, Int, Int, Double, Double, Long, Long)](tag, "mmc_instance_feature_bins_column") {
+    extends Table[(Int, Int, Int, Option[Double], Option[Double], Long, Long)](tag, "mmc_instance_feature_bins_column") {
 
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def featureInstanceId = column[Int]("feature_instance_id")
     def columnId = column[Int]("column_id")
-    def low = column[Double]("low")
-    def high = column[Double]("high")
+    def low = column[Option[Double]]("low")
+    def high = column[Option[Double]]("high")
     def count = column[Long]("cnt")
     def sample_size = column[Long]("sample_size")
 

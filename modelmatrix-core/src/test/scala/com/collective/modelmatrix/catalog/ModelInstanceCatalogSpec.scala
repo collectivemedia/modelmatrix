@@ -79,8 +79,9 @@ trait ModelInstanceCatalogSpec extends FlatSpec with GivenWhenThen with BeforeAn
     )
 
     val binsColumns = Seq(
-      BinColumn(8, 0.1, 0.8, 100, 200),
-      BinColumn(9, 0.8, 2.4, 100, 200)
+      BinColumn.LowerBin(8, 0.8, 100, 300),
+      BinColumn.BinValue(9, 0.8, 2.4, 100, 300),
+      BinColumn.UpperBin(10, 2.4, 100, 300)
     )
 
     val insert = for {
@@ -100,7 +101,7 @@ trait ModelInstanceCatalogSpec extends FlatSpec with GivenWhenThen with BeforeAn
     val instance = instanceO.get
     assert(instance.createdAt == now)
     assert(instance.features == 4)
-    assert(instance.columns == 9)
+    assert(instance.columns == 10)
 
     And("find model instance by id")
     val foundById = await(db.run(modelInstances.findById(modelInstanceId)))

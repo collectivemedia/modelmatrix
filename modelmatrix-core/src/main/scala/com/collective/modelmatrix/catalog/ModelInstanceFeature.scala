@@ -162,8 +162,12 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
       featureInstanceId <- (featureInstances returning featureInstances.map(_.id)) +=
         ((AutoIncId, modelInstanceId, featureDefinitionId, extractType))
       _ <- DBIO.sequence(columns.map {
-        case BinColumn(columnId, low, high, count, sampleSize) =>
-          binsColumns +=(AutoIncId, featureInstanceId, columnId, low, high, count, sampleSize)
+        case BinColumn.LowerBin(columnId, high, count, sampleSize) =>
+          binsColumns +=(AutoIncId, featureInstanceId, columnId, None, Some(high), count, sampleSize)
+        case BinColumn.UpperBin(columnId, low, count, sampleSize) =>
+          binsColumns +=(AutoIncId, featureInstanceId, columnId, Some(low), None, count, sampleSize)
+        case BinColumn.BinValue(columnId, low, high, count, sampleSize) =>
+          binsColumns +=(AutoIncId, featureInstanceId, columnId, Some(low), Some(high), count, sampleSize)
       })
     } yield featureInstanceId
   }
@@ -215,11 +219,17 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
       sys.error(s"Wrong source name and value pair. Name: $sourceName. Value: $sourceValue")
   }
 
-  private type BinsColumnRecord = (Int, Int, Int, Double, Double, Long, Long)
+  private type BinsColumnRecord = (Int, Int, Int, Option[Double], Option[Double], Long, Long)
 
   private def toBinColumn: BinsColumnRecord => BinColumn = {
-    case (_, _, columnId, low, high, count, sampleSize) =>
-      BinColumn(columnId, low, high, count, sampleSize)
+    case (_, _, columnId, None, Some(high), count, sampleSize) =>
+      BinColumn.LowerBin(columnId, high, count, sampleSize)
+    case (_, _, columnId, Some(low), None, count, sampleSize) =>
+      BinColumn.UpperBin(columnId, low, count, sampleSize)
+    case (_, _, columnId, Some(low), Some(high), count, sampleSize) =>
+      BinColumn.BinValue(columnId, low, high, count, sampleSize)
+    case error =>
+      sys.error(s"Usupported bins columns record: $error")
   }
   
   private def topFeatures(modelInstanceId: Int): DBIO[Seq[ModelInstanceTopFeature]] = {
