@@ -29,15 +29,12 @@ and later pass additional options to CLI:
 
 #### List available model matrix definitions
 
-    ./mm definition list
+    ./mm definition list [--name <name>]
 
-#### Find model matrix definition by name
-
-    ./mm definition find <name>
-    
 #### View model matrix definition
 
-    ./mm definition view <model-definition-id>    
+    ./mm definition view features <model-definition-id>    
+    ./mm definition view source <model-definition-id>
          
 #### Validate model matrix definition config
 
@@ -59,13 +56,13 @@ and later pass additional options to CLI:
     ./mm definition validate ./model-matrix-v123.conf
     
     # Create new definition if it's valid
-    ./mm definition add --name "v123" --comment "testing new model" ./model-matrix-v123.conf
+    ./mm definition add --name "v123" --comment "testing" ./model-matrix-v123.conf
     
     # Check that it appears in list of all definitions
     ./mm definition list
     
     # Find it by name
-    ./mm definition find v123
+    ./mm definition list --name v123
     
     # View feature definitions
     ./mm definitions view <model-definition-id> # id returned from 'add' command
@@ -74,12 +71,8 @@ and later pass additional options to CLI:
 
 #### List available model matrix instances
 
-    ./mm instance list
+    ./mm instance list [--name <name>] [--definition <model-definition-id>]
 
-#### Find model matrix instance by name
-
-    ./mm instance find <name>
-    
 #### View model matrix instance features
 
     ./mm instance view features <model-instance-id>    
@@ -122,7 +115,7 @@ Check that input data compatible with model definition and can be used to build 
     ./mm instance list
     
     # Find it by name
-    ./mm instance find 2015-05
+    ./mm instance list --name 2015-05
     
     # View features 
     ./mm instance view features <id> # id returned from 'create' command
