@@ -33,6 +33,7 @@ object ModelFeature {
         case "identity"  => Transform.identity(config)
         case "top"       => Transform.top(config)
         case "index"     => Transform.index(config)
+        case "bins"      => Transform.bins(config)
         case unknown     => s"Unknown transform type: $unknown".failureNel
       })
 

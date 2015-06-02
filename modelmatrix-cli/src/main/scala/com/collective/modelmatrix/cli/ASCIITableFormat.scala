@@ -53,6 +53,7 @@ object ASCIITableFormats {
     case Identity => ""
     case Top(p, ao) => s"cover = $p; allOther = $ao"
     case Index(p, ao) => s"support = $p; allOther = $ao"
+    case Bins(nbins, p, pct) => s"nbins = $nbins; minpts = $p; minpct = $pct"
   }
 
   implicit val modelFeatureFormat: ASCIITableFormat[ModelFeature] =
