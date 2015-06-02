@@ -48,29 +48,33 @@ object ModelMatrixCli extends App {
     cmd("definition").text("manipulate model matrix definitions:").children(
 
       cmd("list").text("list available model matrix definitions")
-        .action((_, _) => definition.ListDefinitions(defaultDbName, defaultDbConfig))
+        .action((_, _) => definition.ListDefinitions(defaultMMName, defaultDbName, defaultDbConfig))
         .children(
           overrideDbName(dbName => (_: definition.ListDefinitions).copy(dbName = dbName)),
-          overrideDbConfig(dbConf => (_: definition.ListDefinitions).copy(dbConfig = dbConf))
+          overrideDbConfig(dbConf => (_: definition.ListDefinitions).copy(dbConfig = dbConf)),
+          opt[String]('n', "name").optional().text("filter by model definition name")
+            .action { (n, s) => s.as[definition.ListDefinitions].copy(name = Some(n))}
         ),
 
-      cmd("find").text("find model matrix definitions by name")
-        .action((_, _) => definition.FindByName("", defaultDbName, defaultDbConfig))
-        .children(
-          overrideDbName(dbName => (_: definition.FindByName).copy(dbName = dbName)),
-          overrideDbConfig(dbConf => (_: definition.FindByName).copy(dbConfig = dbConf)),
-          arg[String]("<name>").required().text("model matrix user defined name")
-            .action { (n, s) => s.as[definition.FindByName].copy(n) }
-        ),
+      cmd("view").children(
+        cmd("features").text("view model matrix definitions features")
+          .action((_, _) => definition.ViewFeatures(-1, defaultDbName, defaultDbConfig))
+          .children(
+            overrideDbName(dbName => (_: definition.ViewFeatures).copy(dbName = dbName)),
+            overrideDbConfig(dbConf => (_: definition.ViewFeatures).copy(dbConfig = dbConf)),
+            arg[Int]("<model-definition-id>").required().text("model matrix definition id")
+              .action { (id, s) => s.as[definition.ViewFeatures].copy(id) }
+          ),
 
-      cmd("view").text("find model matrix definitions for given id")
-        .action((_, _) => definition.ViewDefinition(-1, defaultDbName, defaultDbConfig))
-        .children(
-          overrideDbName(dbName => (_: definition.ViewDefinition).copy(dbName = dbName)),
-          overrideDbConfig(dbConf => (_: definition.ViewDefinition).copy(dbConfig = dbConf)),
-          arg[Int]("<model-definition-id>").required().text("model matrix definition id")
-            .action { (id, s) => s.as[definition.ViewDefinition].copy(id) }
-        ),
+        cmd("source").text("view model matrix definitions source")
+          .action((_, _) => definition.ViewSource(-1, defaultDbName, defaultDbConfig))
+          .children(
+            overrideDbName(dbName => (_: definition.ViewSource).copy(dbName = dbName)),
+            overrideDbConfig(dbConf => (_: definition.ViewSource).copy(dbConfig = dbConf)),
+            arg[Int]("<model-definition-id>").required().text("model matrix definition id")
+              .action { (id, s) => s.as[definition.ViewSource].copy(id) }
+          )
+      ),
 
       cmd("validate").text("validate model matrix configuration")
         .action((_, _) => definition.ValidateConfig(defaultMMConfig, defaultMMFeatures))
@@ -111,21 +115,14 @@ object ModelMatrixCli extends App {
     cmd("instance").text("manipulate model matrix instances:").children(
 
       cmd("list").text("list model matrix instances")
-        .action((_, _) => instance.ListInstances(None, defaultDbName, defaultDbConfig))
+        .action((_, _) => instance.ListInstances(None, None, defaultDbName, defaultDbConfig))
         .children(
           overrideDbName(dbName => (_: instance.ListInstances).copy(dbName = dbName)),
           overrideDbConfig(dbConf => (_: instance.ListInstances).copy(dbConfig = dbConf)),
-          opt[Int]('d', "definition").optional().text("model definition id")
-            .action { (d, s) => s.asInstanceOf[instance.ListInstances].copy(modelDefinitionId = Some(d)) }
-        ),
-
-      cmd("find").text("find model matrix instances by name")
-        .action((_, _) => instance.FindByName("", defaultDbName, defaultDbConfig))
-        .children(
-          overrideDbName(dbName => (_: instance.FindByName).copy(dbName = dbName)),
-          overrideDbConfig(dbConf => (_: instance.FindByName).copy(dbConfig = dbConf)),
-          arg[String]("<name>").required().text("model matrix user defined name")
-            .action { (n, s) => s.as[instance.FindByName].copy(n) }
+          opt[Int]('d', "definition").optional().text("filter by model definition id")
+            .action { (d, s) => s.asInstanceOf[instance.ListInstances].copy(modelDefinitionId = Some(d)) },
+          opt[String]('n', "name").optional().text("filter by model instance name")
+            .action { (n, s) => s.asInstanceOf[instance.ListInstances].copy(name = Some(n)) }
         ),
 
       cmd("view").children(

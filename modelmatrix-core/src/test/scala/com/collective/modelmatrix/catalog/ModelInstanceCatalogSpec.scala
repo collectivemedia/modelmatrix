@@ -108,8 +108,12 @@ trait ModelInstanceCatalogSpec extends FlatSpec with GivenWhenThen with BeforeAn
     assert(foundById == instanceO)
 
     And("find model instance by name")
-    val foundByName = await(db.run(modelInstances.findByName(s"instance=${now.toEpochMilli}"))).headOption
+    val foundByName = await(db.run(modelInstances.list(name = Some(s"instance=${now.toEpochMilli}")))).headOption
     assert(foundByName == instanceO)
+
+    And("find model instance by definition id")
+    val foundByDefinition = await(db.run(modelInstances.list(definitionId = Some(modelDefinitionId)))).headOption
+    assert(foundByDefinition == instanceO)
 
     And("read model instance columns")
     val features = await(db.run(modelInstanceFeatures.features(modelInstanceId)))

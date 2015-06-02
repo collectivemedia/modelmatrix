@@ -61,7 +61,7 @@ trait ModelDefinitionCatalogSpec extends FlatSpec with GivenWhenThen with Before
     assert(foundById == modelO)
 
     And("find model definition by name")
-    val foundByName = await(db.run(modelDefinitions.findByName(s"name=${now.toEpochMilli}"))).headOption
+    val foundByName = await(db.run(modelDefinitions.list(name = Some(s"name=${now.toEpochMilli}")))).headOption
     assert(foundByName == modelO)
 
     And("read all model features by model definition id")

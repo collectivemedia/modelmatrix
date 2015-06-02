@@ -62,8 +62,11 @@ class ModelInstances(val catalog: ModelMatrixCatalog)(implicit val ec: Execution
     q(modelInstances.filter(_.id === id)).map(_.headOption)
   }
 
-  def findByName(name: String): DBIO[Seq[ModelInstance]] = {
-    q(modelInstances.filter(_.name like s"%$name%"))
+  def list(definitionId: Option[Int] = None, name: Option[String] = None): DBIO[Seq[ModelInstance]] = {
+    var m: catalog.modelInstancesT = modelInstances
+    definitionId.foreach(id => m = m.filter(_.modelDefinitionId === id))
+    name.foreach(n => m = m.filter(_.name like s"%$n%"))
+    q(m)
   }
 
   def add(
