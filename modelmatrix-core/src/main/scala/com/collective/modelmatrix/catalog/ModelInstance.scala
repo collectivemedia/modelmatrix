@@ -30,18 +30,24 @@ class ModelInstances(val catalog: ModelMatrixCatalog)(implicit val ec: Execution
 
     val grouped = (for {
       m <- instances
-      (((f, idCol), topCol), indCol) <- featureInstances
+      ((((f, idCol), topCol), indCol), binCol) <- featureInstances
         .joinLeft(identityColumns).on(_.id === _.featureInstanceId)
         .joinLeft(topColumns).on(_._1.id === _.featureInstanceId)
-        .joinLeft(indexColumns).on(_._1._1.id === _.featureInstanceId) if f.modelInstanceId === m.id
-    } yield (m, f, idCol, topCol, indCol)).groupBy(t => t._1.*)
+        .joinLeft(indexColumns).on(_._1._1.id === _.featureInstanceId)
+        .joinLeft(binsColumns).on(_._1._1._1.id === _.featureInstanceId)
+      if f.modelInstanceId === m.id
+    } yield (m, f, idCol, topCol, indCol, binCol)).groupBy(t => t._1.*)
 
     val counted = grouped.map { case (model, group) =>
+
       val features = group.map(_._2).map(_.featureDefinitionId).countDistinct
       val identityColumns = group.map(_._3).length
       val topColumns = group.map(_._4).length
       val indexColumns = group.map(_._5).length
-      (model._1, model._2, model._3, model._4, model._5, model._6, features, identityColumns + topColumns + indexColumns)
+      val binsColumns = group.map(_._6).length
+
+      val nColumns = identityColumns + topColumns + indexColumns + binsColumns
+      (model._1, model._2, model._3, model._4, model._5, model._6, features, nColumns)
     }
 
     counted.result.map(_.map(ModelInstance.tupled)).map(_.sortBy(_.id))

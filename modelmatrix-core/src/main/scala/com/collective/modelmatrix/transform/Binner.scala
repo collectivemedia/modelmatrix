@@ -123,7 +123,15 @@ trait Binner {
     }
   }
 
-  def optimalSplit(x: Array[Double], targetBins: Int, minPoints: Int = 0, minPct: Double = 0, maxIter: Int = 100, m: Int = 3): Seq[Bin] = {
+  def optimalSplit(
+    x: Array[Double],
+    targetBins: Int,
+    minPoints: Int = 0,
+    minPct: Double = 0,
+    maxIter: Int = 100,
+    m: Int = 3
+  ): Seq[Bin] = {
+
     require(targetBins >= 2, s"Target bins should greater or equal 2")
 
     val lbfgs = new LBFGS[DenseVector[Double]](maxIter, m)

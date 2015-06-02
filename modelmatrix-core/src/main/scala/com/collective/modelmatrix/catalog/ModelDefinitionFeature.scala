@@ -1,7 +1,7 @@
 package com.collective.modelmatrix.catalog
 
 import com.collective.modelmatrix.ModelFeature
-import com.collective.modelmatrix.transform.{Index, Top, Identity, Transform}
+import com.collective.modelmatrix.transform._
 import org.slf4j.LoggerFactory
 import scala.concurrent.ExecutionContext
 import scalaz.{Tag, @@}
@@ -27,7 +27,8 @@ class ModelDefinitionFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: 
       id <- identityFeatures(modelDefinitionId)
       top <- topFeatures(modelDefinitionId)
       idx <- indexFeatures(modelDefinitionId)
-    } yield id ++ top ++ idx
+      bins <- binsFeatures(modelDefinitionId)
+    } yield id ++ top ++ idx ++ bins
 
     features.map(_.sortBy(_.id))
   }
@@ -52,6 +53,13 @@ class ModelDefinitionFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: 
           featureId <- (featureDefinitions returning featureDefinitions.map(_.id)) +=
             ((AutoIncId, modelDefinitionId, active, group, feature, extract, index.stringify))
           _ <- indexParameters += (AutoIncId, featureId, index.support, index.allOther)
+        } yield featureId
+
+      case ModelFeature(active, group, feature, extract, bins: Bins) =>
+        for {
+          featureId <- (featureDefinitions returning featureDefinitions.map(_.id)) +=
+            ((AutoIncId, modelDefinitionId, active, group, feature, extract, bins.stringify))
+          _ <- binsParameters += (AutoIncId, featureId, bins.nbins, bins.minPoints, bins.minPercents)
         } yield featureId
     }
 
@@ -108,5 +116,24 @@ class ModelDefinitionFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: 
 
     q.result.map(_.map(extract))
   }
+
+  private def binsFeatures(modelDefinitionId: Int): DBIO[Seq[ModelDefinitionFeature]] = {
+    type Out = (Int, Int, Boolean, String, String, String, String, Int, Int, Double)
+
+    val extract: Out => ModelDefinitionFeature = {
+      case (id, modelDefId, active, group, feature, ex, transform, nbins, minPoints, minPct) =>
+        ModelDefinitionFeature(id, modelDefId, ModelFeature(active, group, feature, ex, Bins(nbins, minPoints, minPct)))
+    }
+
+    val q = for {
+      f <- featureDefinitions
+        .filter(_.modelDefinitionId === modelDefinitionId)
+        .filter(_.transform === Transform.nameOf[Bins])
+      p <- binsParameters if f.id === p.featureDefinitionId
+    } yield (f.id, f.modelDefinitionId, f.active, f.group, f.feature, f.extract, f.transform, p.nbins, p.min_points, p.min_pct)
+
+    q.result.map(_.map(extract))
+  }
+
 
 }

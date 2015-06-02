@@ -44,7 +44,7 @@ case class Index(support: Double, allOther: Boolean) extends Transform
  * @param minPercents minimum percent of points in a bin (0-100).
  *                    The larger of absolute number and percent points is used.
  */
-case class Bins(nbins: Int, minPoints: Long = 0, minPercents: Double = 0.0) extends Transform
+case class Bins(nbins: Int, minPoints: Int = 0, minPercents: Double = 0.0) extends Transform
 
 object Transform {
   def nameOf[T <: Transform : TransformName]: String = implicitly[TransformName[T]].name
@@ -134,7 +134,7 @@ object Transform {
   private object BinsParser extends Parser[Bins]("bins") {
     def parse(config: Config): ValidationNel[String, Bins] = {
       implicit val cfg = config
-      (integer("nbins") |@| long("minpts") |@| double("minpct"))(Bins.apply)
+      (integer("nbins") |@| integer("minpts") |@| double("minpct"))(Bins.apply)
     }
   }
 

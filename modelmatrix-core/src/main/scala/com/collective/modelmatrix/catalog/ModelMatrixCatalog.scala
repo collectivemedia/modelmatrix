@@ -21,12 +21,14 @@ class ModelMatrixCatalog(private[catalog] val driver: JdbcProfile)
     val featureDefinitions = TableQuery[mmc_definition_feature]
     val topParameters = TableQuery[mmc_definition_feature_top_param]
     val indexParameters = TableQuery[mmc_definition_feature_index_param]
+    val binsParameters = TableQuery[mmc_definition_feature_bins_param]
 
     val modelInstances = TableQuery[mmc_instance]
     val featureInstances = TableQuery[mmc_instance_feature]
     val identityColumns = TableQuery[mmc_instance_feature_identity_column]
     val topColumns = TableQuery[mmc_instance_feature_top_column]
     val indexColumns = TableQuery[mmc_instance_feature_index_column]
+    val binsColumns = TableQuery[mmc_instance_feature_bins_column]
 
   }
 
@@ -37,11 +39,13 @@ class ModelMatrixCatalog(private[catalog] val driver: JdbcProfile)
     tables.featureDefinitions.schema.create >>
     tables.topParameters.schema.create      >>
     tables.indexParameters.schema.create    >>
+    tables.binsParameters.schema.create     >>
     tables.modelInstances.schema.create     >>
     tables.featureInstances.schema.create   >>
     tables.identityColumns.schema.create    >>
     tables.topColumns.schema.create         >>
-    tables.indexColumns.schema.create
+    tables.indexColumns.schema.create       >>
+    tables.binsColumns.schema.create
   }
 
 }
@@ -115,6 +119,23 @@ trait ModelMatrixDefinition { self: ModelMatrixCatalog =>
     // Foreign kew that can be navigated to crete a join
     def featureDefinition = foreignKey("mmc_definition_feature_index_param_fk", featureDefinitionId, tables.featureDefinitions)(_.id)
   }
+
+  // Bins transform parameters
+  private[catalog] class mmc_definition_feature_bins_param(tag: Tag)
+    extends Table[(Int, Int, Int, Int, Double)](tag, "mmc_definition_feature_bins_param") {
+
+    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
+    def featureDefinitionId = column[Int]("feature_definition_id")
+    def nbins = column[Int]("nbins")
+    def min_points = column[Int]("min_points")
+    def min_pct = column[Double]("min_pct")
+
+    def * = (id, featureDefinitionId, nbins, min_points, min_pct)
+
+    // Foreign kew that can be navigated to crete a join
+    def featureDefinition = foreignKey("mmc_definition_feature_bins_param_fk", featureDefinitionId, tables.featureDefinitions)(_.id)
+  }
+
 
   // Type gymnastics
   private[catalog] type modelDefinitionsT = slick.lifted.Query[mmc_definition,(Int, Option[String], String, String, java.time.Instant, Option[String]),Seq]
@@ -208,6 +229,24 @@ trait ModelMatrixInstance { self: ModelMatrixCatalog =>
 
     // Foreign kew that can be navigated to crete a join
     def featureDefinition = foreignKey("mmc_instance_feature_index_column_fk", featureInstanceId, tables.featureInstances)(_.id)
+  }
+
+  // Bins columns
+  private[catalog] class mmc_instance_feature_bins_column(tag: Tag)
+    extends Table[(Int, Int, Int, Double, Double, Long, Long)](tag, "mmc_instance_feature_bins_column") {
+
+    def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
+    def featureInstanceId = column[Int]("feature_instance_id")
+    def columnId = column[Int]("column_id")
+    def low = column[Double]("low")
+    def high = column[Double]("high")
+    def count = column[Long]("cnt")
+    def sample_size = column[Long]("sample_size")
+
+    def * = (id, featureInstanceId, columnId, low, high, count, sample_size)
+
+    // Foreign kew that can be navigated to crete a join
+    def featureDefinition = foreignKey("mmc_instance_feature_bins_column_fk", featureInstanceId, tables.featureInstances)(_.id)
   }
 
   // Type gymnastics

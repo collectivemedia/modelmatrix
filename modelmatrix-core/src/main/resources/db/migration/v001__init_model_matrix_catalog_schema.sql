@@ -4,6 +4,7 @@ CREATE SEQUENCE mmc_definition_seq;
 CREATE SEQUENCE mmc_definition_feature_seq;
 CREATE SEQUENCE mmc_definition_feature_top_param_seq;
 CREATE SEQUENCE mmc_definition_feature_index_param_seq;
+CREATE SEQUENCE mmc_definition_feature_bins_param_seq;
 
 CREATE TABLE mmc_definition (
     id         INT NOT NULL UNIQUE DEFAULT nextval('mmc_definition_seq')
@@ -38,6 +39,14 @@ CREATE TABLE mmc_definition_feature_index_param (
   , all_other             BOOLEAN NOT NULL
 );
 
+CREATE TABLE mmc_definition_feature_bins_param (
+    id                    INT NOT NULL UNIQUE DEFAULT nextval('mmc_definition_feature_bins_param_seq')
+  , feature_definition_id INT REFERENCES mmc_definition_feature (id)
+  , nbins                 INT NOT NULL
+  , min_points            INT NOT NULL
+  , min_pct               INT NOT NULL
+);
+
 -- Model Matrix Instances
 
 CREATE SEQUENCE mmc_instance_seq;
@@ -45,6 +54,7 @@ CREATE SEQUENCE mmc_instance_feature_seq;
 CREATE SEQUENCE mmc_instance_feature_identity_column_seq;
 CREATE SEQUENCE mmc_instance_feature_top_column_seq;
 CREATE SEQUENCE mmc_instance_feature_index_column_seq;
+CREATE SEQUENCE mmc_instance_feature_bins_column_seq;
 
 CREATE TABLE mmc_instance (
     id                  INT NOT NULL UNIQUE DEFAULT nextval('mmc_instance_seq')
@@ -86,4 +96,14 @@ CREATE TABLE mmc_instance_feature_index_column (
   , source_value          BYTEA
   , cnt                   INT NOT NULL
   , cumulative_cnt        INT NOT NULL
+);
+
+CREATE TABLE mmc_instance_feature_bins_column (
+    id                    INT NOT NULL UNIQUE DEFAULT nextval('mmc_instance_feature_bins_column_seq')
+  , feature_instance_id   INT REFERENCES mmc_instance_feature (id)
+  , column_id             INT NOT NULL
+  , low                   NUMERIC NOT NULL
+  , high                  NUMERIC NOT NULL
+  , cnt                   INT NOT NULL
+  , sample_size           INT NOT NULL
 );

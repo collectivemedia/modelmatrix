@@ -2,9 +2,11 @@ package com.collective.modelmatrix.cli
 
 import com.bethecoder.ascii_table.{ASCIITable, ASCIITableHeader}
 import com.collective.modelmatrix.CategorialColumn.{AllOther, CategorialValue}
-import com.collective.modelmatrix.{FeatureSchemaError, CategorialColumn, ModelFeature}
+import com.collective.modelmatrix.{BinColumn, FeatureSchemaError, CategorialColumn, ModelFeature}
 import com.collective.modelmatrix.catalog._
 import com.collective.modelmatrix.transform._
+
+import scalaz.{\/-, -\/, \/}
 
 
 abstract class ASCIITableFormat[T](val header: Array[ASCIITableHeader]) {
@@ -130,9 +132,21 @@ object ASCIITableFormats {
           case f: ModelInstanceIdentityFeature => "1"
           case f: ModelInstanceTopFeature => f.columns.size.toString
           case f: ModelInstanceIndexFeature => f.columns.size.toString
+          case f: ModelInstanceBinsFeature => f.columns.size.toString
         }
       )
     }
+
+  private def formatBinColumn(feature: ModelFeature)(column: BinColumn): Array[String] = {
+      Array(
+        column.columnId.toString,
+        feature.feature,
+        feature.transform.stringify,
+        s"[${column.low}, ${column.high})",
+        column.count.toString,
+        column.sampleSize.toString
+      )
+  }
 
   private def formatCategorialColumn(feature: ModelFeature)(column: CategorialColumn): Array[String] = column match {
     case value: CategorialValue =>
@@ -156,9 +170,11 @@ object ASCIITableFormats {
       )
   }
 
-  implicit val modelInstanceFeatureColumnsFormat: ASCIITableFormat[(ModelInstanceFeature, Option[CategorialColumn])] =
-    ASCIITableFormat[(ModelInstanceFeature, Option[CategorialColumn])](
-      "Columns Id", "Feature", "Transform", "Source Name".dataLeftAligned, "Count", "Cumulative Count"
+  type InstanceFeature = (ModelInstanceFeature, Option[CategorialColumn \/ BinColumn])
+
+  implicit val modelInstanceFeatureColumnsFormat: ASCIITableFormat[InstanceFeature] =
+    ASCIITableFormat[InstanceFeature](
+      "Columns Id", "Feature", "Transform", "Name".dataLeftAligned, "Count", "Cumulative Count / Sample Size"
     ) {
       case (f@ModelInstanceIdentityFeature(_, _, _, _, columnId), None) =>
         Array(
@@ -168,8 +184,9 @@ object ASCIITableFormats {
           f.feature.extract,
           "", ""
         )
-      case (f@ModelInstanceTopFeature(_, _, _, _, _), Some(col)) => formatCategorialColumn(f.feature)(col)
-      case (f@ModelInstanceIndexFeature(_, _, _, _, _), Some(col)) => formatCategorialColumn(f.feature)(col)
+      case (f@ModelInstanceTopFeature(_, _, _, _, _), Some(-\/(col))) => formatCategorialColumn(f.feature)(col)
+      case (f@ModelInstanceIndexFeature(_, _, _, _, _), Some(-\/(col))) => formatCategorialColumn(f.feature)(col)
+      case (f@ModelInstanceBinsFeature(_, _, _, _, _), Some(\/-(col))) => formatBinColumn(f.feature)(col)
       case (f, col) => sys.error(s"Unsupported feature: $f column: $col")
     }
 

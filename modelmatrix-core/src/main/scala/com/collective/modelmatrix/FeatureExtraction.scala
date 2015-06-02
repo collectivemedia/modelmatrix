@@ -3,7 +3,7 @@ package com.collective.modelmatrix
 import java.nio.ByteBuffer
 
 import com.collective.modelmatrix.CategorialColumn.{AllOther, CategorialValue}
-import com.collective.modelmatrix.catalog.{ModelInstanceFeature, ModelInstanceIdentityFeature, ModelInstanceIndexFeature, ModelInstanceTopFeature}
+import com.collective.modelmatrix.catalog._
 import org.apache.spark.mllib.linalg.{Vectors, Vector}
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Column, Row, DataFrame}
@@ -52,6 +52,7 @@ class FeatureExtraction(features: Seq[ModelInstanceFeature]) extends Serializabl
     case ModelInstanceIdentityFeature(_, _, _, _, columnId) => Seq(columnId)
     case ModelInstanceTopFeature(_, _, _, _, cols) => cols.map(_.columnId)
     case ModelInstanceIndexFeature(_, _, _, _, cols) => cols.map(_.columnId)
+    case ModelInstanceBinsFeature(_, _, _, _, cols) => cols.map(_.columnId)
   }.max
 
   type FeatureColumnId = (ModelFeature, Int)
@@ -116,6 +117,8 @@ class FeatureExtraction(features: Seq[ModelInstanceFeature]) extends Serializabl
           categorialColumn(row)(f, featuresColumnIdx(f), tpe, cols).toSeq
         case ModelInstanceIndexFeature(_, _, f, tpe, cols) =>
           categorialColumn(row)(f, featuresColumnIdx(f), tpe, cols).toSeq
+        case ModelInstanceBinsFeature(_, _, f, tpe, cols) =>
+          binColumn(row)(f, featuresColumnIdx(f), tpe, cols).toSeq
       }
 
       // Column values 1-based and Vector values are 0-based
@@ -161,6 +164,25 @@ class FeatureExtraction(features: Seq[ModelInstanceFeature]) extends Serializabl
     val allOther = columns.collect { case AllOther(columnId, _, _) => columnId }
     
     (categorialColumn ++ allOther).headOption.map((_, 1.0D))
+  }
+
+  private def binColumn(row: Row)(
+    feature: ModelFeature,
+    idx: Int,
+    extractType: DataType,
+    columns: Seq[BinColumn]
+  ): Option[(Int, Double)] = {
+
+    // Get numeric representation of extracted feature
+    val value = extractType match {
+      case ShortType => row.getShort(idx).toDouble
+      case IntegerType => row.getInt(idx).toDouble
+      case LongType => row.getLong(idx).toDouble
+      case DoubleType => row.getDouble(idx)
+      case tpe => sys.error(s"Unsupported bin extract type: $tpe. Feature: ${feature.feature}. Columns: ${columns.size}")
+    }
+
+    columns.filter(_.fallIntoThisBin(value)).map(_.columnId).map((_, 1.0D)).headOption
   }
 
   private def formatFeatureErrors(errors: Seq[FeatureSchemaError]): String = {

@@ -3,7 +3,7 @@ package com.collective.modelmatrix.catalog
 import java.time.Instant
 
 import com.collective.modelmatrix.ModelFeature
-import com.collective.modelmatrix.transform.{Index, Top, Identity}
+import com.collective.modelmatrix.transform.{Bins, Index, Top, Identity}
 import org.scalatest.{GivenWhenThen, BeforeAndAfterAll, FlatSpec}
 
 class H2ModelDefinitionCatalogSpec extends ModelDefinitionCatalogSpec with H2Database
@@ -25,6 +25,7 @@ trait ModelDefinitionCatalogSpec extends FlatSpec with GivenWhenThen with Before
     val identity = ModelFeature(isActive, "Advertisement", "ad_size", "size", Identity)
     val top = ModelFeature(isActive, "Advertisement", "ad_type", "type", Top(95, addAllOther))
     val index = ModelFeature(isActive, "Advertisement", "ad_network", "network", Index(0.5, addAllOther))
+    val bins = ModelFeature(isActive, "Advertisement", "ad_performance", "pct_clicks", Bins(5, 0, 0))
 
     And("model definition")
     val addModelDefinition = modelDefinitions.add(
@@ -39,11 +40,11 @@ trait ModelDefinitionCatalogSpec extends FlatSpec with GivenWhenThen with Before
 
     val insert = for {
       id <- addModelDefinition
-      featureId <- modelDefinitionFeatures.addFeatures(id, identity, top, index)
+      featureId <- modelDefinitionFeatures.addFeatures(id, identity, top, index, bins)
     } yield (id, featureId)
 
     val (modelDefinitionId, featuresId) = await(db.run(insert))
-    assert(featuresId.size == 3)
+    assert(featuresId.size == 4)
 
     And("read saved model")
 
@@ -53,7 +54,7 @@ trait ModelDefinitionCatalogSpec extends FlatSpec with GivenWhenThen with Before
     val model = modelO.get
     assert(model.createdBy == "ModelDefinitionFeaturesSpec")
     assert(model.createdAt == now)
-    assert(model.features == 3)
+    assert(model.features == 4)
 
     And("find model definitions by id")
     val foundById = await(db.run(modelDefinitions.findById(modelDefinitionId)))
@@ -67,10 +68,11 @@ trait ModelDefinitionCatalogSpec extends FlatSpec with GivenWhenThen with Before
     val features = await(db.run(modelDefinitionFeatures.features(modelDefinitionId)))
     val featureMap = features.map(f => f.feature.feature -> f.feature).toMap
 
-    assert(features.size == 3)
+    assert(features.size == 4)
     assert(featureMap("ad_size") == identity)
     assert(featureMap("ad_type") == top)
     assert(featureMap("ad_network") == index)
+    assert(featureMap("ad_performance") == bins)
   }
 
 }
