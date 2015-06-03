@@ -1,17 +1,17 @@
 package com.collective.modelmatrix.transform
 
 import com.collective.modelmatrix.BinColumn.BinValue
-import com.collective.modelmatrix.transform.TransformSchemaError.{ExtractColumnNotFound, UnsupportedTransformDataType}
+import com.collective.modelmatrix.transform.TransformSchemaError.{FeatureColumnNotFound, UnsupportedTransformDataType}
 import com.collective.modelmatrix.{BinColumn, ModelFeature}
 import com.typesafe.config.ConfigFactory
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types._
 import org.slf4j.LoggerFactory
 
-import scalaz.\/
+import scalaz._
 import scalaz.syntax.either._
 
-class BinsTransformer(input: DataFrame) extends Transformer(input) with Binner {
+class BinsTransformer(input: DataFrame @@ Transformer.Features) extends Transformer(input) with Binner {
 
   private val log = LoggerFactory.getLogger(classOf[BinsTransformer])
 
@@ -24,22 +24,22 @@ class BinsTransformer(input: DataFrame) extends Transformer(input) with Binner {
   protected case class Scan(columnId: Int = 0, columns: Seq[BinValue] = Seq.empty)
 
   def validate: PartialFunction[ModelFeature, TransformSchemaError \/ TypedModelFeature] = {
-    case f@ModelFeature(_, _, _, e, Bins(_, _, _)) if inputDataType(e).isEmpty =>
-      ExtractColumnNotFound(e).left
+    case f@ModelFeature(_, _, _, _, Bins(_, _, _)) if featureDataType(f.feature).isEmpty =>
+      FeatureColumnNotFound(f.feature).left
 
-    case f@ModelFeature(_, _, _, e, Bins(_, _, _))
-      if inputDataType(e).isDefined && supportedDataTypes.contains(inputDataType(e).get) =>
-      TypedModelFeature(f, inputDataType(e).get).right
+    case f@ModelFeature(_, _, _, _, Bins(_, _, _))
+      if featureDataType(f.feature).isDefined && supportedDataTypes.contains(featureDataType(f.feature).get) =>
+      TypedModelFeature(f, featureDataType(f.feature).get).right
 
-    case f@ModelFeature(_, _, _, e, b@Bins(_, _, _)) =>
-      UnsupportedTransformDataType(e, inputDataType(e).get, b).left
+    case f@ModelFeature(_, _, _, _, b@Bins(_, _, _)) =>
+      UnsupportedTransformDataType(f.feature, featureDataType(f.feature).get, b).left
   }
 
   def transform(feature: TypedModelFeature): Seq[BinColumn] = {
     require(feature.feature.transform.isInstanceOf[Bins],
       s"Illegal transform type: ${feature.feature.transform}")
 
-    val ModelFeature(_, _, _, e, Bins(nbins, minPoints, minPct)) = feature.feature
+    val ModelFeature(_, _, f, _, Bins(nbins, minPoints, minPct)) = feature.feature
 
     log.info(s"Calculate bins transformation for feature: ${feature.feature.feature}. " +
       s"Bins: $nbins. " +
@@ -47,9 +47,10 @@ class BinsTransformer(input: DataFrame) extends Transformer(input) with Binner {
       s"Min percentage: $minPct. " +
       s"Extract type: ${feature.extractType}")
 
-    val inputSize = input.count()
-    val fraction = if (sampleSize >= inputSize) 1.0D else sampleSize / inputSize
-    val sample = input.select(e).sample(withReplacement = false, fraction)
+    val df = scalaz.Tag.unwrap(input)
+    val inputSize = df.count()
+    val fraction = if (sampleSize >= inputSize) 1.0D else sampleSize.toDouble / inputSize
+    val sample = df.select(f).filter(df(f).isNotNull).sample(withReplacement = false, fraction)
 
     // Collect sample values
     val x = sample.collect().map {
@@ -61,11 +62,18 @@ class BinsTransformer(input: DataFrame) extends Transformer(input) with Binner {
 
     log.debug(s"Collected sample size of: ${x.length}")
 
+    // Doesn't make any sense to do binning if no enough sample points available
+    require(x.length > nbins * 10,
+      s"Number of sample points for binning is too small")
+
+    // Find optimal split
     val bins = optimalSplit(x, nbins, minPoints, minPct)
-    log.debug(s"Calculated optimal bin split: ${bins.size}")
+    log.debug(s"Calculated optimal split: ${bins.size}. " +
+      s"Bins: ${bins.map(bin => s"${bin.count} in [${bin.low}, ${bin.high})").mkString(", ")}")
 
-    assert(bins.size >= 2, s"Got less than 2 bins")
+    require(bins.size >= 2, s"Got less than 2 bins")
 
+    // Transform bins to Bin columns
     val scan = bins.foldLeft(Scan()) {
       case (state@Scan(columnId, cols), bin) =>
         val column = BinColumn.BinValue(columnId + 1, bin.low, bin.high, bin.count, x.length)

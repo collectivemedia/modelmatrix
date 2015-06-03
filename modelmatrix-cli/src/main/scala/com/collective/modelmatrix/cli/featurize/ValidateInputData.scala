@@ -3,6 +3,7 @@ package com.collective.modelmatrix.cli.featurize
 import com.collective.modelmatrix.FeatureExtraction
 import com.collective.modelmatrix.catalog.ModelMatrixCatalog
 import com.collective.modelmatrix.cli.{CliModelCatalog, CliSparkContext, Script, Source}
+import com.collective.modelmatrix.transform.Transformer
 import com.typesafe.config.Config
 import org.apache.spark.sql.hive.HiveContext
 import org.slf4j.LoggerFactory
@@ -35,7 +36,7 @@ case class ValidateInputData(
 
     val featuresExtraction = new FeatureExtraction(features)
 
-    val input = source.asDataFrame
+    val input = Transformer.selectFeatures(source.asDataFrame, features.map(_.feature))
     val validate = featuresExtraction.validate(input)
 
     // Print schema errors

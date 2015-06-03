@@ -5,6 +5,7 @@ import com.collective.modelmatrix.CategorialColumn.{AllOther, CategorialValue}
 import com.collective.modelmatrix.{BinColumn, FeatureSchemaError, CategorialColumn, ModelFeature}
 import com.collective.modelmatrix.catalog._
 import com.collective.modelmatrix.transform._
+import org.apache.spark.sql.catalyst.SqlParser
 
 import scalaz.{\/-, -\/, \/}
 
@@ -47,6 +48,12 @@ object ASCIITableFormat {
 
 object ASCIITableFormats {
 
+  private val sqlParser = new SqlParser()
+
+  private def formatExtractExpr(s: String): String = {
+    sqlParser.parseExpression(s).toString()
+  }
+
   implicit class StringFormattingOps(val s: String) extends AnyVal {
     def bounded(n: Int): String = if (s.length > n) s"${s.take(n-4)} ..." else s
   }
@@ -66,7 +73,7 @@ object ASCIITableFormats {
         feature.active.toString,
         feature.group,
         feature.feature,
-        feature.extract,
+        formatExtractExpr(feature.extract),
         feature.transform.stringify,
         printParameters(feature.transform)
       )
@@ -94,7 +101,7 @@ object ASCIITableFormats {
         definitionFeature.feature.active.toString,
         definitionFeature.feature.group,
         definitionFeature.feature.feature,
-        definitionFeature.feature.extract,
+        formatExtractExpr(definitionFeature.feature.extract),
         definitionFeature.feature.transform.stringify,
         printParameters(definitionFeature.feature.transform)
       )
@@ -124,7 +131,7 @@ object ASCIITableFormats {
         f.feature.active.toString,
         f.feature.group,
         f.feature.feature,
-        f.feature.extract,
+        formatExtractExpr(f.feature.extract),
         f.feature.transform.stringify,
         printParameters(f.feature.transform),
         f.extractType.toString,
@@ -185,7 +192,7 @@ object ASCIITableFormats {
           columnId.toString,
           f.feature.feature,
           f.feature.transform.stringify,
-          f.feature.extract,
+          formatExtractExpr(f.feature.extract),
           "", ""
         )
       case (f@ModelInstanceTopFeature(_, _, _, _, _), Some(-\/(col))) => formatCategorialColumn(f.feature)(col)
@@ -203,7 +210,7 @@ object ASCIITableFormats {
         feature.active.toString,
         feature.group,
         feature.feature,
-        feature.extract,
+        formatExtractExpr(feature.extract),
         feature.transform.stringify,
         printParameters(feature.transform),
         error.errorMessage
@@ -219,7 +226,7 @@ object ASCIITableFormats {
         feature.active.toString,
         feature.group,
         feature.feature,
-        feature.extract,
+        formatExtractExpr(feature.extract),
         feature.transform.stringify,
         printParameters(feature.transform),
         typed.extractType.toString

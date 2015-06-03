@@ -2,36 +2,36 @@ package com.collective.modelmatrix.transform
 
 import com.collective.modelmatrix.CategorialColumn.AllOther
 import com.collective.modelmatrix.{CategorialColumn, ModelFeature}
-import com.collective.modelmatrix.transform.TransformSchemaError.{UnsupportedTransformDataType, ExtractColumnNotFound}
+import com.collective.modelmatrix.transform.TransformSchemaError.{UnsupportedTransformDataType, FeatureColumnNotFound}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types._
 import org.slf4j.LoggerFactory
 
-import scalaz.\/
+import scalaz.{@@, \/}
 import scalaz.syntax.either._
 
-class IndexTransformer(input: DataFrame) extends CategorialTransformer(input) {
+class IndexTransformer(input: DataFrame @@ Transformer.Features) extends CategorialTransformer(input) {
 
   private val log = LoggerFactory.getLogger(classOf[IndexTransformer])
 
   private val supportedDataTypes = Seq(ShortType, IntegerType, LongType, DoubleType, StringType)
 
   def validate: PartialFunction[ModelFeature, TransformSchemaError \/ TypedModelFeature] = {
-    case f@ModelFeature(_, _, _, e, Index(_, _)) if inputDataType(e).isEmpty =>
-      ExtractColumnNotFound(e).left
+    case f@ModelFeature(_, _, _, _, Index(_, _)) if featureDataType(f.feature).isEmpty =>
+      FeatureColumnNotFound(f.feature).left
 
-    case f@ModelFeature(_, _, _, e, Index(_, _))
-      if inputDataType(e).isDefined && supportedDataTypes.contains(inputDataType(e).get) =>
-      TypedModelFeature(f, inputDataType(e).get).right
+    case f@ModelFeature(_, _, _, _, Index(_, _))
+      if featureDataType(f.feature).isDefined && supportedDataTypes.contains(featureDataType(f.feature).get) =>
+      TypedModelFeature(f, featureDataType(f.feature).get).right
 
-    case f@ModelFeature(_, _, _, e, t@Index(_, _)) =>
-      UnsupportedTransformDataType(e, inputDataType(e).get, t).left
+    case f@ModelFeature(_, _, _, _, t@Index(_, _)) =>
+      UnsupportedTransformDataType(f.feature, featureDataType(f.feature).get, t).left
   }
 
   def transform(feature: TypedModelFeature): Seq[CategorialColumn] = {
     require(feature.feature.transform.isInstanceOf[Index], s"Illegal transform type: ${feature.feature.transform}")
 
-    val ModelFeature(_, _, _, e, Index(support, allOther)) = feature.feature
+    val ModelFeature(_, _, f, _, Index(support, allOther)) = feature.feature
 
     log.info(s"Calculate index transformation for feature: ${feature.feature.feature}. " +
       s"Support: $support. " +
@@ -39,7 +39,8 @@ class IndexTransformer(input: DataFrame) extends CategorialTransformer(input) {
       s"Extract type: ${feature.extractType}")
 
     // Group and count by extract value
-    val values: Seq[Value] = input.groupBy(e).count().collect().toSeq.map { row =>
+    val df = scalaz.Tag.unwrap(input)
+    val values: Seq[Value] = df.filter(df(f).isNotNull).groupBy(f).count().collect().toSeq.map { row =>
       val value = row.get(0)
       val cnt = row.getLong(1)
       Value(value, cnt)

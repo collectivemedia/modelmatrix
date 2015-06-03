@@ -17,4 +17,4 @@ $SPARK_HOME/bin/spark-submit \
 --master $SPARK_MASTER \
 --driver-java-options "-Dlog4j.configuration=file:./modelmatrix-cli/conf/log4j.properties -Dconfig.file=./modelmatrix-cli/conf/application.conf -Dspark.io.compression.codec=lzf" \
 --class com.collective.modelmatrix.cli.ModelMatrixCli \
-./modelmatrix-cli/target/scala-2.10/model-matrix-cli.jar $@
+./modelmatrix-cli/target/scala-2.10/model-matrix-cli.jar ${1+"$@"}

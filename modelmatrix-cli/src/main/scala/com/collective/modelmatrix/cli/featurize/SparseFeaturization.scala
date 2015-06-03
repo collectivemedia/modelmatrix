@@ -2,6 +2,7 @@ package com.collective.modelmatrix.cli.featurize
 
 import com.collective.modelmatrix.catalog.ModelMatrixCatalog
 import com.collective.modelmatrix.cli.{Source, _}
+import com.collective.modelmatrix.transform.Transformer
 import com.collective.modelmatrix.{FeatureExtraction, IdentifiedPoint}
 import com.typesafe.config.Config
 import org.apache.spark.mllib.linalg.{DenseVector, SparseVector}
@@ -46,7 +47,8 @@ case class SparseFeaturization(
 
     // Do featurization
     val featuresExtraction = new FeatureExtraction(features)
-    val (idType, featurized) = featuresExtraction.featurize(source.asDataFrame, idColumn)
+    val input = Transformer.selectFeaturesWithId(source.asDataFrame, idColumn, features.map(_.feature))
+    val (idType, featurized) = featuresExtraction.featurize(input, idColumn)
 
     // Switch from 0-based Vector index to 1-based ColumnId
     val rows = featurized.flatMap {

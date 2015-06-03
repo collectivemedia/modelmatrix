@@ -5,7 +5,7 @@ import java.time.Instant
 import com.collective.modelmatrix.catalog.{ModelDefinitionFeature, ModelMatrixCatalog}
 import com.collective.modelmatrix.cli.{CliModelCatalog, CliSparkContext, Script, Source, _}
 import com.collective.modelmatrix.transform._
-import com.collective.modelmatrix.{CategorialColumn, ModelFeature}
+import com.collective.modelmatrix.{BinColumn, CategorialColumn, ModelFeature}
 import com.typesafe.config.Config
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.sql.types.DataType
@@ -26,11 +26,14 @@ case class AddInstance(
   concurrencyLevel: Int,
   dbName: String,
   dbConfig: Config
-)(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) extends Script with CliModelCatalog with CliSparkContext {
+)(implicit val ec: ExecutionContext @@ ModelMatrixCatalog)
+  extends Script with CliModelCatalog with CliSparkContext with Transformers {
 
   private val log = LoggerFactory.getLogger(classOf[AddInstance])
 
   private implicit val unwrap = Tag.unwrap(ec)
+
+  private implicit lazy val sqlContext = new HiveContext(sc)
 
   import com.collective.modelmatrix.cli.ASCIITableFormat._
   import com.collective.modelmatrix.cli.ASCIITableFormats._
@@ -52,21 +55,16 @@ case class AddInstance(
     columns: Seq[CategorialColumn]
   ) extends AddInstanceFeatureCommand
 
-  // Supported transformations
-  private object Transformers {
-    private implicit val sqlContext = new HiveContext(sc)
-    private val input = source.asDataFrame
-
-    val identity = new IdentityTransformer(input)
-    val top = new TopTransformer(input)
-    val index = new IndexTransformer(input)
-  }
+  case class AddBinsFeature(
+    extractType: DataType,
+    columns: Seq[BinColumn]
+  ) extends AddInstanceFeatureCommand
 
   def run(): Unit = {
 
     log.info(s"Add Model Matrix instance. " +
       s"Model definition id: $modelDefinitionId. " +
-      s"Source: $source" +
+      s"Source: $source. " +
       s"Name: $name. " +
       s"Comment: $comment. " +
       s"Concurrency: $concurrencyLevel. " +
@@ -76,12 +74,13 @@ case class AddInstance(
     require(features.nonEmpty, s"No active features are defined for model definition: $modelDefinitionId. " +
       s"Ensure that this model definition exists")
 
+    // Cache feature columns
+    val input = Transformer.selectFeatures(source.asDataFrame, features.map(_.feature))
+    val transformers = new Transformers(input)
+
+    // Validate each feature
     val validate = features.filter(_.feature.active).map { case mdf@ModelDefinitionFeature(_, _, feature) =>
-      mdf -> (
-        Transformers.identity.validate         orElse
-        Transformers.top.validate              orElse
-        Transformers.index.validate
-     )(feature)
+      mdf -> transformers.validate(feature)
     }
 
     // Check that input schema match with model definition
@@ -104,7 +103,9 @@ case class AddInstance(
     }
 
     // Run with given concurrency level
-    val transformed = typedFeatures.concurrently(concurrencyLevel)(transformerChannel).runLog.attemptRun.fold(onError, identity)
+    val transformed = typedFeatures
+      .concurrently(concurrencyLevel)(transformerChannel(transformers))
+      .runLog.attemptRun.fold(onError, identity)
 
     // Create model instance
 
@@ -136,6 +137,12 @@ case class AddInstance(
           columnId += columns.size
           val rebased = columns.map(_.rebaseColumnId(baseColumnId))
           modelInstanceFeatures.addIndexFeature(modelInstanceId, featureDefinitionId, extractType, rebased)
+
+        case (ModelDefinitionFeature(featureDefinitionId, _, _), AddBinsFeature(extractType, columns)) =>
+          val baseColumnId = columnId
+          columnId += columns.size
+          val rebased = columns.map(_.rebaseColumnId(baseColumnId))
+          modelInstanceFeatures.addBinsFeature(modelInstanceId, featureDefinitionId, extractType, rebased)
       })
     } yield (modelInstanceId, featureId)
 
@@ -150,15 +157,18 @@ case class AddInstance(
   private type In = (ModelDefinitionFeature, TypedModelFeature)
   private type Out = (ModelDefinitionFeature, AddInstanceFeatureCommand)
 
-  private val transformerChannel: Channel[Task, In, Out] = channel.lift[Task, In, Out] {
+  private def transformerChannel(transformers: Transformers): Channel[Task, In, Out] = channel.lift[Task, In, Out] {
     case (mdf, TypedModelFeature(ModelFeature(_, _, _, _, Identity), extractType)) =>
       Task.now(mdf -> AddIdentityFeature(extractType))
 
     case (mdf, typed@TypedModelFeature(ModelFeature(_, _, _, _, top: Top), extractType)) =>
-      Task.apply(mdf -> AddTopFeature(extractType, Transformers.top.transform(typed)))
+      Task.apply(mdf -> AddTopFeature(extractType, transformers.top.transform(typed)))
 
     case (mdf, typed@TypedModelFeature(ModelFeature(_, _, _, _, index: Index), extractType)) =>
-      Task.apply(mdf -> AddIndexFeature(extractType, Transformers.index.transform(typed)))
+      Task.apply(mdf -> AddIndexFeature(extractType, transformers.index.transform(typed)))
+
+    case (mdf, typed@TypedModelFeature(ModelFeature(_, _, _, _, bins: Bins), extractType)) =>
+      Task.apply(mdf -> AddBinsFeature(extractType, transformers.bins.transform(typed)))
   }
 
 }
