@@ -1,11 +1,9 @@
 package com.collective.modelmatrix.cli.instance
 
-import com.collective.modelmatrix.ModelFeature
 import com.collective.modelmatrix.catalog.{ModelDefinitionFeature, ModelMatrixCatalog}
 import com.collective.modelmatrix.cli.{Source, _}
 import com.collective.modelmatrix.transform._
 import com.typesafe.config.Config
-import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.hive.HiveContext
 import org.slf4j.LoggerFactory
 
@@ -17,7 +15,8 @@ case class ValidateInputData(
   source: Source,
   dbName: String,
   dbConfig: Config
-)(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) extends Script with CliModelCatalog with CliSparkContext {
+)(implicit val ec: ExecutionContext @@ ModelMatrixCatalog)
+  extends Script with CliModelCatalog with CliSparkContext with Transformers {
 
   private val log = LoggerFactory.getLogger(classOf[ValidateInputData])
 
@@ -25,27 +24,6 @@ case class ValidateInputData(
 
   import com.collective.modelmatrix.cli.ASCIITableFormat._
   import com.collective.modelmatrix.cli.ASCIITableFormats._
-
-  private class Transformers(input: DataFrame) {
-    private implicit val sqlContext = new HiveContext(sc)
-
-    private val identity = new IdentityTransformer(input)
-    private val top = new TopTransformer(input)
-    private val index = new IndexTransformer(input)
-    private val bins = new BinsTransformer(input)
-
-    private val unknownFeature: PartialFunction[ModelFeature, TransformSchemaError \/ TypedModelFeature] = {
-      case feature => sys.error(s"Feature can't be validated by any of transformers: $feature")
-    }
-
-    def validate(feature: ModelFeature): TransformSchemaError \/ TypedModelFeature =
-      (identity.validate orElse
-       top.validate orElse
-       index.validate orElse
-       bins.validate orElse
-       unknownFeature
-      )(feature)
-  }
 
   def run(): Unit = {
 
@@ -58,7 +36,7 @@ case class ValidateInputData(
       s"Ensure that this model definition exists")
 
     // Cache feature columns
-    val input = Transformer.selectFeatures(source.asDataFrame, features.map(_.feature)).cache()
+    val input = Transformer.selectFeatures(source.asDataFrame, features.map(_.feature))
     val transformers = new Transformers(input)
 
     // Validate each feature

@@ -15,7 +15,7 @@ import slick.dbio.DBIO
 import scala.concurrent.ExecutionContext
 import scalaz.concurrent.Task
 import scalaz.stream._
-import scalaz.{\/, -\/, @@, Tag}
+import scalaz.{-\/, @@, Tag}
 
 
 case class AddInstance(
@@ -75,7 +75,7 @@ case class AddInstance(
       s"Ensure that this model definition exists")
 
     // Cache feature columns
-    val input = Transformer.selectFeatures(source.asDataFrame, features.map(_.feature)).cache()
+    val input = Transformer.selectFeatures(source.asDataFrame, features.map(_.feature))
     val transformers = new Transformers(input)
 
     // Validate each feature

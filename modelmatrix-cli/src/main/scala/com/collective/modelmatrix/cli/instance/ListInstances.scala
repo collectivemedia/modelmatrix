@@ -1,6 +1,6 @@
 package com.collective.modelmatrix.cli.instance
 
-import com.collective.modelmatrix.catalog.{ModelInstance, ModelMatrixCatalog}
+import com.collective.modelmatrix.catalog.ModelMatrixCatalog
 import com.collective.modelmatrix.cli.{CliModelCatalog, Script}
 import com.typesafe.config.Config
 import org.slf4j.LoggerFactory

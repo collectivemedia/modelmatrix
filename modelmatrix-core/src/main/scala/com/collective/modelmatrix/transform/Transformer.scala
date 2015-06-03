@@ -8,7 +8,7 @@ import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types._
 import scodec.bits.ByteVector
 
-import scalaz.\/
+import scalaz.{@@, \/}
 
 case class TypedModelFeature(feature: ModelFeature, extractType: DataType)
 
@@ -32,17 +32,27 @@ object TransformSchemaError {
 
 }
 
-abstract class Transformer(features: DataFrame) {
+abstract class Transformer(features: DataFrame @@ Transformer.Features) {
 
   def validate: PartialFunction[ModelFeature, TransformSchemaError \/ TypedModelFeature]
 
   protected def featureDataType(feature: String): Option[DataType] = {
-    features.schema.find(_.name == feature).map(_.dataType)
+    scalaz.Tag.unwrap(features).schema.find(_.name == feature).map(_.dataType)
   }
 
 }
 
 object Transformer {
+
+  /**
+   * Marker for DataFrame with applied extract expressions
+   */
+  trait Features
+
+  /**
+   * Marker for DataFrame with applied extract expressions + Id columns
+   */
+  trait FeaturesWithId
 
   /** Select expressions associated with each feature
     *
@@ -50,23 +60,30 @@ object Transformer {
     * @param features model features
     * @return data frame with column for each feature
     */
-  def selectFeatures(df: DataFrame, features: Seq[ModelFeature]): DataFrame = {
+  def selectFeatures(df: DataFrame, features: Seq[ModelFeature]): DataFrame  @@ Features= {
     val expressions = features.map { f =>
       s"${f.extract} as ${f.feature}"
     }
-    df.selectExpr(expressions:_*)        
+    scalaz.Tag[DataFrame, Features](df.selectExpr(expressions:_*).cache())
   }
 
-  def selectFeaturesWithId(df: DataFrame, idColumn: String, features: Seq[ModelFeature]): DataFrame = {
+  def selectFeaturesWithId(df: DataFrame, idColumn: String, features: Seq[ModelFeature]): DataFrame @@ FeaturesWithId = {
     val expressions = features.map { f =>
       s"${f.extract} as ${f.feature}"
     }
-    df.selectExpr(idColumn +: expressions:_*)
+    scalaz.Tag[DataFrame, FeaturesWithId](df.selectExpr(idColumn +: expressions:_*).cache())
+  }
+
+  /**
+   * Actually none of the columns are removed, just re-tagging DataFrame
+   */
+  def removeIdColumn(df: DataFrame @@ FeaturesWithId): DataFrame @@ Features = {
+    scalaz.Tag[DataFrame, Features](scalaz.Tag.unwrap(df))
   }
   
 }
 
-abstract class CategorialTransformer(features: DataFrame) extends Transformer(features) {
+abstract class CategorialTransformer(features: DataFrame @@ Transformer.Features) extends Transformer(features) {
 
   def transform(feature: TypedModelFeature): Seq[CategorialColumn]
 

@@ -64,14 +64,14 @@ class FeatureExtractionSpec extends FlatSpec with TestSparkContext {
   val featureExtraction = new FeatureExtraction(Seq(adPriceInstance, adTypeInstance, adSiteInstance))
 
   "Feature Extraction" should "validate input schema against provided features" in {
-    val validation = featureExtraction.validate(transformed)
+    val validation = featureExtraction.validate(Transformer.removeIdColumn(transformed))
     assert(validation.count(_.isRight) == 3)
   }
 
   it should "fail if extractType doesn't match" in {
     val brokenFeatureExtraction = new FeatureExtraction(Seq(adPriceInstance, adTypeInstance.copy(extractType = DoubleType), adSiteInstance))
 
-    val validation = brokenFeatureExtraction.validate(transformed)
+    val validation = brokenFeatureExtraction.validate(Transformer.removeIdColumn(transformed))
     assert(validation.count(_.isLeft) == 1)
 
     val error = validation.find(_.isLeft).head

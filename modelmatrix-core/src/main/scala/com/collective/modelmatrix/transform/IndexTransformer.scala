@@ -7,10 +7,10 @@ import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types._
 import org.slf4j.LoggerFactory
 
-import scalaz.\/
+import scalaz.{@@, \/}
 import scalaz.syntax.either._
 
-class IndexTransformer(input: DataFrame) extends CategorialTransformer(input) {
+class IndexTransformer(input: DataFrame @@ Transformer.Features) extends CategorialTransformer(input) {
 
   private val log = LoggerFactory.getLogger(classOf[IndexTransformer])
 
@@ -39,7 +39,7 @@ class IndexTransformer(input: DataFrame) extends CategorialTransformer(input) {
       s"Extract type: ${feature.extractType}")
 
     // Group and count by extract value
-    val values: Seq[Value] = input.groupBy(f).count().collect().toSeq.map { row =>
+    val values: Seq[Value] = scalaz.Tag.unwrap(input).groupBy(f).count().collect().toSeq.map { row =>
       val value = row.get(0)
       val cnt = row.getLong(1)
       Value(value, cnt)

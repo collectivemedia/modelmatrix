@@ -8,10 +8,10 @@ import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types._
 import org.slf4j.LoggerFactory
 
-import scalaz.\/
+import scalaz._
 import scalaz.syntax.either._
 
-class BinsTransformer(input: DataFrame) extends Transformer(input) with Binner {
+class BinsTransformer(input: DataFrame @@ Transformer.Features) extends Transformer(input) with Binner {
 
   private val log = LoggerFactory.getLogger(classOf[BinsTransformer])
 
@@ -47,9 +47,9 @@ class BinsTransformer(input: DataFrame) extends Transformer(input) with Binner {
       s"Min percentage: $minPct. " +
       s"Extract type: ${feature.extractType}")
 
-    val inputSize = input.count()
+    val inputSize = scalaz.Tag.unwrap(input).count()
     val fraction = if (sampleSize >= inputSize) 1.0D else sampleSize / inputSize
-    val sample = input.select(f).sample(withReplacement = false, fraction)
+    val sample = scalaz.Tag.unwrap(input).select(f).sample(withReplacement = false, fraction)
 
     // Collect sample values
     val x = sample.collect().map {

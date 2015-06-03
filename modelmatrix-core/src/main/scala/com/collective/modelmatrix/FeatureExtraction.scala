@@ -4,14 +4,16 @@ import java.nio.ByteBuffer
 
 import com.collective.modelmatrix.CategorialColumn.{AllOther, CategorialValue}
 import com.collective.modelmatrix.catalog._
-import org.apache.spark.mllib.linalg.{Vectors, Vector}
+import com.collective.modelmatrix.transform.Transformer
+import com.collective.modelmatrix.transform.Transformer.{Features, FeaturesWithId}
+import org.apache.spark.mllib.linalg.{Vector, Vectors}
 import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.{Column, Row, DataFrame}
 import org.apache.spark.sql.types._
+import org.apache.spark.sql.{Column, DataFrame, Row}
 import org.slf4j.LoggerFactory
 import scodec.bits.ByteVector
 
-import scalaz.{\/-, -\/, \/}
+import scalaz._
 import scalaz.syntax.either._
 
 case class IdentifiedPoint(id: Any, features: Vector)
@@ -56,9 +58,9 @@ class FeatureExtraction(features: Seq[ModelInstanceFeature]) extends Serializabl
 
   type FeatureColumnId = (ModelFeature, Int)
 
-  def validate(input: DataFrame): Seq[FeatureSchemaError \/ Column] = {
+  def validate(input: DataFrame @@ Features): Seq[FeatureSchemaError \/ Column] = {
     def featureDataType(feature: String): Option[DataType] = {
-      input.schema.find(_.name == feature).map(_.dataType)
+      scalaz.Tag.unwrap(input).schema.find(_.name == feature).map(_.dataType)
     }
 
     features.map {
@@ -87,25 +89,25 @@ class FeatureExtraction(features: Seq[ModelInstanceFeature]) extends Serializabl
    *
    * @return id data type and featurized rows
    */
-  def featurize(input: DataFrame, idColumn: String): (DataType, RDD[IdentifiedPoint]) = {
+  def featurize(input: DataFrame @@ FeaturesWithId, idColumn: String): (DataType, RDD[IdentifiedPoint]) = {
     log.info(s"Extract features from input DataFrame with id column: $idColumn. Total number of columns: $totalNumberOfColumns")
 
     // Check that schema satisfies input data
-    val validationErrors = validate(input).collect { case -\/(error) => error }
+    val validationErrors = validate(Transformer.removeIdColumn(input)).collect { case -\/(error) => error }
     require(validationErrors.isEmpty,
       s"\nFound ${validationErrors.size} input data errors: \n ${formatFeatureErrors(validationErrors)}")
 
     // Check that id columns exists and has correct type
-    require(input.schema.fields.exists(_.name == idColumn), s"Can't find id column: $idColumn")
-    val idType = input.schema.fields.find(_.name == idColumn).get.dataType
+    require(scalaz.Tag.unwrap(input).schema.fields.exists(_.name == idColumn), s"Can't find id column: $idColumn")
+    val idType = scalaz.Tag.unwrap(input).schema.fields.find(_.name == idColumn).get.dataType
 
     // Collect feature columns
-    val columns = validate(input).collect { case \/-(column) => column }
+    val columns = validate(Transformer.removeIdColumn(input)).collect { case \/-(column) => column }
 
     val featuresColumnIdx: Map[ModelFeature, Int] =
       features.zipWithIndex.map { case (f, idx) => (f.feature, idx + 1) }.toMap
 
-    val rdd = input.select(new Column(idColumn) +: columns:_*).map { row =>
+    val rdd = scalaz.Tag.unwrap(input).select(new Column(idColumn) +: columns:_*).map { row =>
       val id = row.get(0)
       val columnValues = features.flatMap {
         case ModelInstanceIdentityFeature(_, _, f, tpe, columnId) => 

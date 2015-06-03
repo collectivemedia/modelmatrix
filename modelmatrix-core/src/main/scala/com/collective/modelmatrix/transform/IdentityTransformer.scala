@@ -5,10 +5,10 @@ import com.collective.modelmatrix.transform.TransformSchemaError.{FeatureColumnN
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types._
 
-import scalaz.\/
+import scalaz._
 import scalaz.syntax.either._
 
-class IdentityTransformer(input: DataFrame) extends Transformer(input) {
+class IdentityTransformer(input: DataFrame @@ Transformer.Features) extends Transformer(input) {
 
   private val supportedDataTypes = Seq(ShortType, IntegerType, LongType, DoubleType)
 
