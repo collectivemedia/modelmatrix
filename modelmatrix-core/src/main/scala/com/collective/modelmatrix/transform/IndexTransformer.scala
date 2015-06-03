@@ -39,7 +39,8 @@ class IndexTransformer(input: DataFrame @@ Transformer.Features) extends Categor
       s"Extract type: ${feature.extractType}")
 
     // Group and count by extract value
-    val values: Seq[Value] = scalaz.Tag.unwrap(input).groupBy(f).count().collect().toSeq.map { row =>
+    val df = scalaz.Tag.unwrap(input)
+    val values: Seq[Value] = df.filter(df(f).isNotNull).groupBy(f).count().collect().toSeq.map { row =>
       val value = row.get(0)
       val cnt = row.getLong(1)
       Value(value, cnt)

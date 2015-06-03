@@ -8,12 +8,12 @@ import com.collective.modelmatrix.transform.{Transformer, Index, Top, Identity}
 import org.apache.spark.mllib.linalg.SparseVector
 import org.apache.spark.sql.{Row, SQLContext}
 import org.apache.spark.sql.types._
-import org.scalatest.FlatSpec
+import org.scalatest.{GivenWhenThen, FlatSpec}
 import scodec.bits.ByteVector
 
 import scalaz.\/
 
-class FeatureExtractionSpec extends FlatSpec with TestSparkContext {
+class FeatureExtractionSpec extends FlatSpec with GivenWhenThen with TestSparkContext {
 
   val sqlContext = new SQLContext(sc)
 
@@ -107,6 +107,25 @@ class FeatureExtractionSpec extends FlatSpec with TestSparkContext {
     assert(featurized(4l).asInstanceOf[SparseVector].indices.toSeq.map(_ + 1) == Seq(1, 4))
     assert(featurized(4l).asInstanceOf[SparseVector].values.toSeq == Seq(0.09 * 100, 1.0))
 
+  }
+
+  it should "correctly handle null columns" in {
+
+    Given("row with null ad price and ad site")
+    val withNullPriceAndSite = input :+ Row(5l, null /* ad price */, 2 /* ad type */, null /* ad site */)
+    val df = sqlContext.createDataFrame(sc.parallelize(withNullPriceAndSite), schema)
+    val transformed = Transformer.selectFeaturesWithId(df, "auction_id", Seq(adPrice, adType, adSite))
+
+    Then("it should be successfully featurized")
+    val featurized = featureExtraction.featurize(transformed, "auction_id")._2.collect().toSeq.map(p => p.id.asInstanceOf[Long] -> p.features).toMap
+    assert(featurized.size == 5)
+
+    And("only ad type column should be defined")
+    val features = featurized(5l)
+
+    assert(features.asInstanceOf[SparseVector].size == 6)
+    assert(features.asInstanceOf[SparseVector].indices.toSeq.map(_ + 1) == Seq(3))
+    assert(features.asInstanceOf[SparseVector].values.toSeq == Seq(1.0))
   }
 
 }

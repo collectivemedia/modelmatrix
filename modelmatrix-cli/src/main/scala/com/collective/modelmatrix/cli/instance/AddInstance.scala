@@ -64,7 +64,7 @@ case class AddInstance(
 
     log.info(s"Add Model Matrix instance. " +
       s"Model definition id: $modelDefinitionId. " +
-      s"Source: $source" +
+      s"Source: $source. " +
       s"Name: $name. " +
       s"Comment: $comment. " +
       s"Concurrency: $concurrencyLevel. " +

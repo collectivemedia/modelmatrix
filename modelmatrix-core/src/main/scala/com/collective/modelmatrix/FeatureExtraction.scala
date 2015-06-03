@@ -92,14 +92,16 @@ class FeatureExtraction(features: Seq[ModelInstanceFeature]) extends Serializabl
   def featurize(input: DataFrame @@ FeaturesWithId, idColumn: String): (DataType, RDD[IdentifiedPoint]) = {
     log.info(s"Extract features from input DataFrame with id column: $idColumn. Total number of columns: $totalNumberOfColumns")
 
+    val df = scalaz.Tag.unwrap(input)
+
     // Check that schema satisfies input data
     val validationErrors = validate(Transformer.removeIdColumn(input)).collect { case -\/(error) => error }
     require(validationErrors.isEmpty,
       s"\nFound ${validationErrors.size} input data errors: \n ${formatFeatureErrors(validationErrors)}")
 
     // Check that id columns exists and has correct type
-    require(scalaz.Tag.unwrap(input).schema.fields.exists(_.name == idColumn), s"Can't find id column: $idColumn")
-    val idType = scalaz.Tag.unwrap(input).schema.fields.find(_.name == idColumn).get.dataType
+    require(df.schema.fields.exists(_.name == idColumn), s"Can't find id column: $idColumn")
+    val idType = df.schema.fields.find(_.name == idColumn).get.dataType
 
     // Collect feature columns
     val columns = validate(Transformer.removeIdColumn(input)).collect { case \/-(column) => column }
@@ -107,11 +109,11 @@ class FeatureExtraction(features: Seq[ModelInstanceFeature]) extends Serializabl
     val featuresColumnIdx: Map[ModelFeature, Int] =
       features.zipWithIndex.map { case (f, idx) => (f.feature, idx + 1) }.toMap
 
-    val rdd = scalaz.Tag.unwrap(input).select(new Column(idColumn) +: columns:_*).map { row =>
+    val rdd = df.select(new Column(idColumn) +: columns:_*).map { row =>
       val id = row.get(0)
       val columnValues = features.flatMap {
         case ModelInstanceIdentityFeature(_, _, f, tpe, columnId) => 
-          identityColumn(row)(f, featuresColumnIdx(f), tpe, columnId) :: Nil
+          identityColumn(row)(f, featuresColumnIdx(f), tpe, columnId).toSeq
         case ModelInstanceTopFeature(_, _, f, tpe, cols) =>
           categorialColumn(row)(f, featuresColumnIdx(f), tpe, cols).toSeq
         case ModelInstanceIndexFeature(_, _, f, tpe, cols) =>
@@ -130,7 +132,16 @@ class FeatureExtraction(features: Seq[ModelInstanceFeature]) extends Serializabl
   }
 
 
-  private def identityColumn(row: Row)(feature: ModelFeature, idx: Int, extractType: DataType, columnId: Int): (Int, Double) = {
+  private def identityColumn(row: Row)(
+    feature: ModelFeature,
+    idx: Int,
+    extractType: DataType,
+    columnId: Int
+  ): Option[(Int, Double)] = {
+
+    // If input value is null just skip it
+    if (row.isNullAt(idx)) return None
+
     val doubleValue = extractType match {
       case ShortType => row.getShort(idx).toDouble
       case IntegerType => row.getInt(idx).toDouble
@@ -138,7 +149,8 @@ class FeatureExtraction(features: Seq[ModelInstanceFeature]) extends Serializabl
       case DoubleType => row.getDouble(idx)
       case tpe => sys.error(s"Unsupported identity extract type: $tpe. Feature: ${feature.feature}")
     }
-    (idx, doubleValue)
+
+    Some((idx, doubleValue))
   }
   
   private def categorialColumn(row: Row)(
@@ -147,6 +159,9 @@ class FeatureExtraction(features: Seq[ModelInstanceFeature]) extends Serializabl
     extractType: DataType,
     columns: Seq[CategorialColumn]
   ): Option[(Int, Double)] = {
+
+    // If input value is null just skip it
+    if (row.isNullAt(idx)) return None
 
     // Get byte representation of extracted feature
     val byteVector = extractType match {

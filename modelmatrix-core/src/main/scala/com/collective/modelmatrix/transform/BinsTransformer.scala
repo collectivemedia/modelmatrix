@@ -47,9 +47,10 @@ class BinsTransformer(input: DataFrame @@ Transformer.Features) extends Transfor
       s"Min percentage: $minPct. " +
       s"Extract type: ${feature.extractType}")
 
-    val inputSize = scalaz.Tag.unwrap(input).count()
-    val fraction = if (sampleSize >= inputSize) 1.0D else sampleSize / inputSize
-    val sample = scalaz.Tag.unwrap(input).select(f).sample(withReplacement = false, fraction)
+    val df = scalaz.Tag.unwrap(input)
+    val inputSize = df.count()
+    val fraction = if (sampleSize >= inputSize) 1.0D else sampleSize.toDouble / inputSize
+    val sample = df.select(f).filter(df(f).isNotNull).sample(withReplacement = false, fraction)
 
     // Collect sample values
     val x = sample.collect().map {
@@ -61,11 +62,18 @@ class BinsTransformer(input: DataFrame @@ Transformer.Features) extends Transfor
 
     log.debug(s"Collected sample size of: ${x.length}")
 
+    // Doesn't make any sense to do binning if no enough sample points available
+    require(x.length > nbins * 10,
+      s"Number of sample points for binning is too small")
+
+    // Find optimal split
     val bins = optimalSplit(x, nbins, minPoints, minPct)
-    log.debug(s"Calculated optimal bin split: ${bins.size}")
+    log.debug(s"Calculated optimal split: ${bins.size}. " +
+      s"Bins: ${bins.map(bin => s"[${bin.low}, ${bin.high})").mkString(", ")}")
 
-    assert(bins.size >= 2, s"Got less than 2 bins")
+    require(bins.size >= 2, s"Got less than 2 bins")
 
+    // Transform bins to Bin columns
     val scan = bins.foldLeft(Scan()) {
       case (state@Scan(columnId, cols), bin) =>
         val column = BinColumn.BinValue(columnId + 1, bin.low, bin.high, bin.count, x.length)

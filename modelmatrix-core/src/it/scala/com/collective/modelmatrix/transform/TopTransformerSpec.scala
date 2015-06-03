@@ -26,7 +26,9 @@ class TopTransformerSpec extends FlatSpec with TestSparkContext {
     Seq.fill(100)(Row("gizmodo.com")) ++
     Seq.fill(100)(Row("reddit.com")) ++
     Seq.fill(100)(Row("amc.com")) ++
-    Seq.fill(100)(Row("msnbc.com"))
+    Seq.fill(100)(Row("msnbc.com")) ++
+    // null columns should be skipped
+    Seq.fill(100)(Row(null))
   )
 
   val isActive = true

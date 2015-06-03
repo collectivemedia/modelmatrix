@@ -23,11 +23,13 @@ class IndexTransformerSpec extends FlatSpec with TestSparkContext {
       Seq.fill(4000)(Row("bbc.com")) ++
       Seq.fill(400)(Row("hbo.com")) ++
       Seq.fill(200)(Row("mashable.com")) ++
-      // first 4 sites contribute 96% of the rows into full data set
+      // first 4 sites supports more than 2% of data set
       Seq.fill(100)(Row("gizmodo.com")) ++
       Seq.fill(100)(Row("reddit.com")) ++
       Seq.fill(100)(Row("amc.com")) ++
-      Seq.fill(100)(Row("msnbc.com"))
+      Seq.fill(100)(Row("msnbc.com")) ++
+      // null columns should be skipped
+      Seq.fill(100)(Row(null))
   )
 
   val isActive = true
