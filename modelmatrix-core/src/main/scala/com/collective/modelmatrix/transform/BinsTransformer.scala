@@ -69,7 +69,7 @@ class BinsTransformer(input: DataFrame @@ Transformer.Features) extends Transfor
     // Find optimal split
     val bins = optimalSplit(x, nbins, minPoints, minPct)
     log.debug(s"Calculated optimal split: ${bins.size}. " +
-      s"Bins: ${bins.map(bin => s"[${bin.low}, ${bin.high})").mkString(", ")}")
+      s"Bins: ${bins.map(bin => s"${bin.count} @ [${bin.low}, ${bin.high})").mkString(", ")}")
 
     require(bins.size >= 2, s"Got less than 2 bins")
 
