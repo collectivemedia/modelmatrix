@@ -33,13 +33,13 @@ Additional Model Matrix UDFs:
     
     ad_day_of_week = ${top} {
       ...
-      extract = day_of_week(ad_timestamp, 'UTC')
+      extract = day_of_week(ad_epoch_millis, 'UTC')
       ...
     }
     
     ad_hour_of_day = ${top} {
       ...
-      extract = hour_of_day(ad_timestamp, 'UTC')
+      extract = hour_of_day(ad_epoch_millis, 'UTC')
       ...
     }    
     
