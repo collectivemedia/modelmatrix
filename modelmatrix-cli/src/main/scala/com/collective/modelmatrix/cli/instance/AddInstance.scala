@@ -151,7 +151,6 @@ case class AddInstance(
 
     Console.out.println(s"Successfully created new model instance")
     Console.out.println(s"Matrix Model instance id: $modelInstanceId")
-    Console.out.println(s"Matrix Model instance features count: ${featuresId.length}")
   }
 
   private type In = (ModelDefinitionFeature, TypedModelFeature)
