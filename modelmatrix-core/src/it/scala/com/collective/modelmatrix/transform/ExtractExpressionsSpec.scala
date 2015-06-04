@@ -56,22 +56,29 @@ class ExtractExpressionsSpec extends FlatSpec with TestSparkContext {
     Seq.fill(100)(Row(cookieId, 7, "amc.com", price(0.31), "MountainLion", "OSX", yesterday.toInstant.toEpochMilli)) ++
     Seq.fill(100)(Row(cookieId, 8, "msnbc.com", price(0.1), "MountainLion", "OSX", yesterday.toInstant.toEpochMilli)) ++
     // null columns should be skipped
-    Seq.fill(100)(Row(cookieId, 9, null, price(0.1), "MountainLion", "OSX", null))
+    Seq.fill(100)(Row(cookieId, 9, null, null, "MountainLion", "OSX", null))
   )
 
   val isActive = true
 
+  // Plain columns
   val adId = ModelFeature(isActive, "advertisement", "ad_id", "adv_id", Index(2.0, allOther = false))
   val adSite = ModelFeature(isActive, "advertisement", "ad_site", "adv_site", Top(95.0, allOther = true))
   val adPrice = ModelFeature(isActive, "advertisement", "ad_price", "adv_price", Bins(5, 0, 0))
+
+  // Features with expressions
   val adIdSitePair = ModelFeature(isActive, "advertisement", "ad_id_site_pair", "concat('_', cast(adv_id as string), adv_site)", Top(95.0, allOther = false))
   val os = ModelFeature(isActive, "os", "os", "concat('_', os_system, os_family)", Top(100.0, allOther = false))
   val dayOfWeek = ModelFeature(isActive, "time", "day_of_week", "day_of_week(ts, 'UTC')", Top(100.0, allOther = false))
   val hourOfDay = ModelFeature(isActive, "time", "hour_of_day", "hour_of_day(ts, 'UTC')", Top(100.0, allOther = false))
+  val notNullSite = ModelFeature(isActive, "expr", "not_null_ad_site", "nvl_str(adv_site, 'http://no-site.com')", Top(95.0, allOther = true))
+  val notNullPrice = ModelFeature(isActive, "expr", "not_null_ad_price", "nvl(adv_price, 123.0)", Bins(5, 0, 0))
+  val logPrice = ModelFeature(isActive, "expr", "log_price", "log(adv_price)", Bins(5, 0, 0))
+  val greatestPrice = ModelFeature(isActive, "expr", "log_price", "greatest(adv_price, 0.1)", Bins(5, 0, 0))
 
   val df = Transformer.selectFeatures(
     sqlContext.createDataFrame(sc.parallelize(input), schema),
-    Seq(adId, adSite, adPrice, adIdSitePair, os, dayOfWeek, hourOfDay)
+    Seq(adId, adSite, adPrice, adIdSitePair, os, dayOfWeek, hourOfDay, notNullSite, notNullPrice, logPrice, greatestPrice)
   )
 
   object Transformers {
@@ -85,8 +92,9 @@ class ExtractExpressionsSpec extends FlatSpec with TestSparkContext {
   }
 
   "Transformers" should "support all features" in {
-    val valid = Transformers.validate(adId, adSite, adPrice, adIdSitePair, os, dayOfWeek, hourOfDay)
-    assert(valid.count(_.isRight) == 7)
+    val valid = Transformers.validate(adId, adSite, adPrice, adIdSitePair, os, dayOfWeek, hourOfDay, notNullSite, notNullPrice, logPrice, greatestPrice)
+
+    assert(valid.count(_.isRight) == 11)
     assert(valid(0) == TypedModelFeature(adId, IntegerType).right)
     assert(valid(1) == TypedModelFeature(adSite, StringType).right)
     assert(valid(2) == TypedModelFeature(adPrice, DoubleType).right)
@@ -94,6 +102,20 @@ class ExtractExpressionsSpec extends FlatSpec with TestSparkContext {
     assert(valid(4) == TypedModelFeature(os, StringType).right)
     assert(valid(5) == TypedModelFeature(dayOfWeek, StringType).right)
     assert(valid(6) == TypedModelFeature(hourOfDay, IntegerType).right)
+    assert(valid(7) == TypedModelFeature(notNullSite, StringType).right)
+    assert(valid(8) == TypedModelFeature(notNullPrice, DoubleType).right)
+    assert(valid(9) == TypedModelFeature(logPrice, DoubleType).right)
+    assert(valid(10) == TypedModelFeature(greatestPrice, DoubleType).right)
+  }
+
+  it should "correctly extract nvl columns" in {
+    val dataFrame = scalaz.Tag.unwrap(df)
+
+    val sites = dataFrame.select(notNullSite.feature).collect().map(_.getString(0))
+    assert(sites.count(_ == "http://no-site.com") == 100)
+
+    val prices = dataFrame.select(notNullPrice.feature).collect().map(_.getDouble(0))
+    assert(prices.count(_ > 100) == 100)
   }
 
   it should "calculate top columns with 'concat'" in {
