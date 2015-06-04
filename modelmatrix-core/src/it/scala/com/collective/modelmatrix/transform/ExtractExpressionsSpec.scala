@@ -64,13 +64,14 @@ class ExtractExpressionsSpec extends FlatSpec with TestSparkContext {
   val adId = ModelFeature(isActive, "advertisement", "ad_id", "adv_id", Index(2.0, allOther = false))
   val adSite = ModelFeature(isActive, "advertisement", "ad_site", "adv_site", Top(95.0, allOther = true))
   val adPrice = ModelFeature(isActive, "advertisement", "ad_price", "adv_price", Bins(5, 0, 0))
+  val adIdSitePair = ModelFeature(isActive, "advertisement", "ad_id_site_pair", "concat('_', cast(adv_id as string), adv_site)", Top(95.0, allOther = false))
   val os = ModelFeature(isActive, "os", "os", "concat('_', os_system, os_family)", Top(100.0, allOther = false))
   val dayOfWeek = ModelFeature(isActive, "time", "day_of_week", "day_of_week(ts, 'UTC')", Top(100.0, allOther = false))
   val hourOfDay = ModelFeature(isActive, "time", "hour_of_day", "hour_of_day(ts, 'UTC')", Top(100.0, allOther = false))
 
   val df = Transformer.selectFeatures(
     sqlContext.createDataFrame(sc.parallelize(input), schema),
-    Seq(adId, adSite, adPrice, os, dayOfWeek, hourOfDay)
+    Seq(adId, adSite, adPrice, adIdSitePair, os, dayOfWeek, hourOfDay)
   )
 
   object Transformers {
@@ -84,14 +85,15 @@ class ExtractExpressionsSpec extends FlatSpec with TestSparkContext {
   }
 
   "Transformers" should "support all features" in {
-    val valid = Transformers.validate(adId, adSite, adPrice, os, dayOfWeek, hourOfDay)
-    assert(valid.count(_.isRight) == 6)
+    val valid = Transformers.validate(adId, adSite, adPrice, adIdSitePair, os, dayOfWeek, hourOfDay)
+    assert(valid.count(_.isRight) == 7)
     assert(valid(0) == TypedModelFeature(adId, IntegerType).right)
     assert(valid(1) == TypedModelFeature(adSite, StringType).right)
     assert(valid(2) == TypedModelFeature(adPrice, DoubleType).right)
-    assert(valid(3) == TypedModelFeature(os, StringType).right)
-    assert(valid(4) == TypedModelFeature(dayOfWeek, StringType).right)
-    assert(valid(5) == TypedModelFeature(hourOfDay, IntegerType).right)
+    assert(valid(3) == TypedModelFeature(adIdSitePair, StringType).right)
+    assert(valid(4) == TypedModelFeature(os, StringType).right)
+    assert(valid(5) == TypedModelFeature(dayOfWeek, StringType).right)
+    assert(valid(6) == TypedModelFeature(hourOfDay, IntegerType).right)
   }
 
   it should "calculate top columns with 'concat'" in {
