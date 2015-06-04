@@ -84,9 +84,6 @@ Additional Model Matrix UDFs:
       extract = <extract expression>
       transform = "bins"
       nbins = <target number of bins>
-      minpts = <minimum number of points in bin>   
-      minpct = <minimum % of points in bin>
-      # Higher absolute number is used for binning concrete feature      
     }    
    
 
@@ -114,8 +111,6 @@ Additional Model Matrix UDFs:
     bins = ${feature} {
       transform = "bins"
       nbins = 10
-      minpts = 0
-      minpct = 0
     }
 
     # Define concrete model matrix features
