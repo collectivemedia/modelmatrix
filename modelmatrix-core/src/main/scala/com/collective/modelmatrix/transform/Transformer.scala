@@ -64,14 +64,14 @@ object Transformer {
     val expressions = features.map { f =>
       s"${f.extract} as ${f.feature}"
     }
-    scalaz.Tag[DataFrame, Features](df.selectExpr(expressions:_*).cache())
+    scalaz.Tag[DataFrame, Features](df.selectExpr(expressions:_*)/* .cache() */)
   }
 
   def selectFeaturesWithId(df: DataFrame, idColumn: String, features: Seq[ModelFeature]): DataFrame @@ FeaturesWithId = {
     val expressions = features.map { f =>
       s"${f.extract} as ${f.feature}"
     }
-    scalaz.Tag[DataFrame, FeaturesWithId](df.selectExpr(idColumn +: expressions:_*).cache())
+    scalaz.Tag[DataFrame, FeaturesWithId](df.selectExpr(idColumn +: expressions:_*)/* .cache() */)
   }
 
   /**

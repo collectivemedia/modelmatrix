@@ -71,7 +71,8 @@ class BinsTransformer(input: DataFrame @@ Transformer.Features) extends Transfor
     log.debug(s"Calculated optimal split: ${bins.size}. " +
       s"Bins: ${bins.map(bin => s"${bin.count} in [${bin.low}, ${bin.high})").mkString(", ")}")
 
-    require(bins.size >= 2, s"Got less than 2 bins")
+    require(bins.size >= 2,
+      s"Got less than 2 bins, probably sample size is too small or data is too skewed")
 
     // Transform bins to Bin columns
     val scan = bins.foldLeft(Scan()) {

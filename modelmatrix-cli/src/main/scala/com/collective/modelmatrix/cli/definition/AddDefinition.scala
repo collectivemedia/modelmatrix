@@ -82,6 +82,5 @@ case class AddDefinition(
 
     Console.out.println(s"Successfully created new model definition")
     Console.out.println(s"Matrix Model definition id: $modelDefinitionId")
-    Console.out.println(s"Matrix Model features count: ${featuresId.length}")
   }
 }

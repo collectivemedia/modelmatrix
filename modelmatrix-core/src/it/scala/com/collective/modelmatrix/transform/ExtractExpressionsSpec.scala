@@ -36,7 +36,7 @@ class ExtractExpressionsSpec extends FlatSpec with TestSparkContext {
     StructField("adv_price", DoubleType),
     StructField("os_system", StringType),
     StructField("os_family", StringType),
-    StructField("ts", LongType)
+    StructField("ts", StringType)
   ))
 
   def cookieId = UUID.randomUUID().toString
@@ -46,15 +46,15 @@ class ExtractExpressionsSpec extends FlatSpec with TestSparkContext {
   }
 
   val input = new Random().shuffle(
-    Seq.fill(5000)(Row(cookieId, 1, "cnn.com", price(0.1), "Yosemite", "OSX", now.toInstant.toEpochMilli)) ++
-    Seq.fill(4000)(Row(cookieId, 2, "bbc.com", price(0.3), "Mavericks", "OSX", now.toInstant.toEpochMilli)) ++
-    Seq.fill(400)(Row(cookieId, 3, "hbo.com", price(0.5), "Mavericks", "OSX", yesterday.toInstant.toEpochMilli)) ++
-    Seq.fill(200)(Row(cookieId, 4, "mashable.com", price(0.05), "MountainLion", "OSX", yesterday.toInstant.toEpochMilli)) ++
+    Seq.fill(5000)(Row(cookieId, 1, "cnn.com", price(0.1), "Yosemite", "OSX", now.toInstant.toEpochMilli.toString)) ++
+    Seq.fill(4000)(Row(cookieId, 2, "bbc.com", price(0.3), "Mavericks", "OSX", now.toInstant.toEpochMilli.toString)) ++
+    Seq.fill(400)(Row(cookieId, 3, "hbo.com", price(0.5), "Mavericks", "OSX", yesterday.toInstant.toEpochMilli.toString)) ++
+    Seq.fill(200)(Row(cookieId, 4, "mashable.com", price(0.05), "MountainLion", "OSX", yesterday.toInstant.toEpochMilli.toString)) ++
     // first 4 sites contribute 96% of the rows into full data set
-    Seq.fill(100)(Row(cookieId, 5, "gizmodo.com", price(0.14), "MountainLion", "OSX", yesterday.toInstant.toEpochMilli)) ++
-    Seq.fill(100)(Row(cookieId, 6, "reddit.com", price(0.21), "MountainLion", "OSX", yesterday.toInstant.toEpochMilli)) ++
-    Seq.fill(100)(Row(cookieId, 7, "amc.com", price(0.31), "MountainLion", "OSX", yesterday.toInstant.toEpochMilli)) ++
-    Seq.fill(100)(Row(cookieId, 8, "msnbc.com", price(0.1), "MountainLion", "OSX", yesterday.toInstant.toEpochMilli)) ++
+    Seq.fill(100)(Row(cookieId, 5, "gizmodo.com", price(0.14), "MountainLion", "OSX", yesterday.toInstant.toEpochMilli.toString)) ++
+    Seq.fill(100)(Row(cookieId, 6, "reddit.com", price(0.21), "MountainLion", "OSX", yesterday.toInstant.toEpochMilli.toString)) ++
+    Seq.fill(100)(Row(cookieId, 7, "amc.com", price(0.31), "MountainLion", "OSX", yesterday.toInstant.toEpochMilli.toString)) ++
+    Seq.fill(100)(Row(cookieId, 8, "msnbc.com", price(0.1), "MountainLion", "OSX", yesterday.toInstant.toEpochMilli.toString)) ++
     // null columns should be skipped
     Seq.fill(100)(Row(cookieId, 9, null, null, "MountainLion", "OSX", null))
   )
@@ -69,8 +69,8 @@ class ExtractExpressionsSpec extends FlatSpec with TestSparkContext {
   // Features with expressions
   val adIdSitePair = ModelFeature(isActive, "advertisement", "ad_id_site_pair", "concat('_', cast(adv_id as string), adv_site)", Top(95.0, allOther = false))
   val os = ModelFeature(isActive, "os", "os", "concat('_', os_system, os_family)", Top(100.0, allOther = false))
-  val dayOfWeek = ModelFeature(isActive, "time", "day_of_week", "day_of_week(ts, 'UTC')", Top(100.0, allOther = false))
-  val hourOfDay = ModelFeature(isActive, "time", "hour_of_day", "hour_of_day(ts, 'UTC')", Top(100.0, allOther = false))
+  val dayOfWeek = ModelFeature(isActive, "time", "day_of_week", "day_of_week(toLong(ts), 'UTC')", Top(100.0, allOther = false))
+  val hourOfDay = ModelFeature(isActive, "time", "hour_of_day", "hour_of_day(toLong(ts), 'UTC')", Top(100.0, allOther = false))
   val notNullSite = ModelFeature(isActive, "expr", "not_null_ad_site", "nvl_str(adv_site, 'http://no-site.com')", Top(95.0, allOther = true))
   val notNullPrice = ModelFeature(isActive, "expr", "not_null_ad_price", "nvl(adv_price, 123.0)", Bins(5, 0, 0))
   val logPrice = ModelFeature(isActive, "expr", "log_price", "log(adv_price)", Bins(5, 0, 0))
