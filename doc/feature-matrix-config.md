@@ -23,6 +23,26 @@ Any valid [Spark DataFrame](https://spark.apache.org/docs/1.3.0/sql-programming-
       ...
     }
     
+Additional Model Matrix UDFs:
+    
+    os = ${top} {
+      ...
+      extract = concat('_', os_system, os_family)
+      ...    
+    }
+    
+    ad_day_of_week = ${top} {
+      ...
+      extract = day_of_week(ad_timestamp, 'UTC')
+      ...
+    }
+    
+    ad_hour_of_day = ${top} {
+      ...
+      extract = hour_of_day(ad_timestamp, 'UTC')
+      ...
+    }    
+    
 ## Feature types
 
 ### <a name="identity-feature">Identity feature</a>

@@ -147,3 +147,13 @@ Check that input data compatible with model instance and can be "featurized"
     
     # Create sparse feature matrix in Hive
     ./mm featurize sparse 1 hive://mm.clicks_2015_05_05 hive://mm.clicks_features_2015_05_05 auction_id
+
+## <a name="source-sink">Source and Sink</a>
+
+HDFS and Hive can be used as source or sink for Model Matrix CLI
+
+    ./mm ... hive://mm.clicks_2015_05_05
+    ./mm ... csv://file:///Users/mm/clicks_2015_05_05.csv
+    ./mm ... csv://hdfs:///Users/mm/clicks_2015_05_05.csv
+    ./mm ... parquet://file:///Users/mm/clicks_2015_05_05.csv
+    ./mm ... parquet://hdfs:///Users/mm/clicks_2015_05_05.csv
