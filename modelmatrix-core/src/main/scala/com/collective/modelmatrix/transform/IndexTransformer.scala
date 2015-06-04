@@ -61,7 +61,7 @@ class IndexTransformer(input: DataFrame @@ Transformer.Features) extends Categor
     }
 
     // Get all other columns if required
-    val allOtherColumns = if (allOther) {
+    val allOtherColumns = if (allOther && support < 100.0) {
       val allOtherCnt = topValues.filter(_.count <= threshold).map(_.count).sum
       Seq(AllOther(valueColumns.columnId + 1, allOtherCnt, valueColumns.cumulativeCnt + allOtherCnt))
     } else Seq.empty

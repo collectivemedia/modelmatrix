@@ -3,7 +3,7 @@ package com.collective.modelmatrix.cli.featurize
 import com.collective.modelmatrix.catalog.ModelMatrixCatalog
 import com.collective.modelmatrix.cli.{Source, _}
 import com.collective.modelmatrix.transform.Transformer
-import com.collective.modelmatrix.{FeatureExtraction, IdentifiedPoint}
+import com.collective.modelmatrix.{ModelMatrix, FeatureExtraction, IdentifiedPoint}
 import com.typesafe.config.Config
 import org.apache.spark.mllib.linalg.{DenseVector, SparseVector}
 import org.apache.spark.sql.Row
@@ -39,7 +39,7 @@ case class SparseFeaturization(
       s"Id column: $idColumn" +
       s"Database: $dbName @ ${dbConfig.origin()}")
 
-    implicit val sqlContext = new HiveContext(sc)
+    implicit val sqlContext = ModelMatrix.hiveContext(sc)
 
     val features = blockOn(db.run(modelInstanceFeatures.features(modelInstanceId)))
     require(features.nonEmpty, s"No active features are defined for model instance: $modelInstanceId. " +

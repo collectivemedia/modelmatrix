@@ -16,4 +16,10 @@ class SinkSpec extends FlatSpec {
     assert(parsed == HiveSink("mm.featurized"))
   }
 
+  it should "parse parquet sink" in {
+    val sink = "parquet://file://temp/data/output.parquet"
+    val parsed = Sink(sink)
+    assert(parsed == ParquetSink("file://temp/data/output.parquet"))
+  }
+
 }

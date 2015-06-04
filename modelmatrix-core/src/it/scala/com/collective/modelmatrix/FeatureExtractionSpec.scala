@@ -15,7 +15,7 @@ import scalaz.\/
 
 class FeatureExtractionSpec extends FlatSpec with GivenWhenThen with TestSparkContext {
 
-  val sqlContext = new SQLContext(sc)
+  val sqlContext = ModelMatrix.sqlContext(sc)
 
   val schema = StructType(Seq(
     StructField("auction_id", LongType),

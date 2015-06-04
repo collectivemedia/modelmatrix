@@ -1,7 +1,7 @@
 package com.collective.modelmatrix.transform
 
 import com.collective.modelmatrix.CategorialColumn.{AllOther, CategorialValue}
-import com.collective.modelmatrix.{ModelFeature, TestSparkContext}
+import com.collective.modelmatrix.{ModelMatrix, ModelFeature, TestSparkContext}
 import org.apache.spark.sql.{Row, SQLContext}
 import org.apache.spark.sql.types.{StringType, StructField, StructType}
 import org.scalatest.FlatSpec
@@ -12,7 +12,7 @@ import scalaz.syntax.either._
 
 class IndexTransformerSpec extends FlatSpec with TestSparkContext {
 
-  val sqlContext = new SQLContext(sc)
+  val sqlContext = ModelMatrix.sqlContext(sc)
 
   val schema = StructType(Seq(
     StructField("adv_site", StringType)

@@ -5,7 +5,7 @@ import java.time.Instant
 import com.collective.modelmatrix.catalog.{ModelDefinitionFeature, ModelMatrixCatalog}
 import com.collective.modelmatrix.cli.{CliModelCatalog, CliSparkContext, Script, Source, _}
 import com.collective.modelmatrix.transform._
-import com.collective.modelmatrix.{BinColumn, CategorialColumn, ModelFeature}
+import com.collective.modelmatrix.{ModelMatrix, BinColumn, CategorialColumn, ModelFeature}
 import com.typesafe.config.Config
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.sql.types.DataType
@@ -33,7 +33,7 @@ case class AddInstance(
 
   private implicit val unwrap = Tag.unwrap(ec)
 
-  private implicit lazy val sqlContext = new HiveContext(sc)
+  private implicit lazy val sqlContext = ModelMatrix.hiveContext(sc)
 
   import com.collective.modelmatrix.cli.ASCIITableFormat._
   import com.collective.modelmatrix.cli.ASCIITableFormats._

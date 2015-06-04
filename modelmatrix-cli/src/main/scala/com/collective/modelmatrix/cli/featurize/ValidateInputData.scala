@@ -1,6 +1,6 @@
 package com.collective.modelmatrix.cli.featurize
 
-import com.collective.modelmatrix.FeatureExtraction
+import com.collective.modelmatrix.{ModelMatrix, FeatureExtraction}
 import com.collective.modelmatrix.catalog.ModelMatrixCatalog
 import com.collective.modelmatrix.cli.{CliModelCatalog, CliSparkContext, Script, Source}
 import com.collective.modelmatrix.transform.Transformer
@@ -28,7 +28,7 @@ case class ValidateInputData(
       s"Data source: $source. " +
       s"Database: $dbName @ ${dbConfig.origin()}")
 
-    implicit val sqlContext = new HiveContext(sc)
+    implicit val sqlContext = ModelMatrix.hiveContext(sc)
 
     val features = blockOn(db.run(modelInstanceFeatures.features(modelInstanceId)))
     require(features.nonEmpty, s"No active features are defined for model instance: $modelInstanceId. " +
