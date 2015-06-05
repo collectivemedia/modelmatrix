@@ -60,7 +60,7 @@ lazy val root = Project("modelmatrix", file(".")).
   settings(publish :=()).
   settings(publishLocal :=()).
   settings(unidocSettings: _*).
-  aggregate(modelmatrixCore, modelmatrixCli)
+  aggregate(modelmatrixCore, modelmatrixCli, modelMatrixClient)
 
 
 // Model Matrix projects
@@ -71,4 +71,8 @@ lazy val modelmatrixCore =
 
 lazy val modelmatrixCli =
   ModelMatrixProject("modelmatrix-cli")
+    .dependsOn(modelmatrixCore)
+
+lazy val modelMatrixClient =
+  ModelMatrixProject("modelmatrix-client")
     .dependsOn(modelmatrixCore)
