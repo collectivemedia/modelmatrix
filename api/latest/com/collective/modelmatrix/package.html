@@ -58,7 +58,72 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="com.collective.modelmatrix.ModelFeature" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="com.collective.modelmatrix.BinColumn" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="BinColumnextendsAnyRef"></a>
+      <a id="BinColumn:BinColumn"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="BinColumn.html"><span class="name">BinColumn</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.CategorialColumn" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CategorialColumnextendsAnyRef"></a>
+      <a id="CategorialColumn:CategorialColumn"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="CategorialColumn.html"><span class="name">CategorialColumn</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.Featurization" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="FeaturizationextendsSerializable"></a>
+      <a id="Featurization:Featurization"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="Featurization.html"><span class="name">Featurization</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.FeaturizationError" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="FeaturizationErrorextendsAnyRef"></a>
+      <a id="FeaturizationError:FeaturizationError"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="FeaturizationError.html"><span class="name">FeaturizationError</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.IdentifiedPoint" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="IdentifiedPointextendsProductwithSerializable"></a>
+      <a id="IdentifiedPoint:IdentifiedPoint"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="IdentifiedPoint.html"><span class="name">IdentifiedPoint</span></a><span class="params">(<span name="id">id: <span class="extype" name="scala.Any">Any</span></span>, <span name="features">features: <span class="extype" name="org.apache.spark.mllib.linalg.Vector">Vector</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.ModelFeature" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="ModelFeatureextendsProductwithSerializable"></a>
       <a id="ModelFeature:ModelFeature"></a>
       <h4 class="signature">
@@ -71,6 +136,45 @@
       </span>
       </h4>
       
+    </li><li name="com.collective.modelmatrix.ModelMatrixClient" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ModelMatrixClientextendsClientModelCatalog"></a>
+      <a id="ModelMatrixClient:ModelMatrixClient"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="ModelMatrixClient.html"><span class="name">ModelMatrixClient</span></a><span class="result"> extends <span class="extype" name="com.collective.modelmatrix.ClientModelCatalog">ClientModelCatalog</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.ModelMatrixFeatureExtractionException" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ModelMatrixFeatureExtractionExceptionextendsRuntimeException"></a>
+      <a id="ModelMatrixFeatureExtractionException:ModelMatrixFeatureExtractionException"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="ModelMatrixFeatureExtractionException.html"><span class="name">ModelMatrixFeatureExtractionException</span></a><span class="result"> extends <span class="extype" name="scala.RuntimeException">RuntimeException</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.ModelMatrixFeaturizationException" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ModelMatrixFeaturizationExceptionextendsRuntimeException"></a>
+      <a id="ModelMatrixFeaturizationException:ModelMatrixFeaturizationException"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="ModelMatrixFeaturizationException.html"><span class="name">ModelMatrixFeaturizationException</span></a><span class="result"> extends <span class="extype" name="scala.RuntimeException">RuntimeException</span></span>
+      </span>
+      </h4>
+      
     </li></ol>
             </div>
 
@@ -78,7 +182,46 @@
 
         <div id="values" class="values members">
               <h3>Value Members</h3>
-              <ol><li name="com.collective.modelmatrix.ModelFeature" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="com.collective.modelmatrix.BinColumn" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="BinColumn"></a>
+      <a id="BinColumn:BinColumn"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="BinColumn$.html"><span class="name">BinColumn</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.CategorialColumn" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CategorialColumn"></a>
+      <a id="CategorialColumn:CategorialColumn"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="CategorialColumn$.html"><span class="name">CategorialColumn</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.FeaturizationError" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="FeaturizationError"></a>
+      <a id="FeaturizationError:FeaturizationError"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="FeaturizationError$.html"><span class="name">FeaturizationError</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.ModelFeature" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="ModelFeature"></a>
       <a id="ModelFeature:ModelFeature"></a>
       <h4 class="signature">
@@ -88,6 +231,19 @@
       </span>
       <span class="symbol">
         <a href="ModelFeature$.html"><span class="name">ModelFeature</span></a><span class="result"> extends <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.ModelMatrix" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ModelMatrix"></a>
+      <a id="ModelMatrix:ModelMatrix"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ModelMatrix$.html"><span class="name">ModelMatrix</span></a>
       </span>
       </h4>
       

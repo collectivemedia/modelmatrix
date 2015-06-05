@@ -39,13 +39,36 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"></div>
+          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <span class="toggle">Linear Supertypes</span>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+        </div></div>
         
 
       <div id="mbrsel">
         <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
-        
-        
+        <div id="order">
+              <span class="filtertype">Ordering</span>
+              <ol>
+                
+                <li class="alpha in"><span>Alphabetic</span></li>
+                <li class="inherit out"><span>By inheritance</span></li>
+              </ol>
+            </div>
+        <div id="ancestors">
+                <span class="filtertype">Inherited<br />
+                </span>
+                <ol id="linearization">
+                  <li class="in" name="com.collective.modelmatrix.cli"><span>cli</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                </ol>
+              </div><div id="ancestors">
+            <span class="filtertype"></span>
+            <ol>
+              <li class="hideall out"><span>Hide All</span></li>
+              <li class="showall in"><span>Show all</span></li>
+            </ol>
+            <a href="http://docs.scala-lang.org/overviews/scaladoc/usage.html#members" target="_blank">Learn more about member selection</a>
+          </div>
         <div id="visbl">
             <span class="filtertype">Visibility</span>
             <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
@@ -58,16 +81,107 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="com.collective.modelmatrix.cli.ModelCatalogScript" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="ModelCatalogScriptextendsScript"></a>
-      <a id="ModelCatalogScript:ModelCatalogScript"></a>
+              <ol><li name="com.collective.modelmatrix.cli.ASCIITableFormat" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ASCIITableFormat[T]extendsAnyRef"></a>
+      <a id="ASCIITableFormat[T]:ASCIITableFormat[T]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="ASCIITableFormat.html"><span class="name">ASCIITableFormat</span></a><span class="tparams">[<span name="T">T</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.cli.CliModelCatalog" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CliModelCatalogextendsAnyRef"></a>
+      <a id="CliModelCatalog:CliModelCatalog"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <a href="ModelCatalogScript.html"><span class="name">ModelCatalogScript</span></a><span class="result"> extends <a href="Script.html" class="extype" name="com.collective.modelmatrix.cli.Script">Script</a></span>
+        <a href="CliModelCatalog.html"><span class="name">CliModelCatalog</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.cli.CliSparkContext" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CliSparkContextextendsAnyRef"></a>
+      <a id="CliSparkContext:CliSparkContext"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="CliSparkContext.html"><span class="name">CliSparkContext</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.cli.ConcurrentProcess" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ConcurrentProcess[O]extendsAnyRef"></a>
+      <a id="ConcurrentProcess[O]:ConcurrentProcess[O]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="package$$ConcurrentProcess.html"><span class="name">ConcurrentProcess</span></a><span class="tparams">[<span name="O">O</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.cli.CsvSink" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CsvSinkextendsSinkwithProductwithSerializable"></a>
+      <a id="CsvSink:CsvSink"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CsvSink.html"><span class="name">CsvSink</span></a><span class="params">(<span name="path">path: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="useHeader">useHeader: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>, <span name="delimiter">delimiter: <span class="extype" name="scala.Char">Char</span> = <span class="symbol">','</span></span>, <span name="quote">quote: <span class="extype" name="scala.Char">Char</span> = <span class="symbol">'\&quot;'</span></span>, <span name="escape">escape: <span class="extype" name="scala.Char">Char</span> = <span class="symbol">'\\'</span></span>)</span><span class="result"> extends <a href="Sink.html" class="extype" name="com.collective.modelmatrix.cli.Sink">Sink</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.cli.CsvSource" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="CsvSourceextendsSourcewithProductwithSerializable"></a>
+      <a id="CsvSource:CsvSource"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="CsvSource.html"><span class="name">CsvSource</span></a><span class="params">(<span name="path">path: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="useHeader">useHeader: <span class="extype" name="scala.Boolean">Boolean</span> = <span class="symbol">true</span></span>, <span name="delimiter">delimiter: <span class="extype" name="scala.Char">Char</span> = <span class="symbol">','</span></span>, <span name="quote">quote: <span class="extype" name="scala.Char">Char</span> = <span class="symbol">'\&quot;'</span></span>, <span name="escape">escape: <span class="extype" name="scala.Char">Char</span> = <span class="symbol">'\\'</span></span>)</span><span class="result"> extends <a href="Source.html" class="extype" name="com.collective.modelmatrix.cli.Source">Source</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.cli.HiveSink" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="HiveSinkextendsSinkwithProductwithSerializable"></a>
+      <a id="HiveSink:HiveSink"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="HiveSink.html"><span class="name">HiveSink</span></a><span class="params">(<span name="tableName">tableName: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="Sink.html" class="extype" name="com.collective.modelmatrix.cli.Sink">Sink</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.cli.HiveSource" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="HiveSourceextendsSourcewithProductwithSerializable"></a>
+      <a id="HiveSource:HiveSource"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="HiveSource.html"><span class="name">HiveSource</span></a><span class="params">(<span name="tableName">tableName: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="Source.html" class="extype" name="com.collective.modelmatrix.cli.Source">Source</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
@@ -84,6 +198,32 @@
       </span>
       </h4>
       
+    </li><li name="com.collective.modelmatrix.cli.ParquetSink" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ParquetSinkextendsSinkwithProductwithSerializable"></a>
+      <a id="ParquetSink:ParquetSink"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ParquetSink.html"><span class="name">ParquetSink</span></a><span class="params">(<span name="path">path: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="Sink.html" class="extype" name="com.collective.modelmatrix.cli.Sink">Sink</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.cli.ParquetSource" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ParquetSourceextendsSourcewithProductwithSerializable"></a>
+      <a id="ParquetSource:ParquetSource"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ParquetSource.html"><span class="name">ParquetSource</span></a><span class="params">(<span name="path">path: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result"> extends <a href="Source.html" class="extype" name="com.collective.modelmatrix.cli.Source">Source</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
     </li><li name="com.collective.modelmatrix.cli.Script" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="ScriptextendsAnyRef"></a>
       <a id="Script:Script"></a>
@@ -97,6 +237,45 @@
       </span>
       </h4>
       
+    </li><li name="com.collective.modelmatrix.cli.Sink" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="SinkextendsAnyRef"></a>
+      <a id="Sink:Sink"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Sink.html"><span class="name">Sink</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.cli.Source" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="SourceextendsAnyRef"></a>
+      <a id="Source:Source"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Source.html"><span class="name">Source</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.cli.StringOps" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="StringOpsextendsAnyVal"></a>
+      <a id="StringOps:StringOps"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit final </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="package$$StringOps.html"><span class="name">StringOps</span></a><span class="result"> extends <span class="extype" name="scala.AnyVal">AnyVal</span></span>
+      </span>
+      </h4>
+      
     </li></ol>
             </div>
 
@@ -104,7 +283,33 @@
 
         <div id="values" class="values members">
               <h3>Value Members</h3>
-              <ol><li name="com.collective.modelmatrix.cli.ModelMatrixCli" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="com.collective.modelmatrix.cli.ASCIITableFormat" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ASCIITableFormat"></a>
+      <a id="ASCIITableFormat:ASCIITableFormat"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ASCIITableFormat$.html"><span class="name">ASCIITableFormat</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.cli.ASCIITableFormats" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ASCIITableFormats"></a>
+      <a id="ASCIITableFormats:ASCIITableFormats"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="ASCIITableFormats$.html"><span class="name">ASCIITableFormats</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.cli.ModelMatrixCli" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="ModelMatrixCli"></a>
       <a id="ModelMatrixCli:ModelMatrixCli"></a>
       <h4 class="signature">
@@ -114,6 +319,32 @@
       </span>
       <span class="symbol">
         <a href="ModelMatrixCli$.html"><span class="name">ModelMatrixCli</span></a><span class="result"> extends <span class="extype" name="scala.App">App</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.cli.NoSink" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="NoSink"></a>
+      <a id="NoSink:NoSink"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="NoSink$.html"><span class="name">NoSink</span></a><span class="result"> extends <a href="Sink.html" class="extype" name="com.collective.modelmatrix.cli.Sink">Sink</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.cli.NoSource" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="NoSource"></a>
+      <a id="NoSource:NoSource"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="NoSource$.html"><span class="name">NoSource</span></a><span class="result"> extends <a href="Source.html" class="extype" name="com.collective.modelmatrix.cli.Source">Source</a></span>
       </span>
       </h4>
       
@@ -130,6 +361,32 @@
       </span>
       </h4>
       
+    </li><li name="com.collective.modelmatrix.cli.Sink" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Sink"></a>
+      <a id="Sink:Sink"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Sink$.html"><span class="name">Sink</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.cli.Source" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Source"></a>
+      <a id="Source:Source"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Source$.html"><span class="name">Source</span></a>
+      </span>
+      </h4>
+      
     </li><li name="com.collective.modelmatrix.cli.definition" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="definition"></a>
       <a id="definition:definition"></a>
@@ -143,6 +400,58 @@
       </span>
       </h4>
       
+    </li><li name="com.collective.modelmatrix.cli.featurize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="featurize"></a>
+      <a id="featurize:featurize"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a href="featurize/package.html"><span class="name">featurize</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.cli.instance" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="instance"></a>
+      <a id="instance:instance"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">package</span>
+      </span>
+      <span class="symbol">
+        <a href="instance/package.html"><span class="name">instance</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.cli.package#stringToASCIITableHeader" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="stringToASCIITableHeader(s:String):com.bethecoder.ascii_table.ASCIITableHeader"></a>
+      <a id="stringToASCIITableHeader(String):ASCIITableHeader"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">stringToASCIITableHeader</span><span class="params">(<span name="s">s: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="com.bethecoder.ascii_table.ASCIITableHeader">ASCIITableHeader</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.cli.package#timeFormatter" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="timeFormatter:java.time.format.DateTimeFormatter"></a>
+      <a id="timeFormatter:DateTimeFormatter"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">timeFormatter</span><span class="result">: <span class="extype" name="java.time.format.DateTimeFormatter">DateTimeFormatter</span></span>
+      </span>
+      </h4>
+      
     </li></ol>
             </div>
 
@@ -152,7 +461,11 @@
         </div>
 
         <div id="inheritedMembers">
-        
+        <div class="parent" name="scala.AnyRef">
+              <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
+            </div><div class="parent" name="scala.Any">
+              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
+            </div>
         
         </div>
 

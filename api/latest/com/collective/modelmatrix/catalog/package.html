@@ -133,8 +133,112 @@
       </span>
       </h4>
       
+    </li><li name="com.collective.modelmatrix.catalog.ModelInstance" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ModelInstanceextendsProductwithSerializable"></a>
+      <a id="ModelInstance:ModelInstance"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ModelInstance.html"><span class="name">ModelInstance</span></a><span class="params">(<span name="id">id: <span class="extype" name="scala.Int">Int</span></span>, <span name="modelDefinitionId">modelDefinitionId: <span class="extype" name="scala.Int">Int</span></span>, <span name="name">name: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="createdBy">createdBy: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="createdAt">createdAt: <span class="extype" name="java.time.Instant">Instant</span></span>, <span name="comment">comment: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="features">features: <span class="extype" name="scala.Int">Int</span></span>, <span name="columns">columns: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.catalog.ModelInstanceBinsFeature" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ModelInstanceBinsFeatureextendsModelInstanceFeaturewithProductwithSerializable"></a>
+      <a id="ModelInstanceBinsFeature:ModelInstanceBinsFeature"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ModelInstanceBinsFeature.html"><span class="name">ModelInstanceBinsFeature</span></a><span class="params">(<span name="id">id: <span class="extype" name="scala.Int">Int</span></span>, <span name="modelInstanceId">modelInstanceId: <span class="extype" name="scala.Int">Int</span></span>, <span name="feature">feature: <a href="../ModelFeature.html" class="extype" name="com.collective.modelmatrix.ModelFeature">ModelFeature</a></span>, <span name="extractType">extractType: <span class="extype" name="org.apache.spark.sql.types.DataType">DataType</span></span>, <span name="columns">columns: <span class="extype" name="scala.Seq">Seq</span>[<a href="../BinColumn.html" class="extype" name="com.collective.modelmatrix.BinColumn">BinColumn</a>]</span>)</span><span class="result"> extends <a href="ModelInstanceFeature.html" class="extype" name="com.collective.modelmatrix.catalog.ModelInstanceFeature">ModelInstanceFeature</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.catalog.ModelInstanceFeature" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ModelInstanceFeatureextendsAnyRef"></a>
+      <a id="ModelInstanceFeature:ModelInstanceFeature"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ModelInstanceFeature.html"><span class="name">ModelInstanceFeature</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.catalog.ModelInstanceFeatures" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ModelInstanceFeaturesextendsAnyRef"></a>
+      <a id="ModelInstanceFeatures:ModelInstanceFeatures"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="ModelInstanceFeatures.html"><span class="name">ModelInstanceFeatures</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.catalog.ModelInstanceIdentityFeature" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ModelInstanceIdentityFeatureextendsModelInstanceFeaturewithProductwithSerializable"></a>
+      <a id="ModelInstanceIdentityFeature:ModelInstanceIdentityFeature"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ModelInstanceIdentityFeature.html"><span class="name">ModelInstanceIdentityFeature</span></a><span class="params">(<span name="id">id: <span class="extype" name="scala.Int">Int</span></span>, <span name="modelInstanceId">modelInstanceId: <span class="extype" name="scala.Int">Int</span></span>, <span name="feature">feature: <a href="../ModelFeature.html" class="extype" name="com.collective.modelmatrix.ModelFeature">ModelFeature</a></span>, <span name="extractType">extractType: <span class="extype" name="org.apache.spark.sql.types.DataType">DataType</span></span>, <span name="columnId">columnId: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result"> extends <a href="ModelInstanceFeature.html" class="extype" name="com.collective.modelmatrix.catalog.ModelInstanceFeature">ModelInstanceFeature</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.catalog.ModelInstanceIndexFeature" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ModelInstanceIndexFeatureextendsModelInstanceFeaturewithProductwithSerializable"></a>
+      <a id="ModelInstanceIndexFeature:ModelInstanceIndexFeature"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ModelInstanceIndexFeature.html"><span class="name">ModelInstanceIndexFeature</span></a><span class="params">(<span name="id">id: <span class="extype" name="scala.Int">Int</span></span>, <span name="modelInstanceId">modelInstanceId: <span class="extype" name="scala.Int">Int</span></span>, <span name="feature">feature: <a href="../ModelFeature.html" class="extype" name="com.collective.modelmatrix.ModelFeature">ModelFeature</a></span>, <span name="extractType">extractType: <span class="extype" name="org.apache.spark.sql.types.DataType">DataType</span></span>, <span name="columns">columns: <span class="extype" name="scala.Seq">Seq</span>[<a href="../CategorialColumn.html" class="extype" name="com.collective.modelmatrix.CategorialColumn">CategorialColumn</a>]</span>)</span><span class="result"> extends <a href="ModelInstanceFeature.html" class="extype" name="com.collective.modelmatrix.catalog.ModelInstanceFeature">ModelInstanceFeature</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.catalog.ModelInstanceTopFeature" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ModelInstanceTopFeatureextendsModelInstanceFeaturewithProductwithSerializable"></a>
+      <a id="ModelInstanceTopFeature:ModelInstanceTopFeature"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="ModelInstanceTopFeature.html"><span class="name">ModelInstanceTopFeature</span></a><span class="params">(<span name="id">id: <span class="extype" name="scala.Int">Int</span></span>, <span name="modelInstanceId">modelInstanceId: <span class="extype" name="scala.Int">Int</span></span>, <span name="feature">feature: <a href="../ModelFeature.html" class="extype" name="com.collective.modelmatrix.ModelFeature">ModelFeature</a></span>, <span name="extractType">extractType: <span class="extype" name="org.apache.spark.sql.types.DataType">DataType</span></span>, <span name="columns">columns: <span class="extype" name="scala.Seq">Seq</span>[<a href="../CategorialColumn.html" class="extype" name="com.collective.modelmatrix.CategorialColumn">CategorialColumn</a>]</span>)</span><span class="result"> extends <a href="ModelInstanceFeature.html" class="extype" name="com.collective.modelmatrix.catalog.ModelInstanceFeature">ModelInstanceFeature</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.catalog.ModelInstances" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="ModelInstancesextendsAnyRef"></a>
+      <a id="ModelInstances:ModelInstances"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="ModelInstances.html"><span class="name">ModelInstances</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
     </li><li name="com.collective.modelmatrix.catalog.ModelMatrixCatalog" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="ModelMatrixCatalogextendsAnyRef"></a>
+      <a id="ModelMatrixCatalogextendsModelMatrixDefinitionwithModelMatrixInstance"></a>
       <a id="ModelMatrixCatalog:ModelMatrixCatalog"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -142,10 +246,38 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="ModelMatrixCatalog.html"><span class="name">ModelMatrixCatalog</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+        <a href="ModelMatrixCatalog.html"><span class="name">ModelMatrixCatalog</span></a><span class="result"> extends <a href="ModelMatrixDefinition.html" class="extype" name="com.collective.modelmatrix.catalog.ModelMatrixDefinition">ModelMatrixDefinition</a> with <a href="ModelMatrixInstance.html" class="extype" name="com.collective.modelmatrix.catalog.ModelMatrixInstance">ModelMatrixInstance</a></span>
       </span>
       </h4>
       
+    </li><li name="com.collective.modelmatrix.catalog.ModelMatrixDefinition" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ModelMatrixDefinitionextendsAnyRef"></a>
+      <a id="ModelMatrixDefinition:ModelMatrixDefinition"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ModelMatrixDefinition.html"><span class="name">ModelMatrixDefinition</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Model Matrix definition tables
+</p>
+    </li><li name="com.collective.modelmatrix.catalog.ModelMatrixInstance" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ModelMatrixInstanceextendsAnyRef"></a>
+      <a id="ModelMatrixInstance:ModelMatrixInstance"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ModelMatrixInstance.html"><span class="name">ModelMatrixInstance</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Model Matrix instance tables
+</p>
     </li></ol>
             </div>
 
@@ -153,7 +285,33 @@
 
         <div id="values" class="values members">
               <h3>Value Members</h3>
-              <ol><li name="com.collective.modelmatrix.catalog.package#instantColumnType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="com.collective.modelmatrix.catalog.package#byteVectorColumnType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="byteVectorColumnType:slick.driver.PostgresDriver.BaseColumnType[scodec.bits.ByteVector]"></a>
+      <a id="byteVectorColumnType:slick.driver.PostgresDriver.BaseColumnType[ByteVector]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">byteVectorColumnType</span><span class="result">: <span class="extype" name="slick.driver.JdbcProfile.BaseColumnType">slick.driver.PostgresDriver.BaseColumnType</span>[<span class="extype" name="scodec.bits.ByteVector">ByteVector</span>]</span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.catalog.package#dataTypeColumnType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="dataTypeColumnType:slick.driver.PostgresDriver.BaseColumnType[org.apache.spark.sql.types.DataType]"></a>
+      <a id="dataTypeColumnType:slick.driver.PostgresDriver.BaseColumnType[DataType]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">dataTypeColumnType</span><span class="result">: <span class="extype" name="slick.driver.JdbcProfile.BaseColumnType">slick.driver.PostgresDriver.BaseColumnType</span>[<span class="extype" name="org.apache.spark.sql.types.DataType">DataType</span>]</span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.catalog.package#instantColumnType" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="instantColumnType:slick.driver.PostgresDriver.BaseColumnType[java.time.Instant]"></a>
       <a id="instantColumnType:slick.driver.PostgresDriver.BaseColumnType[Instant]"></a>
       <h4 class="signature">

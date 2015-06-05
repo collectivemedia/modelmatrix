@@ -81,36 +81,7 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="com.collective.modelmatrix.transform.Transform.Index" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="IndexextendsTransformwithProductwithSerializable"></a>
-      <a id="Index:Index"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a href="Transform$$Index.html"><span class="name">Index</span></a><span class="params">(<span name="percentage">percentage: <span class="extype" name="scala.Double">Double</span></span>, <span name="allOther">allOther: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result"> extends <a href="Transform.html" class="extype" name="com.collective.modelmatrix.transform.Transform">Transform</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt">For distinct values of the column, find the values
-with at least the minimum support in the data set.</p>
-    </li><li name="com.collective.modelmatrix.transform.Transform.Top" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="TopextendsTransformwithProductwithSerializable"></a>
-      <a id="Top:Top"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a href="Transform$$Top.html"><span class="name">Top</span></a><span class="params">(<span name="percentage">percentage: <span class="extype" name="scala.Double">Double</span></span>, <span name="allOther">allOther: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result"> extends <a href="Transform.html" class="extype" name="com.collective.modelmatrix.transform.Transform">Transform</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt">For distinct values of the column, find top values
-by a quantity that cumulatively cover a given percentage
-of this quantity.</p>
-    </li><li name="com.collective.modelmatrix.transform.Transform.TransformName" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+              <ol><li name="com.collective.modelmatrix.transform.Transform.TransformName" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="TransformName[T&lt;:com.collective.modelmatrix.transform.Transform]extendsAnyRef"></a>
       <a id="TransformName[T&lt;:Transform]:TransformName[T]"></a>
       <h4 class="signature">
@@ -208,20 +179,6 @@ of this quantity.</p>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="com.collective.modelmatrix.transform.Transform.Identity" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="Identity"></a>
-      <a id="Identity:Identity"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">object</span>
-      </span>
-      <span class="symbol">
-        <a href="Transform$$Identity$.html"><span class="name">Identity</span></a><span class="result"> extends <a href="Transform.html" class="extype" name="com.collective.modelmatrix.transform.Transform">Transform</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4>
-      <p class="comment cmt">Absence of transformation
-</p>
     </li><li name="com.collective.modelmatrix.transform.Transform.TransformName" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="TransformName"></a>
       <a id="TransformName:TransformName"></a>
@@ -248,6 +205,19 @@ of this quantity.</p>
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
+    </li><li name="com.collective.modelmatrix.transform.Transform#bins" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="bins(config:com.typesafe.config.Config):scalaz.ValidationNel[String,com.collective.modelmatrix.transform.Bins]"></a>
+      <a id="bins(Config):ValidationNel[String,Bins]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">bins</span><span class="params">(<span name="config">config: <span class="extype" name="com.typesafe.config.Config">Config</span></span>)</span><span class="result">: <a href="../../../../scalaz/package.html#ValidationNel[+E,+X]=scalaz.Validation[scalaz.NonEmptyList[E],X]" class="extmbr" name="scalaz.ValidationNel">ValidationNel</a>[<span class="extype" name="scala.Predef.String">String</span>, <a href="Bins.html" class="extype" name="com.collective.modelmatrix.transform.Bins">Bins</a>]</span>
+      </span>
+      </h4>
+      
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
       <a id="clone():AnyRef"></a>
@@ -339,7 +309,7 @@ of this quantity.</p>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="com.collective.modelmatrix.transform.Transform#identity" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="identity(config:com.typesafe.config.Config):scalaz.ValidationNel[String,com.collective.modelmatrix.transform.Transform.Identity.type]"></a>
+      <a id="identity(config:com.typesafe.config.Config):scalaz.ValidationNel[String,com.collective.modelmatrix.transform.Identity.type]"></a>
       <a id="identity(Config):ValidationNel[String,Identity.type]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -347,12 +317,12 @@ of this quantity.</p>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">identity</span><span class="params">(<span name="config">config: <span class="extype" name="com.typesafe.config.Config">Config</span></span>)</span><span class="result">: <a href="../../../../scalaz/package.html#ValidationNel[+E,+X]=scalaz.Validation[scalaz.NonEmptyList[E],X]" class="extmbr" name="scalaz.ValidationNel">ValidationNel</a>[<span class="extype" name="scala.Predef.String">String</span>, <a href="Transform$$Identity$.html" class="extype" name="com.collective.modelmatrix.transform.Transform.Identity">Identity</a>.type]</span>
+        <span class="name">identity</span><span class="params">(<span name="config">config: <span class="extype" name="com.typesafe.config.Config">Config</span></span>)</span><span class="result">: <a href="../../../../scalaz/package.html#ValidationNel[+E,+X]=scalaz.Validation[scalaz.NonEmptyList[E],X]" class="extmbr" name="scalaz.ValidationNel">ValidationNel</a>[<span class="extype" name="scala.Predef.String">String</span>, <a href="Identity$.html" class="extype" name="com.collective.modelmatrix.transform.Identity">Identity</a>.type]</span>
       </span>
       </h4>
       
     </li><li name="com.collective.modelmatrix.transform.Transform#index" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="index(config:com.typesafe.config.Config):scalaz.ValidationNel[String,com.collective.modelmatrix.transform.Transform.Index]"></a>
+      <a id="index(config:com.typesafe.config.Config):scalaz.ValidationNel[String,com.collective.modelmatrix.transform.Index]"></a>
       <a id="index(Config):ValidationNel[String,Index]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -360,7 +330,7 @@ of this quantity.</p>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">index</span><span class="params">(<span name="config">config: <span class="extype" name="com.typesafe.config.Config">Config</span></span>)</span><span class="result">: <a href="../../../../scalaz/package.html#ValidationNel[+E,+X]=scalaz.Validation[scalaz.NonEmptyList[E],X]" class="extmbr" name="scalaz.ValidationNel">ValidationNel</a>[<span class="extype" name="scala.Predef.String">String</span>, <a href="Transform$$Index.html" class="extype" name="com.collective.modelmatrix.transform.Transform.Index">Index</a>]</span>
+        <span class="name">index</span><span class="params">(<span name="config">config: <span class="extype" name="com.typesafe.config.Config">Config</span></span>)</span><span class="result">: <a href="../../../../scalaz/package.html#ValidationNel[+E,+X]=scalaz.Validation[scalaz.NonEmptyList[E],X]" class="extmbr" name="scalaz.ValidationNel">ValidationNel</a>[<span class="extype" name="scala.Predef.String">String</span>, <a href="Index.html" class="extype" name="com.collective.modelmatrix.transform.Index">Index</a>]</span>
       </span>
       </h4>
       
@@ -456,7 +426,7 @@ of this quantity.</p>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="com.collective.modelmatrix.transform.Transform#top" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="top(config:com.typesafe.config.Config):scalaz.ValidationNel[String,com.collective.modelmatrix.transform.Transform.Top]"></a>
+      <a id="top(config:com.typesafe.config.Config):scalaz.ValidationNel[String,com.collective.modelmatrix.transform.Top]"></a>
       <a id="top(Config):ValidationNel[String,Top]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -464,7 +434,7 @@ of this quantity.</p>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">top</span><span class="params">(<span name="config">config: <span class="extype" name="com.typesafe.config.Config">Config</span></span>)</span><span class="result">: <a href="../../../../scalaz/package.html#ValidationNel[+E,+X]=scalaz.Validation[scalaz.NonEmptyList[E],X]" class="extmbr" name="scalaz.ValidationNel">ValidationNel</a>[<span class="extype" name="scala.Predef.String">String</span>, <a href="Transform$$Top.html" class="extype" name="com.collective.modelmatrix.transform.Transform.Top">Top</a>]</span>
+        <span class="name">top</span><span class="params">(<span name="config">config: <span class="extype" name="com.typesafe.config.Config">Config</span></span>)</span><span class="result">: <a href="../../../../scalaz/package.html#ValidationNel[+E,+X]=scalaz.Validation[scalaz.NonEmptyList[E],X]" class="extmbr" name="scalaz.ValidationNel">ValidationNel</a>[<span class="extype" name="scala.Predef.String">String</span>, <a href="Top.html" class="extype" name="com.collective.modelmatrix.transform.Top">Top</a>]</span>
       </span>
       </h4>
       

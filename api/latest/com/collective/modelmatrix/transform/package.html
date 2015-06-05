@@ -58,7 +58,140 @@
 
         <div id="types" class="types members">
               <h3>Type Members</h3>
-              <ol><li name="com.collective.modelmatrix.transform.Transform" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+              <ol><li name="com.collective.modelmatrix.transform.Binner" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="BinnerextendsAnyRef"></a>
+      <a id="Binner:Binner"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Binner.html"><span class="name">Binner</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.transform.Bins" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="BinsextendsTransformwithProductwithSerializable"></a>
+      <a id="Bins:Bins"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="Bins.html"><span class="name">Bins</span></a><span class="params">(<span name="nbins">nbins: <span class="extype" name="scala.Int">Int</span></span>, <span name="minPoints">minPoints: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">0</span></span>, <span name="minPercents">minPercents: <span class="extype" name="scala.Double">Double</span> = <span class="symbol">0.0</span></span>)</span><span class="result"> extends <a href="Transform.html" class="extype" name="com.collective.modelmatrix.transform.Transform">Transform</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Break the values in the column into bins with roughly the same number of points.</p>
+    </li><li name="com.collective.modelmatrix.transform.BinsTransformer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="BinsTransformerextendsTransformerwithBinner"></a>
+      <a id="BinsTransformer:BinsTransformer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="BinsTransformer.html"><span class="name">BinsTransformer</span></a><span class="result"> extends <a href="Transformer.html" class="extype" name="com.collective.modelmatrix.transform.Transformer">Transformer</a> with <a href="Binner.html" class="extype" name="com.collective.modelmatrix.transform.Binner">Binner</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.transform.CategorialTransformer" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CategorialTransformerextendsTransformer"></a>
+      <a id="CategorialTransformer:CategorialTransformer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="CategorialTransformer.html"><span class="name">CategorialTransformer</span></a><span class="result"> extends <a href="Transformer.html" class="extype" name="com.collective.modelmatrix.transform.Transformer">Transformer</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.transform.FeatureTransformationError" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="FeatureTransformationErrorextendsAnyRef"></a>
+      <a id="FeatureTransformationError:FeatureTransformationError"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">sealed </span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="FeatureTransformationError.html"><span class="name">FeatureTransformationError</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.transform.IdentityTransformer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="IdentityTransformerextendsTransformer"></a>
+      <a id="IdentityTransformer:IdentityTransformer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="IdentityTransformer.html"><span class="name">IdentityTransformer</span></a><span class="result"> extends <a href="Transformer.html" class="extype" name="com.collective.modelmatrix.transform.Transformer">Transformer</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.transform.Index" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="IndexextendsTransformwithProductwithSerializable"></a>
+      <a id="Index:Index"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="Index.html"><span class="name">Index</span></a><span class="params">(<span name="support">support: <span class="extype" name="scala.Double">Double</span></span>, <span name="allOther">allOther: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result"> extends <a href="Transform.html" class="extype" name="com.collective.modelmatrix.transform.Transform">Transform</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">For distinct values of the column, find the values
+with at least the minimum support in the data set.</p>
+    </li><li name="com.collective.modelmatrix.transform.IndexTransformer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="IndexTransformerextendsCategorialTransformer"></a>
+      <a id="IndexTransformer:IndexTransformer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="IndexTransformer.html"><span class="name">IndexTransformer</span></a><span class="result"> extends <a href="CategorialTransformer.html" class="extype" name="com.collective.modelmatrix.transform.CategorialTransformer">CategorialTransformer</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.transform.Top" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TopextendsTransformwithProductwithSerializable"></a>
+      <a id="Top:Top"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="Top.html"><span class="name">Top</span></a><span class="params">(<span name="cover">cover: <span class="extype" name="scala.Double">Double</span></span>, <span name="allOther">allOther: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result"> extends <a href="Transform.html" class="extype" name="com.collective.modelmatrix.transform.Transform">Transform</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">For distinct values of the column, find top values
+by a quantity that cumulatively cover a given percentage
+of this quantity.</p>
+    </li><li name="com.collective.modelmatrix.transform.TopTransformer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TopTransformerextendsCategorialTransformer"></a>
+      <a id="TopTransformer:TopTransformer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="TopTransformer.html"><span class="name">TopTransformer</span></a><span class="result"> extends <a href="CategorialTransformer.html" class="extype" name="com.collective.modelmatrix.transform.CategorialTransformer">CategorialTransformer</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.transform.Transform" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
       <a id="TransformextendsAnyRef"></a>
       <a id="Transform:Transform"></a>
       <h4 class="signature">
@@ -71,6 +204,32 @@
       </span>
       </h4>
       
+    </li><li name="com.collective.modelmatrix.transform.Transformer" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="TransformerextendsAnyRef"></a>
+      <a id="Transformer:Transformer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">abstract </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="Transformer.html"><span class="name">Transformer</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.transform.TypedModelFeature" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="TypedModelFeatureextendsProductwithSerializable"></a>
+      <a id="TypedModelFeature:TypedModelFeature"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">case class</span>
+      </span>
+      <span class="symbol">
+        <a href="TypedModelFeature.html"><span class="name">TypedModelFeature</span></a><span class="params">(<span name="feature">feature: <a href="../ModelFeature.html" class="extype" name="com.collective.modelmatrix.ModelFeature">ModelFeature</a></span>, <span name="extractType">extractType: <span class="extype" name="org.apache.spark.sql.types.DataType">DataType</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      
     </li></ol>
             </div>
 
@@ -78,7 +237,34 @@
 
         <div id="values" class="values members">
               <h3>Value Members</h3>
-              <ol><li name="com.collective.modelmatrix.transform.Transform" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+              <ol><li name="com.collective.modelmatrix.transform.FeatureTransformationError" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="FeatureTransformationError"></a>
+      <a id="FeatureTransformationError:FeatureTransformationError"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="FeatureTransformationError$.html"><span class="name">FeatureTransformationError</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.transform.Identity" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Identity"></a>
+      <a id="Identity:Identity"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Identity$.html"><span class="name">Identity</span></a><span class="result"> extends <a href="Transform.html" class="extype" name="com.collective.modelmatrix.transform.Transform">Transform</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Absence of transformation
+</p>
+    </li><li name="com.collective.modelmatrix.transform.Transform" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="Transform"></a>
       <a id="Transform:Transform"></a>
       <h4 class="signature">
@@ -88,6 +274,19 @@
       </span>
       <span class="symbol">
         <a href="Transform$.html"><span class="name">Transform</span></a>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.transform.Transformer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="Transformer"></a>
+      <a id="Transformer:Transformer"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">object</span>
+      </span>
+      <span class="symbol">
+        <a href="Transformer$.html"><span class="name">Transformer</span></a>
       </span>
       </h4>
       
