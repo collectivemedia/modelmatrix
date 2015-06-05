@@ -43,4 +43,11 @@ object Dependencies {
     , scalazStream
     )
 
+  val modelmatrixClient =
+    spark ++
+    test ++
+    Seq(
+      guava
+    )
+
 }
