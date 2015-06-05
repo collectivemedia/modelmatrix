@@ -1,6 +1,6 @@
 # Model Matrix
 
-Model Matrix (feature engineering tools)
+Model Matrix: Machine Learning Feature Engineering
 
 * Website: https://collectivemedia.github.io/modelmatrix/
 * Source: https://github.com/collectivemedia/modelmatrix/
