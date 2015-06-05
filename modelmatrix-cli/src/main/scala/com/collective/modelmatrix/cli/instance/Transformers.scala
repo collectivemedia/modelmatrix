@@ -15,11 +15,11 @@ trait Transformers {
     val index = new IndexTransformer(input)
     val bins = new BinsTransformer(input)
 
-    private val unknownFeature: PartialFunction[ModelFeature, TransformSchemaError \/ TypedModelFeature] = {
+    private val unknownFeature: PartialFunction[ModelFeature, FeatureTransformationError \/ TypedModelFeature] = {
       case feature => sys.error(s"Feature can't be validated by any of transformers: $feature")
     }
 
-    def validate(feature: ModelFeature): TransformSchemaError \/ TypedModelFeature =
+    def validate(feature: ModelFeature): FeatureTransformationError \/ TypedModelFeature =
       (identity.validate orElse
        top.validate orElse
        index.validate orElse

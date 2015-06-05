@@ -1,17 +1,18 @@
 package com.collective.modelmatrix.transform
 
 import com.collective.modelmatrix.CategorialColumn.{AllOther, CategorialValue}
-import com.collective.modelmatrix.{ModelFeature, TestSparkContext}
+import com.collective.modelmatrix.{ModelMatrix, ModelFeature, TestSparkContext}
 import org.apache.spark.sql.{DataFrame, Row, SQLContext}
 import org.apache.spark.sql.types._
 import org.scalatest.FlatSpec
 import scodec.bits.ByteVector
 import scala.util.Random
+import scalaz.{\/-, -\/}
 import scalaz.syntax.either._
 
 class TopTransformerSpec extends FlatSpec with TestSparkContext {
 
-  val sqlContext = new SQLContext(sc)
+  val sqlContext = ModelMatrix.sqlContext(sc)
 
   val schema = StructType(Seq(
     StructField("adv_site", StringType)
@@ -37,7 +38,10 @@ class TopTransformerSpec extends FlatSpec with TestSparkContext {
   val adSite = ModelFeature(isActive, "Ad", "ad_site", "adv_site", Top(95.0, withAllOther))
 
   val df = sqlContext.createDataFrame(sc.parallelize(input), schema)
-  val transformer = new TopTransformer(Transformer.selectFeatures(df, Seq(adSite)))
+  val transformer = new TopTransformer(Transformer.selectFeatures(df, Seq(adSite)) match {
+    case -\/(err) => sys.error(s"Can't extract features: $err")
+    case \/-(suc) => suc
+  })
 
   "Top Transformer" should "support string typed model feature" in {
     val valid = transformer.validate(adSite)
@@ -46,7 +50,7 @@ class TopTransformerSpec extends FlatSpec with TestSparkContext {
 
   it should "fail if feature column doesn't exists" in {
     val failed = transformer.validate(adSite.copy(feature = "adv_site"))
-    assert(failed == TransformSchemaError.FeatureColumnNotFound("adv_site").left)
+    assert(failed == FeatureTransformationError.FeatureColumnNotFound("adv_site").left)
   }
 
   it should "calculate correct categorial columns with all other" in {

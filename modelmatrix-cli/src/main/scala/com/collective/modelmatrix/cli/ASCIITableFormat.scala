@@ -2,12 +2,13 @@ package com.collective.modelmatrix.cli
 
 import com.bethecoder.ascii_table.{ASCIITable, ASCIITableHeader}
 import com.collective.modelmatrix.CategorialColumn.{AllOther, CategorialValue}
-import com.collective.modelmatrix.{BinColumn, FeatureSchemaError, CategorialColumn, ModelFeature}
+import com.collective.modelmatrix._
 import com.collective.modelmatrix.catalog._
+import com.collective.modelmatrix.transform.Transformer.FeatureExtractionError
 import com.collective.modelmatrix.transform._
 import org.apache.spark.sql.catalyst.SqlParser
 
-import scalaz.{\/-, -\/, \/}
+import scalaz.{NonEmptyList, \/-, -\/, \/}
 
 
 abstract class ASCIITableFormat[T](val header: Array[ASCIITableHeader]) {
@@ -64,6 +65,12 @@ object ASCIITableFormats {
     case Index(p, ao) => s"support = $p; allOther = $ao"
     case Bins(nbins, p, pct) => s"nbins = $nbins; minpts = $p; minpct = $pct"
   }
+
+  implicit val featureDefinitionErrorFormat: ASCIITableFormat[(String, NonEmptyList[String])] =
+    ASCIITableFormat[(String, NonEmptyList[String])]("Feature", "Errors".dataLeftAligned) { obj =>
+      val (feature, errors) = obj
+      Array(feature, errors.list.mkString(System.lineSeparator()))
+    }
 
   implicit val modelFeatureFormat: ASCIITableFormat[ModelFeature] =
     ASCIITableFormat[ModelFeature](
@@ -201,8 +208,8 @@ object ASCIITableFormats {
       case (f, col) => sys.error(s"Unsupported feature: $f column: $col")
     }
 
-  implicit val inputSchemaErrorFormat: ASCIITableFormat[(ModelDefinitionFeature, TransformSchemaError)] =
-    ASCIITableFormat[(ModelDefinitionFeature, TransformSchemaError)](
+  implicit val featureTransformationErrorFormat: ASCIITableFormat[(ModelDefinitionFeature, FeatureTransformationError)] =
+    ASCIITableFormat[(ModelDefinitionFeature, FeatureTransformationError)](
       "Active", "Group", "Feature", "Extract", "Transform", "Transform Parameters", "Error".dataLeftAligned
     ) { inputSchemaError =>
       val (ModelDefinitionFeature(id, _, feature), error) = inputSchemaError
@@ -233,13 +240,28 @@ object ASCIITableFormats {
       )
     }
 
-  implicit val featureSchemaErrorFormat: ASCIITableFormat[FeatureSchemaError] =
-    ASCIITableFormat[FeatureSchemaError](
+  implicit val featurizationErrorFormat: ASCIITableFormat[FeaturizationError] =
+    ASCIITableFormat[FeaturizationError](
       "Feature", "Error".dataLeftAligned
     ) { error =>
       Array(
         error.feature,
         error.errorMessage
+      )
+    }
+
+  private def formatSparkErrorMessage(error: String): String = {
+    error.take(80) + " ..."
+  }
+
+  implicit val featureExtractionErrorFormat: ASCIITableFormat[FeatureExtractionError] =
+    ASCIITableFormat[FeatureExtractionError](
+      "Feature", "Extract", "Error".dataLeftAligned
+    ) { error =>
+      Array(
+        error.feature.feature,
+        formatExtractExpr(error.feature.extract),
+        formatSparkErrorMessage(error.error.getMessage)
       )
     }
 

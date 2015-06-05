@@ -11,6 +11,7 @@ sealed trait Sink {
 object Sink {
   private val csv = "csv://(.*)".r
   private val hive = "hive://(.*)".r
+  private val parquet = "parquet://(.*)".r
 
   def validate(sink: String): Either[String, Unit] = {
     Try(apply(sink)) match {
@@ -22,6 +23,7 @@ object Sink {
   def apply(sink: String): Sink = sink match {
     case csv(path) => CsvSink(path)
     case hive(table) => HiveSink(table)
+    case parquet(path) => ParquetSink(path)
   }
 }
 
@@ -54,7 +56,7 @@ case class CsvSink(
   }
 
   override def toString: String =
-    s"CSV file: $path"
+    s"CSV: $path"
 }
 
 case class HiveSink(
@@ -67,4 +69,16 @@ case class HiveSink(
 
   override def toString: String =
     s"Hive table: $tableName"
+}
+
+case class ParquetSink(
+  path: String
+) extends Sink {
+
+  def saveDataFrame(df: DataFrame)(implicit sqlContext: SQLContext): Unit = {
+    df.saveAsParquetFile(path)
+  }
+
+  override def toString: String =
+    s"Parquet: $path"
 }

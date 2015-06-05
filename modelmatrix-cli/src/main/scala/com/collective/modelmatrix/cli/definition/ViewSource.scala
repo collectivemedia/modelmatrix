@@ -22,8 +22,6 @@ case class ViewSource(
 
     blockOn(db.run(modelDefinitions.findById(modelDefinitionId))) match {
       case Some(modelDefinition) =>
-        val features = blockOn(db.run(modelDefinitionFeatures.features(modelDefinitionId)))
-
         Console.out.println(s"Model definition:")
         modelDefinition.printASCIITable()
 

@@ -243,7 +243,8 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
     features.result.flatMap { features =>
       DBIO.sequence(features.map { case (featureInstanceId, active, group, feature, extract, cover, allOther, extractTime) =>
         val modelFeature = ModelFeature(active, group, feature, extract, Top(cover, allOther))
-        val columns = topColumns.filter(_.featureInstanceId === featureInstanceId).result.map(_.map(toCategorialColumn))
+        val columns = topColumns.filter(_.featureInstanceId === featureInstanceId)
+          .result.map(_.map(toCategorialColumn).sortBy(_.columnId))
         columns.map(ModelInstanceTopFeature(featureInstanceId, modelInstanceId, modelFeature, extractTime, _))
       })
     }
@@ -260,7 +261,8 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
     features.result.flatMap { features =>
       DBIO.sequence(features.map { case (featureInstanceId, active, group, feature, extract, support, allOther, extractTime) =>
         val modelFeature = ModelFeature(active, group, feature, extract, Index(support, allOther))
-        val columns = indexColumns.filter(_.featureInstanceId === featureInstanceId).result.map(_.map(toCategorialColumn))
+        val columns = indexColumns.filter(_.featureInstanceId === featureInstanceId)
+          .result.map(_.map(toCategorialColumn).sortBy(_.columnId))
         columns.map(ModelInstanceIndexFeature(featureInstanceId, modelInstanceId, modelFeature, extractTime, _))
       })
     }
@@ -277,7 +279,8 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
     features.result.flatMap { features =>
       DBIO.sequence(features.map { case (ftrInstanceId, active, group, feature, extract, nbins, minPts, minPct, extractTime) =>
         val modelFeature = ModelFeature(active, group, feature, extract, Bins(nbins, minPts, minPct))
-        val columns = binsColumns.filter(_.featureInstanceId === ftrInstanceId).result.map(_.map(toBinColumn))
+        val columns = binsColumns.filter(_.featureInstanceId === ftrInstanceId)
+          .result.map(_.map(toBinColumn).sortBy(_.columnId))
         columns.map(ModelInstanceBinsFeature(ftrInstanceId, modelInstanceId, modelFeature, extractTime, _))
       })
     }

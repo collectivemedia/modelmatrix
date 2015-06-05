@@ -11,6 +11,7 @@ sealed trait Source {
 object Source {
   private val csv = "csv://(.*)".r
   private val hive = "hive://(.*)".r
+  private val parquet = "parquet://(.*)".r
 
   def validate(source: String): Either[String, Unit] = {
     Try(apply(source)) match {
@@ -21,7 +22,8 @@ object Source {
 
   def apply(source: String): Source = source match {
     case csv(path) => CsvSource(path)
-    case hive(path) => HiveSource(path)
+    case hive(table) => HiveSource(table)
+    case parquet(path) => ParquetSource(path)
   }
 }
 
@@ -48,7 +50,7 @@ case class CsvSource(
   }
 
   override def toString: String = {
-    s"CSV file: $path"
+    s"CSV: $path"
   }
 
 }
@@ -63,6 +65,20 @@ case class HiveSource(
 
   override def toString: String = {
     s"Hive table: $tableName"
+  }
+
+}
+
+case class ParquetSource(
+  path: String
+) extends Source {
+
+  def asDataFrame(implicit sqlContext: SQLContext): DataFrame = {
+    sqlContext.parquetFile(path)
+  }
+
+  override def toString: String = {
+    s"Parquet: $path"
   }
 
 }

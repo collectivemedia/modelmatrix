@@ -16,4 +16,10 @@ class SourceSpec extends FlatSpec {
     assert(parsed == HiveSource("mm.input"))
   }
 
+  it should "parse parquet source" in {
+    val source = "parquet://file://temp/data/output.parquet"
+    val parsed = Source(source)
+    assert(parsed == ParquetSource("file://temp/data/output.parquet"))
+  }
+
 }

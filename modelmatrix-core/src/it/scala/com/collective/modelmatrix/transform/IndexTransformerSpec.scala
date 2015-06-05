@@ -1,18 +1,19 @@
 package com.collective.modelmatrix.transform
 
 import com.collective.modelmatrix.CategorialColumn.{AllOther, CategorialValue}
-import com.collective.modelmatrix.{ModelFeature, TestSparkContext}
+import com.collective.modelmatrix.{ModelMatrix, ModelFeature, TestSparkContext}
 import org.apache.spark.sql.{Row, SQLContext}
 import org.apache.spark.sql.types.{StringType, StructField, StructType}
 import org.scalatest.FlatSpec
 import scodec.bits.ByteVector
 
 import scala.util.Random
+import scalaz.{\/-, -\/}
 import scalaz.syntax.either._
 
 class IndexTransformerSpec extends FlatSpec with TestSparkContext {
 
-  val sqlContext = new SQLContext(sc)
+  val sqlContext = ModelMatrix.sqlContext(sc)
 
   val schema = StructType(Seq(
     StructField("adv_site", StringType)
@@ -38,7 +39,10 @@ class IndexTransformerSpec extends FlatSpec with TestSparkContext {
   val adSite = ModelFeature(isActive, "Ad", "ad_site", "adv_site", Index(2, withAllOther))
 
   val df = sqlContext.createDataFrame(sc.parallelize(input), schema)
-  val transformer = new IndexTransformer(Transformer.selectFeatures(df, Seq(adSite)))
+  val transformer = new IndexTransformer(Transformer.selectFeatures(df, Seq(adSite)) match {
+    case -\/(err) => sys.error(s"Can't extract features: $err")
+    case \/-(suc) => suc
+  })
 
   "Index Transformer" should "support string typed model feature" in {
     val valid = transformer.validate(adSite)
@@ -47,7 +51,7 @@ class IndexTransformerSpec extends FlatSpec with TestSparkContext {
 
   it should "fail if feature column doesn't exists" in {
     val failed = transformer.validate(adSite.copy(feature = "adv_site"))
-    assert(failed == TransformSchemaError.FeatureColumnNotFound("adv_site").left)
+    assert(failed == FeatureTransformationError.FeatureColumnNotFound("adv_site").left)
   }
 
   it should "calculate correct categorial columns with all other" in {

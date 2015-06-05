@@ -18,14 +18,14 @@ import scalaz.syntax.either._
 
 case class IdentifiedPoint(id: Any, features: Vector)
 
-sealed trait FeatureSchemaError {
+sealed trait FeaturizationError {
   def feature: String
   def errorMessage: String
 }
 
-object FeatureSchemaError {
+object FeaturizationError {
 
-  case class FeatureColumnNotFound(feature: String) extends FeatureSchemaError {
+  case class FeatureColumnNotFound(feature: String) extends FeaturizationError {
     def errorMessage: String = s"Can't find feature column: $feature"
   }
 
@@ -33,16 +33,16 @@ object FeatureSchemaError {
     feature: String,
     expected: DataType,
     found: DataType
-  ) extends FeatureSchemaError {
+  ) extends FeaturizationError {
     def errorMessage: String = s"Feature column: $feature type: $found doesn't match expected: $expected"
   }
 }
 
-class FeatureExtraction(features: Seq[ModelInstanceFeature]) extends Serializable {
+class Featurization(features: Seq[ModelInstanceFeature]) extends Serializable {
 
   private val log = LoggerFactory.getLogger(classOf[ModelInstanceFeature])
 
-  import FeatureSchemaError._
+  import FeaturizationError._
 
   // Check that all input features belong to the same model instance
   private val instances = features.map(_.modelInstanceId).toSet
@@ -58,7 +58,7 @@ class FeatureExtraction(features: Seq[ModelInstanceFeature]) extends Serializabl
 
   type FeatureColumnId = (ModelFeature, Int)
 
-  def validate(input: DataFrame @@ Features): Seq[FeatureSchemaError \/ Column] = {
+  def validate(input: DataFrame @@ Features): Seq[FeaturizationError \/ Column] = {
     def featureDataType(feature: String): Option[DataType] = {
       scalaz.Tag.unwrap(input).schema.find(_.name == feature).map(_.dataType)
     }
@@ -199,7 +199,7 @@ class FeatureExtraction(features: Seq[ModelInstanceFeature]) extends Serializabl
     columns.filter(_.fallIntoThisBin(value)).map(_.columnId).map((_, 1.0D)).headOption
   }
 
-  private def formatFeatureErrors(errors: Seq[FeatureSchemaError]): String = {
+  private def formatFeatureErrors(errors: Seq[FeaturizationError]): String = {
     val out = errors.map { case e => s" - Feature: ${e.feature}. Error: ${e.errorMessage}" }
     out.mkString(System.lineSeparator())
   }

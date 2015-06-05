@@ -1,10 +1,10 @@
 package com.collective.modelmatrix.cli.instance
 
-import com.collective.modelmatrix.catalog.{ModelDefinitionFeature, ModelMatrixCatalog}
+import com.collective.modelmatrix.ModelMatrix
+import com.collective.modelmatrix.catalog.ModelMatrixCatalog
 import com.collective.modelmatrix.cli.{Source, _}
 import com.collective.modelmatrix.transform._
 import com.typesafe.config.Config
-import org.apache.spark.sql.hive.HiveContext
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.ExecutionContext
@@ -20,7 +20,7 @@ case class ValidateInputData(
 
   private val log = LoggerFactory.getLogger(classOf[ValidateInputData])
 
-  private implicit lazy val sqlContext = new HiveContext(sc)
+  private implicit lazy val sqlContext = ModelMatrix.hiveContext(sc)
 
   import com.collective.modelmatrix.cli.ASCIITableFormat._
   import com.collective.modelmatrix.cli.ASCIITableFormats._
@@ -35,27 +35,30 @@ case class ValidateInputData(
     require(features.nonEmpty, s"No active features are defined for model definition: $modelDefinitionId. " +
       s"Ensure that this model definition exists")
 
-    // Cache feature columns
-    val input = Transformer.selectFeatures(source.asDataFrame, features.map(_.feature))
-    val transformers = new Transformers(input)
+    Transformer.selectFeatures(source.asDataFrame, features.map(_.feature)) match {
+      // One of extract expressions failed
+      case -\/(extractionErrors) =>
+        Console.out.println(s"Feature extraction failed:")
+        extractionErrors.printASCIITable()
 
-    // Validate each feature
-    val validate = features.filter(_.feature.active).map { case mdf@ModelDefinitionFeature(_, _, feature) =>
-      mdf -> transformers.validate(feature)
-    }
+      // Features extracted, time to transform them!
+      case \/-(extracted)  =>
+        val transformers = new Transformers(extracted)
 
-    // Print schema errors
-    val invalidFeatures = validate.collect { case (mdf, -\/(error)) => mdf -> error }
-    if (invalidFeatures.nonEmpty) {
-      Console.out.println(s"Input schema errors:")
-      invalidFeatures.printASCIITable()
-    }
+        val validate = features.map(mdf => mdf -> transformers.validate(mdf.feature))
 
-    // Print schema typed features
-    val typedFeatures = validate.collect { case (mdf, \/-(typed)) => mdf -> typed }
-    if (typedFeatures.nonEmpty) {
-      Console.out.println(s"Input schema typed features:")
-      typedFeatures.printASCIITable()
+        val featureErrors = validate.collect { case (mdf, -\/(error)) => mdf -> error }
+        val typedFeatures = validate.collect { case (mdf, \/-(typed)) => mdf -> typed }
+
+        if (featureErrors.nonEmpty) {
+          Console.out.println(s"Input schema errors:")
+          featureErrors.printASCIITable()
+        }
+
+        if (typedFeatures.nonEmpty) {
+          Console.out.println(s"Input schema typed features:")
+          typedFeatures.printASCIITable()
+        }
     }
   }
 }

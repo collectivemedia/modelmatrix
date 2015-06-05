@@ -4,29 +4,31 @@ import java.nio.ByteBuffer
 
 import com.collective.modelmatrix.CategorialColumn.CategorialValue
 import com.collective.modelmatrix.{CategorialColumn, ModelFeature}
+import org.apache.spark.SparkException
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types._
 import scodec.bits.ByteVector
 
-import scalaz.{@@, \/}
+import scala.util.{Success, Failure, Try}
+import scalaz.{\/-, -\/, @@, \/}
 
 case class TypedModelFeature(feature: ModelFeature, extractType: DataType)
 
-sealed trait TransformSchemaError {
+sealed trait FeatureTransformationError {
   def errorMessage: String
 }
 
-object TransformSchemaError {
+object FeatureTransformationError {
 
-  case class FeatureColumnNotFound(feature: String) extends TransformSchemaError {
-    def errorMessage: String = s"Can't find feature column: $feature"
+  case class FeatureColumnNotFound(column: String) extends FeatureTransformationError {
+    def errorMessage: String = s"Can't find feature column: $column"
   }
 
   case class UnsupportedTransformDataType(
     extract: String,
     dataType: DataType,
     transform: Transform
-  ) extends TransformSchemaError {
+  ) extends FeatureTransformationError {
     def errorMessage: String = s"Unsupported feature data type: ${dataType.typeName} for transformation: $transform"
   }
 
@@ -34,7 +36,7 @@ object TransformSchemaError {
 
 abstract class Transformer(features: DataFrame @@ Transformer.Features) {
 
-  def validate: PartialFunction[ModelFeature, TransformSchemaError \/ TypedModelFeature]
+  def validate: PartialFunction[ModelFeature, FeatureTransformationError \/ TypedModelFeature]
 
   protected def featureDataType(feature: String): Option[DataType] = {
     scalaz.Tag.unwrap(features).schema.find(_.name == feature).map(_.dataType)
@@ -43,6 +45,8 @@ abstract class Transformer(features: DataFrame @@ Transformer.Features) {
 }
 
 object Transformer {
+
+  case class FeatureExtractionError(feature: ModelFeature, error: Throwable)
 
   /**
    * Marker for DataFrame with applied extract expressions
@@ -54,24 +58,49 @@ object Transformer {
    */
   trait FeaturesWithId
 
-  /** Select expressions associated with each feature
-    *
-    * @param df       source data frame
-    * @param features model features
-    * @return data frame with column for each feature
-    */
-  def selectFeatures(df: DataFrame, features: Seq[ModelFeature]): DataFrame  @@ Features= {
-    val expressions = features.map { f =>
-      s"${f.extract} as ${f.feature}"
+  type FeaturesDataFrame = DataFrame  @@ Features
+  type FeaturesWithIdDataFrame = DataFrame @@ FeaturesWithId
+
+  private def tryExtract(df: DataFrame, features: Seq[ModelFeature]): (Seq[FeatureExtractionError], Seq[String]) = {
+    val tryExtract = features map { case feature =>
+      val expr = s"${feature.extract} as ${feature.feature}"
+      Try(df.selectExpr(expr).head()) match {
+        case Failure(err) => \/.left(FeatureExtractionError(feature, err))
+        case Success(_) => \/.right(expr)
+      }
     }
-    scalaz.Tag[DataFrame, Features](df.selectExpr(expressions:_*).cache())
+
+    val errors = tryExtract.collect { case -\/(err) => err }
+    val expressions = tryExtract.collect { case \/-(expr) => expr }
+
+    (errors, expressions)
   }
 
-  def selectFeaturesWithId(df: DataFrame, idColumn: String, features: Seq[ModelFeature]): DataFrame @@ FeaturesWithId = {
-    val expressions = features.map { f =>
-      s"${f.extract} as ${f.feature}"
+  def selectFeatures(
+    df: DataFrame,
+    features: Seq[ModelFeature]
+  ): Seq[FeatureExtractionError] \/ FeaturesDataFrame= {
+    val (errors, expressions) = tryExtract(df, features)
+    if (errors.nonEmpty) {
+      \/.left(errors)
+    } else {
+      val extracted = df.selectExpr(expressions:_*)
+      \/.right(scalaz.Tag[DataFrame, Features](extracted))
     }
-    scalaz.Tag[DataFrame, FeaturesWithId](df.selectExpr(idColumn +: expressions:_*).cache())
+  }
+
+  def selectFeaturesWithId(
+    df: DataFrame,
+    idColumn: String,
+    features: Seq[ModelFeature]
+  ):  Seq[FeatureExtractionError] \/ FeaturesWithIdDataFrame = {
+    val (errors, expressions) = tryExtract(df, features)
+    if (errors.nonEmpty) {
+      \/.left(errors)
+    } else {
+      val extracted = df.selectExpr(idColumn +: expressions:_*)
+      \/.right(scalaz.Tag[DataFrame, FeaturesWithId](extracted))
+    }
   }
 
   /**

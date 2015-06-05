@@ -1,11 +1,10 @@
 package com.collective.modelmatrix.cli.featurize
 
-import com.collective.modelmatrix.FeatureExtraction
 import com.collective.modelmatrix.catalog.ModelMatrixCatalog
 import com.collective.modelmatrix.cli.{CliModelCatalog, CliSparkContext, Script, Source}
 import com.collective.modelmatrix.transform.Transformer
+import com.collective.modelmatrix.{Featurization, ModelMatrix}
 import com.typesafe.config.Config
-import org.apache.spark.sql.hive.HiveContext
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.ExecutionContext
@@ -28,25 +27,30 @@ case class ValidateInputData(
       s"Data source: $source. " +
       s"Database: $dbName @ ${dbConfig.origin()}")
 
-    implicit val sqlContext = new HiveContext(sc)
+    implicit val sqlContext = ModelMatrix.hiveContext(sc)
 
     val features = blockOn(db.run(modelInstanceFeatures.features(modelInstanceId)))
-    require(features.nonEmpty, s"No active features are defined for model instance: $modelInstanceId. " +
+    require(features.nonEmpty, s"No features are defined for model instance: $modelInstanceId. " +
       s"Ensure that this model instance exists")
 
-    val featuresExtraction = new FeatureExtraction(features)
+    val featurization = new Featurization(features)
 
-    val input = Transformer.selectFeatures(source.asDataFrame, features.map(_.feature))
-    val validate = featuresExtraction.validate(input)
+    Transformer.selectFeatures(source.asDataFrame, features.map(_.feature)) match {
+      // One of extract expressions failed
+      case -\/(extractionErrors) =>
+        Console.out.println(s"Feature extraction failed:")
+        extractionErrors.printASCIITable()
 
-    // Print schema errors
-    val invalidFeatures = validate.collect { case -\/(error) => error }
-    if (invalidFeatures.nonEmpty) {
-      Console.out.println(s"Input schema errors:")
-      invalidFeatures.printASCIITable()
+      // Features data frame was successfully prepared
+      case \/-(extracted) if featurization.validate(extracted).exists(_.isLeft) =>
+        Console.out.println(s"Source can't be featurized because of errors:")
+        val validate = featurization.validate(extracted)
+        val errors = validate.collect { case -\/(error) => error }
+        errors.printASCIITable()
 
-    } else {
-      Console.out.println(s"Input schema is compatible with Matrix Model instance: $modelInstanceId")
+      // All looks good
+      case \/-(extracted) =>
+        Console.out.println(s"Source schema is compatible with Matrix Model instance: $modelInstanceId")
     }
   }
 }
