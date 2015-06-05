@@ -12,6 +12,7 @@ import org.scalatest.FlatSpec
 import scodec.bits.ByteVector
 
 import scala.util.Random
+import scalaz.{\/-, -\/}
 import scalaz.syntax.either._
 
 class ExtractExpressionsSpec extends FlatSpec with TestSparkContext {
@@ -69,8 +70,8 @@ class ExtractExpressionsSpec extends FlatSpec with TestSparkContext {
   // Features with expressions
   val adIdSitePair = ModelFeature(isActive, "advertisement", "ad_id_site_pair", "concat('_', cast(adv_id as string), adv_site)", Top(95.0, allOther = false))
   val os = ModelFeature(isActive, "os", "os", "concat('_', os_system, os_family)", Top(100.0, allOther = false))
-  val dayOfWeek = ModelFeature(isActive, "time", "day_of_week", "day_of_week(toLong(ts), 'UTC')", Top(100.0, allOther = false))
-  val hourOfDay = ModelFeature(isActive, "time", "hour_of_day", "hour_of_day(toLong(ts), 'UTC')", Top(100.0, allOther = false))
+  val dayOfWeek = ModelFeature(isActive, "time", "day_of_week", "day_of_week(strToEpochMilli(ts), 'UTC')", Top(100.0, allOther = false))
+  val hourOfDay = ModelFeature(isActive, "time", "hour_of_day", "hour_of_day(strToEpochMilli(ts), 'UTC')", Top(100.0, allOther = false))
   val notNullSite = ModelFeature(isActive, "expr", "not_null_ad_site", "nvl_str(adv_site, 'http://no-site.com')", Top(95.0, allOther = true))
   val notNullPrice = ModelFeature(isActive, "expr", "not_null_ad_price", "nvl(adv_price, 123.0)", Bins(5, 0, 0))
   val logPrice = ModelFeature(isActive, "expr", "log_price", "log(adv_price)", Bins(5, 0, 0))
@@ -79,7 +80,10 @@ class ExtractExpressionsSpec extends FlatSpec with TestSparkContext {
   val df = Transformer.selectFeatures(
     sqlContext.createDataFrame(sc.parallelize(input), schema),
     Seq(adId, adSite, adPrice, adIdSitePair, os, dayOfWeek, hourOfDay, notNullSite, notNullPrice, logPrice, greatestPrice)
-  )
+  ) match {
+    case -\/(err) => sys.error(s"Can't extract features: $err")
+    case \/-(suc) => suc
+  }
 
   object Transformers {
     val top = new TopTransformer(df)

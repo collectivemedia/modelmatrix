@@ -1,7 +1,7 @@
 package com.collective.modelmatrix.transform
 
 import com.collective.modelmatrix.BinColumn.BinValue
-import com.collective.modelmatrix.transform.TransformSchemaError.{FeatureColumnNotFound, UnsupportedTransformDataType}
+import com.collective.modelmatrix.transform.FeatureTransformationError.{FeatureColumnNotFound, UnsupportedTransformDataType}
 import com.collective.modelmatrix.{BinColumn, ModelFeature}
 import com.typesafe.config.ConfigFactory
 import org.apache.spark.sql.DataFrame
@@ -23,7 +23,7 @@ class BinsTransformer(input: DataFrame @@ Transformer.Features) extends Transfor
 
   protected case class Scan(columnId: Int = 0, columns: Seq[BinValue] = Seq.empty)
 
-  def validate: PartialFunction[ModelFeature, TransformSchemaError \/ TypedModelFeature] = {
+  def validate: PartialFunction[ModelFeature, FeatureTransformationError \/ TypedModelFeature] = {
     case f@ModelFeature(_, _, _, _, Bins(_, _, _)) if featureDataType(f.feature).isEmpty =>
       FeatureColumnNotFound(f.feature).left
 

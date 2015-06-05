@@ -2,7 +2,7 @@ package com.collective.modelmatrix
 
 import java.nio.ByteBuffer
 
-import com.collective.modelmatrix.FeatureSchemaError.FeatureColumnTypeDoesNotMatch
+import com.collective.modelmatrix.FeaturizationError.FeatureColumnTypeDoesNotMatch
 import com.collective.modelmatrix.catalog.{ModelInstanceIndexFeature, ModelInstanceTopFeature, ModelInstanceIdentityFeature}
 import com.collective.modelmatrix.transform.{Transformer, Index, Top, Identity}
 import org.apache.spark.mllib.linalg.SparseVector
@@ -11,9 +11,9 @@ import org.apache.spark.sql.types._
 import org.scalatest.{GivenWhenThen, FlatSpec}
 import scodec.bits.ByteVector
 
-import scalaz.\/
+import scalaz.{\/-, -\/, \/}
 
-class FeatureExtractionSpec extends FlatSpec with GivenWhenThen with TestSparkContext {
+class FeaturizationSpec extends FlatSpec with GivenWhenThen with TestSparkContext {
 
   val sqlContext = ModelMatrix.sqlContext(sc)
 
@@ -59,9 +59,12 @@ class FeatureExtractionSpec extends FlatSpec with GivenWhenThen with TestSparkCo
   val totalColumns = 6
 
   val df = sqlContext.createDataFrame(sc.parallelize(input), schema)
-  val transformed = Transformer.selectFeaturesWithId(df, "auction_id", Seq(adPrice, adType, adSite))
+  val transformed = Transformer.selectFeaturesWithId(df, "auction_id", Seq(adPrice, adType, adSite)) match {
+    case -\/(err) => sys.error(s"Can't extract features: $err")
+    case \/-(suc) => suc
+  }
 
-  val featureExtraction = new FeatureExtraction(Seq(adPriceInstance, adTypeInstance, adSiteInstance))
+  val featureExtraction = new Featurization(Seq(adPriceInstance, adTypeInstance, adSiteInstance))
 
   "Feature Extraction" should "validate input schema against provided features" in {
     val validation = featureExtraction.validate(Transformer.removeIdColumn(transformed))
@@ -69,7 +72,7 @@ class FeatureExtractionSpec extends FlatSpec with GivenWhenThen with TestSparkCo
   }
 
   it should "fail if extractType doesn't match" in {
-    val brokenFeatureExtraction = new FeatureExtraction(Seq(adPriceInstance, adTypeInstance.copy(extractType = DoubleType), adSiteInstance))
+    val brokenFeatureExtraction = new Featurization(Seq(adPriceInstance, adTypeInstance.copy(extractType = DoubleType), adSiteInstance))
 
     val validation = brokenFeatureExtraction.validate(Transformer.removeIdColumn(transformed))
     assert(validation.count(_.isLeft) == 1)
@@ -114,7 +117,10 @@ class FeatureExtractionSpec extends FlatSpec with GivenWhenThen with TestSparkCo
     Given("row with null ad price and ad site")
     val withNullPriceAndSite = input :+ Row(5l, null /* ad price */, 2 /* ad type */, null /* ad site */)
     val df = sqlContext.createDataFrame(sc.parallelize(withNullPriceAndSite), schema)
-    val transformed = Transformer.selectFeaturesWithId(df, "auction_id", Seq(adPrice, adType, adSite))
+    val transformed = Transformer.selectFeaturesWithId(df, "auction_id", Seq(adPrice, adType, adSite)) match {
+      case -\/(err) => sys.error(s"Can't extract features: $err")
+      case \/-(suc) => suc
+    }
 
     Then("it should be successfully featurized")
     val featurized = featureExtraction.featurize(transformed, "auction_id")._2.collect().toSeq.map(p => p.id.asInstanceOf[Long] -> p.features).toMap

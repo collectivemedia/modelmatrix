@@ -9,7 +9,7 @@ import org.apache.spark.sql.{SQLContext, UDFRegistration}
 
 object ModelMatrix {
 
-  private val toLong: String => java.lang.Long = {
+  private val strToEpochMilli: String => java.lang.Long = {
     case s if s != null => s.toLong
     case _ => null
   }
@@ -53,7 +53,7 @@ object ModelMatrix {
   }
 
   private def registerUDF(udf: UDFRegistration): Unit = {
-    udf.register("toLong", toLong)
+    udf.register("strToEpochMilli", strToEpochMilli)
     udf.register("concat", concat)
     udf.register("day_of_week", dayOfWeek)
     udf.register("hour_of_day", hourOfDay)

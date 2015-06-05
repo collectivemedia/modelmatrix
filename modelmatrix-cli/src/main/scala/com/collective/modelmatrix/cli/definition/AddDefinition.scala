@@ -3,9 +3,8 @@ package com.collective.modelmatrix.cli.definition
 import java.nio.file.Path
 import java.time.Instant
 
-import com.bethecoder.ascii_table.{ASCIITable, ASCIITableHeader}
 import com.collective.modelmatrix.catalog.ModelMatrixCatalog
-import com.collective.modelmatrix.cli.{CliModelCatalog, ModelConfigurationParser, Script, _}
+import com.collective.modelmatrix.cli.{CliModelCatalog, ModelConfigurationParser, Script}
 import com.typesafe.config.{Config, ConfigFactory, ConfigResolveOptions}
 import org.slf4j.LoggerFactory
 
@@ -25,15 +24,13 @@ case class AddDefinition(
 
   private implicit val unwrap = Tag.unwrap(ec)
 
-  private lazy val parser = new ModelConfigurationParser(
-    ConfigFactory.parseFile(config.toFile)
-      .resolve(ConfigResolveOptions.defaults()),
+  private val parser = new ModelConfigurationParser(
+    ConfigFactory.parseFile(config.toFile).resolve(ConfigResolveOptions.defaults()),
     configPath
   )
 
-  private def definitionSource(): String = {
-    scala.io.Source.fromFile(config.toFile).getLines().mkString(System.lineSeparator())
-  }
+  import com.collective.modelmatrix.cli.ASCIITableFormat._
+  import com.collective.modelmatrix.cli.ASCIITableFormats._
 
   def run(): Unit = {
     log.info(s"Add Model Matrix definition. " +
@@ -42,45 +39,40 @@ case class AddDefinition(
       s"Comment: $comment. " +
       s"Database: $dbName @ ${dbConfig.origin()}")
 
-    val (failed, success) = parser.features().partition(_._2.isFailure)
+    val features = parser.features()
 
-    // Fail in case of bad configuration
-    if (failed.nonEmpty) {
-      Console.out.println(s"Incorrect configured model features: ${failed.size}")
+    val errors = features collect { case (f, Failure(e)) => (f, e) }
+    val success = features collect { case (_, Success(feature)) => feature }
 
-      val featuresHeader: Array[ASCIITableHeader] = Array(
-        "Feature", "Error".dataLeftAligned
-      )
-
-      val failedCols = failed collect {
-        case (feature, Failure(errors)) =>
-          Array(feature, errors.list.mkString(System.lineSeparator()))
-      }
-
-      ASCIITable.getInstance().printTable(featuresHeader, failedCols.toArray)
-
-      sys.error(s"Incorrect configured model features: ${failed.size}")
+    if (errors.nonEmpty) {
+      Console.out.println(s"Incorrect configured model features: ${errors.size}")
+      errors.printASCIITable()
     }
 
-    // Save definition to catalog in other case
+    if (success.nonEmpty && errors.isEmpty) {
+      val addModelDefinition = modelDefinitions.add(
+        name = name,
+        source = definitionSource(),
+        createdBy = System.getProperty("user.name"),
+        createdAt = Instant.now(),
+        comment = comment
+      )
 
-    val addModelDefinition = modelDefinitions.add(
-      name = name,
-      source = definitionSource(),
-      createdBy = System.getProperty("user.name"),
-      createdAt = Instant.now(),
-      comment = comment
-    )
+      val insert = for {
+        id <- addModelDefinition
+        featureId <- modelDefinitionFeatures.addFeatures(id, success: _*)
+      } yield (id, featureId)
 
-    val insert = for {
-      id <- addModelDefinition
-      featureId <- modelDefinitionFeatures.addFeatures(id, success.map(_._2.toOption.get):_*)
-    } yield (id, featureId)
+      import driver.api._
+      val (modelDefinitionId, _) = blockOn(db.run(insert.transactionally))
 
-    import driver.api._
-    val (modelDefinitionId, featuresId) = blockOn(db.run(insert.transactionally))
-
-    Console.out.println(s"Successfully created new model definition")
-    Console.out.println(s"Matrix Model definition id: $modelDefinitionId")
+      Console.out.println(s"Successfully created new model definition")
+      Console.out.println(s"Matrix Model definition id: $modelDefinitionId")
+    }
   }
+
+  private def definitionSource(): String = {
+    scala.io.Source.fromFile(config.toFile).getLines().mkString(System.lineSeparator())
+  }
+
 }

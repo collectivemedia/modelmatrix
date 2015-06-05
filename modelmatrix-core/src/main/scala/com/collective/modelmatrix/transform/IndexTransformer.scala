@@ -2,7 +2,7 @@ package com.collective.modelmatrix.transform
 
 import com.collective.modelmatrix.CategorialColumn.AllOther
 import com.collective.modelmatrix.{CategorialColumn, ModelFeature}
-import com.collective.modelmatrix.transform.TransformSchemaError.{UnsupportedTransformDataType, FeatureColumnNotFound}
+import com.collective.modelmatrix.transform.FeatureTransformationError.{UnsupportedTransformDataType, FeatureColumnNotFound}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types._
 import org.slf4j.LoggerFactory
@@ -16,7 +16,7 @@ class IndexTransformer(input: DataFrame @@ Transformer.Features) extends Categor
 
   private val supportedDataTypes = Seq(ShortType, IntegerType, LongType, DoubleType, StringType)
 
-  def validate: PartialFunction[ModelFeature, TransformSchemaError \/ TypedModelFeature] = {
+  def validate: PartialFunction[ModelFeature, FeatureTransformationError \/ TypedModelFeature] = {
     case f@ModelFeature(_, _, _, _, Index(_, _)) if featureDataType(f.feature).isEmpty =>
       FeatureColumnNotFound(f.feature).left
 
