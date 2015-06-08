@@ -37,14 +37,14 @@ object ASCIITableFormat {
       ASCIITable.getInstance().printTable(format.header, rows)
     }
   }
-  
+
   implicit class ASCIISeqOps[T: ASCIITableFormat](val values: Seq[T]) {
     def printASCIITable(): Unit = {
       val format = implicitly[ASCIITableFormat[T]]
       val rows = if (values.nonEmpty) values.map(_.toASCIITableRow).toArray else format.noData
       ASCIITable.getInstance().printTable(format.header, rows)
     }
-  }  
+  }
 }
 
 object ASCIITableFormats {

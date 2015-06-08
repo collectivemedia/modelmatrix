@@ -84,7 +84,7 @@ object Transformer {
     if (errors.nonEmpty) {
       \/.left(errors)
     } else {
-      val extracted = df.selectExpr(expressions:_*)
+      val extracted = df.selectExpr(expressions: _*)
       \/.right(scalaz.Tag[DataFrame, Features](extracted))
     }
   }
@@ -98,7 +98,7 @@ object Transformer {
     if (errors.nonEmpty) {
       \/.left(errors)
     } else {
-      val extracted = df.selectExpr(idColumn +: expressions:_*)
+      val extracted = df.selectExpr(idColumn +: expressions: _*)
       \/.right(scalaz.Tag[DataFrame, FeaturesWithId](extracted))
     }
   }
@@ -109,7 +109,7 @@ object Transformer {
   def removeIdColumn(df: DataFrame @@ FeaturesWithId): DataFrame @@ Features = {
     scalaz.Tag[DataFrame, Features](scalaz.Tag.unwrap(df))
   }
-  
+
 }
 
 abstract class CategorialTransformer(features: DataFrame @@ Transformer.Features) extends Transformer(features) {

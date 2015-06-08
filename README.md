@@ -5,6 +5,22 @@ Model Matrix: Machine Learning Feature Engineering
 * Website: https://collectivemedia.github.io/modelmatrix/
 * Source: https://github.com/collectivemedia/modelmatrix/
 
+## Where to get it
+
+Model Matrix workflow focused around [command line interface](http://collectivemedia.github.io/modelmatrix/doc/cli.html), 
+however you can use client library to apply model matrix transformations to DataFrame in your application.
+
+To get the latest version of the model matrix, add the following to your SBT build:
+
+``` scala
+resolvers += "Collective Media Bintray" at "https://dl.bintray.com/collectivemedia/releases"
+```
+
+And use following library dependencies:
+
+```
+libraryDependencies +=  "com.collective.modelmatrix" %% "modelmatrix-client" % "0.0.1"
+```
 
 ## Developing
 

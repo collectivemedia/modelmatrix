@@ -207,7 +207,7 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
   }
 
   private type CategorialColumnRecord = (Int, Int, Int, Option[String], Option[ByteVector], Long, Long)
-  
+
   private def toCategorialColumn: CategorialColumnRecord => CategorialColumn = {
     case (_, _, columnId, Some(sourceName), Some(sourceValue), count, cumCount) =>
       CategorialValue(columnId, sourceName, sourceValue, count, cumCount)
@@ -231,7 +231,7 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
     case error =>
       sys.error(s"Usupported bins columns record: $error")
   }
-  
+
   private def topFeatures(modelInstanceId: Int): DBIO[Seq[ModelInstanceTopFeature]] = {
     val features = for {
       fi <- featureInstances.filter(_.modelInstanceId === modelInstanceId)

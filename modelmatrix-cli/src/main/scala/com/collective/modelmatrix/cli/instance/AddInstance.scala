@@ -57,7 +57,7 @@ case class AddInstance(
 
     val features = blockOn(db.run(modelDefinitionFeatures.features(modelDefinitionId)))
       .filter(_.feature.active == true)
-    
+
     require(features.nonEmpty, s"No active features are defined for model definition: $modelDefinitionId. " +
       s"Ensure that this model definition exists")
 
@@ -69,7 +69,7 @@ case class AddInstance(
         extractionErrors.printASCIITable()
 
       // Features extracted, time to transform them!
-      case \/-(extracted)  =>
+      case \/-(extracted) =>
         implicit val transformers = new Transformers(extracted)
 
         val validate = features.map(mdf => mdf -> transformers.validate(mdf.feature))

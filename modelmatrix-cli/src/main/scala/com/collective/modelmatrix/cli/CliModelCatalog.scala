@@ -18,10 +18,10 @@ trait CliModelCatalog {
 
   protected lazy val db = Database.forConfig(dbName, dbConfig)
   protected lazy val catalog = new ModelMatrixCatalog(PostgresDriver)
-  
+
   protected lazy val modelDefinitions = new ModelDefinitions(catalog)
   protected lazy val modelDefinitionFeatures = new ModelDefinitionFeatures(catalog)
-  
+
   protected lazy val modelInstances = new ModelInstances(catalog)
   protected lazy val modelInstanceFeatures = new ModelInstanceFeatures(catalog)
 }

@@ -44,7 +44,7 @@ case class ValidateInputData(
         extractionErrors.printASCIITable()
 
       // Features extracted, time to transform them!
-      case \/-(extracted)  =>
+      case \/-(extracted) =>
         val transformers = new Transformers(extracted)
 
         val validate = features.map(mdf => mdf -> transformers.validate(mdf.feature))

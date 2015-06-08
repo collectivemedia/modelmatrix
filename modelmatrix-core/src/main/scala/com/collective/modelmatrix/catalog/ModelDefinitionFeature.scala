@@ -32,7 +32,7 @@ class ModelDefinitionFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: 
 
     features.map(_.sortBy(_.id))
   }
-  
+
   def addFeatures(modelDefinitionId: Int, features: ModelFeature*): DBIO[Seq[Int]] = {
     log.trace(s"Add ${features.length} featured to model definition id: $modelDefinitionId")
 

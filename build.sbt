@@ -19,6 +19,8 @@ scalacOptions in ThisBuild ++= Seq(
 // still experimental
 // scalacOptions       += "-Ybackend:o3"
 
+licenses in ThisBuild += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
+
 scalastyleFailOnError in ThisBuild := true
 
 maxErrors in ThisBuild := 5
@@ -45,7 +47,6 @@ resolvers in ThisBuild ++= Seq(
   "Conjars"              at "http://conjars.org/repo"
 )
 
-bintrayOrganization in ThisBuild := Some("Collective")
 
 // Model Matrix project
 
@@ -55,6 +56,9 @@ def ModelMatrixProject(path: String) =
     .configs(TestSettings.IntegrationTest)
     .settings(TestSettings.testSettings: _*)
     .settings(TestSettings.integrationTestSettings: _*)
+    .settings(bintrayRepository := "releases")
+    .settings(bintrayOrganization := Some("collectivemedia"))
+
 
 // Aggregate all projects & disable publishing root project
 

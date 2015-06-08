@@ -33,7 +33,7 @@ case class SparseFeaturization(
 
   import com.collective.modelmatrix.cli.ASCIITableFormat._
   import com.collective.modelmatrix.cli.ASCIITableFormats._
-  
+
   def run(): Unit = {
 
     log.info(s"Run sparse featurization using Model Matrix instance: $modelInstanceId. " +

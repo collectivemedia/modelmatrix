@@ -109,10 +109,10 @@ class Featurization(features: Seq[ModelInstanceFeature]) extends Serializable {
     val featuresColumnIdx: Map[ModelFeature, Int] =
       features.zipWithIndex.map { case (f, idx) => (f.feature, idx + 1) }.toMap
 
-    val rdd = df.select(new Column(idColumn) +: columns:_*).map { row =>
+    val rdd = df.select(new Column(idColumn) +: columns: _*).map { row =>
       val id = row.get(0)
       val columnValues = features.flatMap {
-        case ModelInstanceIdentityFeature(_, _, f, tpe, columnId) => 
+        case ModelInstanceIdentityFeature(_, _, f, tpe, columnId) =>
           identityColumn(row)(f, featuresColumnIdx(f), tpe, columnId).toSeq
         case ModelInstanceTopFeature(_, _, f, tpe, cols) =>
           categorialColumn(row)(f, featuresColumnIdx(f), tpe, cols).toSeq
@@ -152,7 +152,7 @@ class Featurization(features: Seq[ModelInstanceFeature]) extends Serializable {
 
     Some((idx, doubleValue))
   }
-  
+
   private def categorialColumn(row: Row)(
     feature: ModelFeature,
     idx: Int,
@@ -176,7 +176,7 @@ class Featurization(features: Seq[ModelInstanceFeature]) extends Serializable {
     // Take first matching categorial value or fallback to 'all other' if exists
     val categorialColumn = columns.collect { case v: CategorialValue if v.sourceValue == byteVector => v.columnId }
     val allOther = columns.collect { case AllOther(columnId, _, _) => columnId }
-    
+
     (categorialColumn ++ allOther).headOption.map((_, 1.0D))
   }
 
