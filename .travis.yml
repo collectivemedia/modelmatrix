@@ -1,0 +1,24 @@
+sudo: false
+
+cache:
+  directories:
+    - $HOME/.ivy2/cache
+    - $HOME/.sbt/boot/
+
+before_script:
+  - psql -c "create user modelmatrix with password 'modelmatrix';" -U postgres
+  - psql -c "create database modelmatrix;" -U postgres
+  - psql -c "grant all privileges on database modelmatrix to modelmatrix;" -U postgres
+
+language: scala
+scala:
+   - 2.10.5
+jdk:
+  - oraclejdk8
+
+script:
+  - sbt ++$TRAVIS_SCALA_VERSION -J-Xmx2512m clean flywayMigrate test it:test
+
+  # Tricks to avoid unnecessary cache updates
+  - find $HOME/.sbt -name "*.lock" | xargs rm
+  - find $HOME/.ivy2 -name "ivydata-*.properties" | xargs rm
