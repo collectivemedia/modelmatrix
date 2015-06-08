@@ -1,5 +1,7 @@
 # Model Matrix
 
+[![Build Status](https://travis-ci.org/ezhulenev/modelmatrix.svg?branch=master)](https://travis-ci.org/ezhulenev/modelmatrix)
+
 Model Matrix: Machine Learning Feature Engineering
 
 * Website: https://collectivemedia.github.io/modelmatrix/
