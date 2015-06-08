@@ -18,6 +18,7 @@ case class SparseFeaturization(
   source: Source,
   sink: Sink,
   idColumn: String,
+  cacheSource: Boolean,
   dbName: String,
   dbConfig: Config
 )(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) extends Script with CliModelCatalog with CliSparkContext {
@@ -49,7 +50,8 @@ case class SparseFeaturization(
 
     val featurization = new Featurization(features)
 
-    Transformer.selectFeaturesWithId(source.asDataFrame, idColumn, features.map(_.feature)) match {
+    val df = if (cacheSource) source.asDataFrame.cache() else source.asDataFrame
+    Transformer.selectFeaturesWithId(df, idColumn, features.map(_.feature)) match {
       // Feature extraction failed
       case -\/(extractionErrors) =>
         Console.out.println(s"Feature extraction failed:")

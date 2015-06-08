@@ -93,7 +93,7 @@ object Transformer {
     df: DataFrame,
     idColumn: String,
     features: Seq[ModelFeature]
-  ):  Seq[FeatureExtractionError] \/ FeaturesWithIdDataFrame = {
+  ): Seq[FeatureExtractionError] \/ FeaturesWithIdDataFrame = {
     val (errors, expressions) = tryExtract(df, features)
     if (errors.nonEmpty) {
       \/.left(errors)

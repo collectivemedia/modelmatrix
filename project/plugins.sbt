@@ -14,5 +14,8 @@ addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "0.7.0")
 // Flyway: database schema migrations
 addSbtPlugin("org.flywaydb" % "flyway-sbt" % "3.2.1")
 
-// Publish unnified documentation to site
+// Publish unified documentation to site
 addSbtPlugin("com.eed3si9n" % "sbt-unidoc" % "0.3.2")
+
+// Publish to bintray
+addSbtPlugin("me.lessis" % "bintray-sbt" % "0.3.0")

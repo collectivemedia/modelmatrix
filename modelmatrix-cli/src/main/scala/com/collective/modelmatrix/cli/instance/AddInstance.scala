@@ -23,6 +23,7 @@ case class AddInstance(
   name: Option[String],
   comment: Option[String],
   concurrencyLevel: Int,
+  cacheSource: Boolean,
   dbName: String,
   dbConfig: Config
 )(implicit val ec: ExecutionContext @@ ModelMatrixCatalog)
@@ -59,8 +60,9 @@ case class AddInstance(
     
     require(features.nonEmpty, s"No active features are defined for model definition: $modelDefinitionId. " +
       s"Ensure that this model definition exists")
-    
-    Transformer.selectFeatures(source.asDataFrame, features.map(_.feature)) match {
+
+    val df = if (cacheSource) source.asDataFrame.cache() else source.asDataFrame
+    Transformer.selectFeatures(df, features.map(_.feature)) match {
       // One of extract expressions failed
       case -\/(extractionErrors) =>
         Console.out.println(s"Source feature extraction failed:")

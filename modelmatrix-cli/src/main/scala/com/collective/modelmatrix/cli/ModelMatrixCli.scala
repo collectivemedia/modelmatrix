@@ -25,6 +25,7 @@ object ModelMatrixCli extends App {
   private val defaultMMFeatures = "features"
   private val defaultMMName: Option[String] = None
   private val defaultMMComment: Option[String] = None
+  private val defaultSourceCache: Boolean = false
 
   private val defaultDbName = "modelmatrix.catalog.db"
   private val defaultDbConfig = ConfigFactory.load()
@@ -150,10 +151,12 @@ object ModelMatrixCli extends App {
       ),
 
       cmd("validate").text("validate model matrix definition against input data")
-        .action((_, _) => instance.ValidateInputData(0, NoSource, defaultDbName, defaultDbConfig))
+        .action((_, _) => instance.ValidateInputData(0, NoSource, defaultSourceCache, defaultDbName, defaultDbConfig))
         .children(
           overrideDbName(dbName => (_: instance.ValidateInputData).copy(dbName = dbName)),
           overrideDbConfig(dbConf => (_: instance.ValidateInputData).copy(dbConfig = dbConf)),
+          opt[Boolean]("cache").optional().text("cache source data frame")
+            .action { (c, s) => s.asInstanceOf[instance.ValidateInputData].copy(cacheSource = c) },
           arg[Int]("<model-definition-id>").required().text("model matrix definition id")
             .action { (id, s) => s.as[instance.ValidateInputData].copy(id) },
           arg[String]("<input-source>").required().text("input data source")
@@ -168,8 +171,10 @@ object ModelMatrixCli extends App {
         defaultMMName,
         defaultMMComment,
         10,
+        defaultSourceCache,
         defaultDbName,
-        defaultDbConfig))
+        defaultDbConfig)
+        )
         .children(
           overrideDbName(dbName => (_: instance.AddInstance).copy(dbName = dbName)),
           overrideDbConfig(dbConf => (_: instance.AddInstance).copy(dbConfig = dbConf)),
@@ -177,8 +182,10 @@ object ModelMatrixCli extends App {
             .action { (n, s) => s.as[instance.AddInstance].copy(name = Some(n)) },
           opt[String]('c', "comment").optional().text("model matrix instance comment")
             .action { (c, s) => s.as[instance.AddInstance].copy(comment = Some(c)) },
-          opt[Int]('t', "concurrency").optional().text("concurrency level")
+          opt[Int]("concurrency").optional().text("concurrency level")
             .action { (c, s) => s.as[instance.AddInstance].copy(concurrencyLevel = c) },
+          opt[Boolean]("cache").optional().text("cache source data frame")
+            .action { (c, s) => s.asInstanceOf[instance.AddInstance].copy(cacheSource = c) },
           arg[Int]("<model-definition-id>").required().text("model matrix definition id")
             .action { (id, s) => s.as[instance.AddInstance].copy(id) },
           arg[String]("<input-source>").required().text("input data source")
@@ -194,10 +201,12 @@ object ModelMatrixCli extends App {
     cmd("featurize").text("featurize input data with model matrix instance:").children(
 
       cmd("validate").text("validate input data against model matrix instance")
-        .action((_, _) => featurize.ValidateInputData(0, NoSource, defaultDbName, defaultDbConfig))
+        .action((_, _) => featurize.ValidateInputData(0, NoSource, defaultSourceCache, defaultDbName, defaultDbConfig))
         .children(
           overrideDbName(dbName => (_: featurize.ValidateInputData).copy(dbName = dbName)),
           overrideDbConfig(dbConf => (_: featurize.ValidateInputData).copy(dbConfig = dbConf)),
+          opt[Boolean]("cache").optional().text("cache source data frame")
+            .action { (c, s) => s.asInstanceOf[featurize.ValidateInputData].copy(cacheSource = c) },
           arg[Int]("<model-instance-id>").required().text("model matrix instance id")
             .action { (id, s) => s.as[featurize.ValidateInputData].copy(id) },
           arg[String]("<input-source>").required().text("input data source")
@@ -206,10 +215,20 @@ object ModelMatrixCli extends App {
         ),
 
       cmd("sparse").text("featurize input data to sparse feature representation")
-        .action((_, _) => featurize.SparseFeaturization(0, NoSource, NoSink, defaultIdColumn, defaultDbName, defaultDbConfig))
+        .action((_, _) => featurize.SparseFeaturization(
+        0,
+        NoSource,
+        NoSink,
+        defaultIdColumn,
+        defaultSourceCache,
+        defaultDbName,
+        defaultDbConfig)
+        )
         .children(
           overrideDbName(dbName => (_: featurize.SparseFeaturization).copy(dbName = dbName)),
           overrideDbConfig(dbConf => (_: featurize.SparseFeaturization).copy(dbConfig = dbConf)),
+          opt[Boolean]("cache").optional().text("cache source data frame")
+            .action { (c, s) => s.asInstanceOf[featurize.SparseFeaturization].copy(cacheSource = c) },
           arg[Int]("<model-instance-id>").required().text("model matrix instance id")
             .action { (id, s) => s.as[featurize.SparseFeaturization].copy(id) },
           arg[String]("<input-source>").required().text("input data source")
@@ -218,7 +237,7 @@ object ModelMatrixCli extends App {
           arg[String]("<output-sink>").required().text("output featurized data sink")
             .validate(Sink.validate)
             .action { (f, s) => s.as[featurize.SparseFeaturization].copy(sink = Sink(f)) },
-          arg[String]("<id-column>").required().text("id column name")            
+          arg[String]("<id-column>").required().text("id column name")
             .action { (c, s) => s.as[featurize.SparseFeaturization].copy(idColumn = c) }
         )
     )

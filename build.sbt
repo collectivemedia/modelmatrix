@@ -45,6 +45,8 @@ resolvers in ThisBuild ++= Seq(
   "Conjars"              at "http://conjars.org/repo"
 )
 
+bintrayOrganization in ThisBuild := Some("Collective")
+
 // Model Matrix project
 
 def ModelMatrixProject(path: String) =

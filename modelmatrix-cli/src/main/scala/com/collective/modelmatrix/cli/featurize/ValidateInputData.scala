@@ -13,6 +13,7 @@ import scalaz._
 case class ValidateInputData(
   modelInstanceId: Int,
   source: Source,
+  cacheSource: Boolean,
   dbName: String,
   dbConfig: Config
 )(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) extends Script with CliModelCatalog with CliSparkContext {
@@ -35,7 +36,8 @@ case class ValidateInputData(
 
     val featurization = new Featurization(features)
 
-    Transformer.selectFeatures(source.asDataFrame, features.map(_.feature)) match {
+    val df = if (cacheSource) source.asDataFrame.cache() else source.asDataFrame
+    Transformer.selectFeatures(df, features.map(_.feature)) match {
       // One of extract expressions failed
       case -\/(extractionErrors) =>
         Console.out.println(s"Feature extraction failed:")
