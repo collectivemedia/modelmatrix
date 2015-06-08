@@ -19,13 +19,13 @@ scalacOptions in ThisBuild ++= Seq(
 // still experimental
 // scalacOptions       += "-Ybackend:o3"
 
+licenses in ThisBuild += ("Apache-2.0", url("http://www.apache.org/licenses/LICENSE-2.0"))
+
 scalastyleFailOnError in ThisBuild := true
 
 maxErrors in ThisBuild := 5
 
 shellPrompt in ThisBuild := ShellPrompt.buildShellPrompt
-
-libraryDependencies ++= Dependencies.modelMatrix
 
 resolvers in ThisBuild ++= Seq(
   // Typesafe
@@ -42,13 +42,43 @@ resolvers in ThisBuild ++= Seq(
   "Apache Releases"      at "http://repository.apache.org/content/repositories/releases/",
   "Apache Snapshots"     at "http://repository.apache.org/content/repositories/snapshots",
   // Cloudera
-  "Cloudera"             at "https://repository.cloudera.com/artifactory/cloudera-repos/"
+  "Cloudera"             at "https://repository.cloudera.com/artifactory/cloudera-repos/",
+  // Conjars
+  "Conjars"              at "http://conjars.org/repo"
 )
+
 
 // Model Matrix project
 
-lazy val modelmatrix = (project in file("."))
-  .settings(net.virtualvoid.sbt.graph.Plugin.graphSettings: _*)
-  .configs(IntegrationTest)
-  .settings(TestSettings.testSettings:_*)
-  .settings(TestSettings.integrationTestSettings:_*)
+def ModelMatrixProject(path: String) =
+  Project(path, file(path))
+    .settings(net.virtualvoid.sbt.graph.Plugin.graphSettings: _*)
+    .configs(TestSettings.IntegrationTest)
+    .settings(TestSettings.testSettings: _*)
+    .settings(TestSettings.integrationTestSettings: _*)
+    .settings(bintrayRepository := "releases")
+    .settings(bintrayOrganization := Some("collectivemedia"))
+
+
+// Aggregate all projects & disable publishing root project
+
+lazy val root = Project("modelmatrix", file(".")).
+  settings(publish :=()).
+  settings(publishLocal :=()).
+  settings(unidocSettings: _*).
+  aggregate(modelmatrixCore, modelmatrixCli, modelMatrixClient)
+
+
+// Model Matrix projects
+
+lazy val modelmatrixCore =
+  ModelMatrixProject("modelmatrix-core")
+    .settings(flywaySettings: _*)
+
+lazy val modelmatrixCli =
+  ModelMatrixProject("modelmatrix-cli")
+    .dependsOn(modelmatrixCore)
+
+lazy val modelMatrixClient =
+  ModelMatrixProject("modelmatrix-client")
+    .dependsOn(modelmatrixCore)
