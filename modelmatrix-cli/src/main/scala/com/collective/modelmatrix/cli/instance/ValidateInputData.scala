@@ -37,7 +37,7 @@ case class ValidateInputData(
       s"Ensure that this model definition exists")
 
     val df = if (cacheSource) source.asDataFrame.cache() else source.asDataFrame
-    Transformer.selectFeatures(df, features.map(_.feature)) match {
+    Transformer.extractFeatures(df, features.map(_.feature)) match {
       // One of extract expressions failed
       case -\/(extractionErrors) =>
         Console.out.println(s"Feature extraction failed:")

@@ -35,7 +35,7 @@ class TransformerSpec extends FlatSpec with TestSparkContext {
   val df = sqlContext.createDataFrame(sc.parallelize(input), schema)
 
   "Transformer" should "report failed feature extraction" in {
-    val features = Transformer.selectFeatures(df, Seq(badFunctionType, wrongParametersCount))
+    val features = Transformer.extractFeatures(df, Seq(badFunctionType, wrongParametersCount))
     assert(features.isLeft)
     val errors = features.fold(identity, _ => sys.error("Should not be here"))
 
