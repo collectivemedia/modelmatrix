@@ -2,14 +2,13 @@ package com.collective.modelmatrix.cli.definition
 
 import com.collective.modelmatrix.catalog.ModelMatrixCatalog
 import com.collective.modelmatrix.cli.{CliModelCatalog, Script}
-import com.typesafe.config.Config
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.ExecutionContext
 import scalaz._
 
 case class ViewFeatures(
-  modelDefinitionId: Int, dbName: String, dbConfig: Config
+  modelDefinitionId: Int
 )(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) extends Script with CliModelCatalog {
 
   private val log = LoggerFactory.getLogger(classOf[ViewFeatures])
@@ -18,7 +17,7 @@ case class ViewFeatures(
   import com.collective.modelmatrix.cli.ASCIITableFormats._
 
   def run(): Unit = {
-    log.info(s"View Model Matrix definition features: $modelDefinitionId. Database: $dbName @ ${dbConfig.origin()}")
+    log.info(s"View Model Matrix definition features: $modelDefinitionId")
 
     blockOn(db.run(modelDefinitions.findById(modelDefinitionId))) match {
       case Some(modelDefinition) =>

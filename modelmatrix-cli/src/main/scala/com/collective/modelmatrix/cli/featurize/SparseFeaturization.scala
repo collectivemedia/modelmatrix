@@ -5,7 +5,6 @@ import com.collective.modelmatrix.catalog.ModelMatrixCatalog
 import com.collective.modelmatrix.cli.{Source, _}
 import com.collective.modelmatrix.transform.Transformer
 import com.collective.modelmatrix.{Featurization, IdentifiedPoint, ModelMatrix}
-import com.typesafe.config.Config
 import org.apache.spark.mllib.linalg.{DenseVector, SparseVector}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
@@ -19,9 +18,7 @@ case class SparseFeaturization(
   source: Source,
   sink: Sink,
   idColumn: String,
-  cacheSource: Boolean,
-  dbName: String,
-  dbConfig: Config
+  cacheSource: Boolean
 )(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) extends Script with CliModelCatalog with CliSparkContext {
 
   private val log = LoggerFactory.getLogger(classOf[ValidateInputData])
@@ -40,8 +37,7 @@ case class SparseFeaturization(
     log.info(s"Run sparse featurization using Model Matrix instance: $modelInstanceId. " +
       s"Input source: $source. " +
       s"Featurized sink: $sink. " +
-      s"Id column: $idColumn" +
-      s"Database: $dbName @ ${dbConfig.origin()}")
+      s"Id column: $idColumn")
 
     implicit val sqlContext = ModelMatrix.hiveContext(sc)
 

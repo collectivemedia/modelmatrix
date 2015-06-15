@@ -15,9 +15,7 @@ case class AddDefinition(
   config: Path,
   configPath: String,
   name: Option[String],
-  comment: Option[String],
-  dbName: String,
-  dbConfig: Config
+  comment: Option[String]
 )(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) extends Script with CliModelCatalog {
 
   private val log = LoggerFactory.getLogger(classOf[AddDefinition])
@@ -36,8 +34,7 @@ case class AddDefinition(
     log.info(s"Add Model Matrix definition. " +
       s"Config: $configPath @ $config. " +
       s"Name: $name. " +
-      s"Comment: $comment. " +
-      s"Database: $dbName @ ${dbConfig.origin()}")
+      s"Comment: $comment")
 
     val features = parser.features()
 

@@ -1,7 +1,7 @@
 package com.collective.modelmatrix.cli
 
 import com.collective.modelmatrix.catalog._
-import com.typesafe.config.Config
+import com.typesafe.config.ConfigFactory
 import slick.driver.PostgresDriver
 
 import scala.concurrent.ExecutionContext
@@ -12,11 +12,9 @@ trait CliModelCatalog {
   protected val driver = slick.driver.PostgresDriver
   import driver.api._
 
-  def dbName: String
-  def dbConfig: Config
   implicit def ec: ExecutionContext @@ ModelMatrixCatalog
 
-  protected lazy val db = Database.forConfig(dbName, dbConfig)
+  protected lazy val db = Database.forConfig("modelmatrix.catalog.db", ConfigFactory.load())
   protected lazy val catalog = new ModelMatrixCatalog(PostgresDriver)
 
   protected lazy val modelDefinitions = new ModelDefinitions(catalog)

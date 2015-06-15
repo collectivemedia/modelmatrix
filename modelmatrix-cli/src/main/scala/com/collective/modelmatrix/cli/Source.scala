@@ -9,7 +9,6 @@ sealed trait Source {
 }
 
 object Source {
-  private val csv = "csv://(.*)".r
   private val hive = "hive://(.*)".r
   private val parquet = "parquet://(.*)".r
 
@@ -21,7 +20,6 @@ object Source {
   }
 
   def apply(source: String): Source = source match {
-    case csv(path) => CsvSource(path)
     case hive(table) => HiveSource(table)
     case parquet(path) => ParquetSource(path)
   }
@@ -33,26 +31,6 @@ object NoSource extends Source {
   }
 
   override def toString: String = "Source is not defined"
-}
-
-case class CsvSource(
-  path: String,
-  useHeader: Boolean = true,
-  delimiter: Char = ',',
-  quote: Char = '"',
-  escape: Char = '\\'
-) extends Source {
-
-  import com.databricks.spark.csv._
-
-  def asDataFrame(implicit sqlContext: SQLContext): DataFrame = {
-    sqlContext.csvFile(path, useHeader, delimiter, quote, escape)
-  }
-
-  override def toString: String = {
-    s"CSV: $path"
-  }
-
 }
 
 case class HiveSource(

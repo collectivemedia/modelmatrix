@@ -4,7 +4,6 @@ import com.collective.modelmatrix.ModelMatrix
 import com.collective.modelmatrix.catalog.ModelMatrixCatalog
 import com.collective.modelmatrix.cli.{Source, _}
 import com.collective.modelmatrix.transform._
-import com.typesafe.config.Config
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.ExecutionContext
@@ -13,9 +12,7 @@ import scalaz._
 case class ValidateInputData(
   modelDefinitionId: Int,
   source: Source,
-  cacheSource: Boolean,
-  dbName: String,
-  dbConfig: Config
+  cacheSource: Boolean
 )(implicit val ec: ExecutionContext @@ ModelMatrixCatalog)
   extends Script with CliModelCatalog with CliSparkContext with Transformers {
 
@@ -29,8 +26,7 @@ case class ValidateInputData(
   def run(): Unit = {
 
     log.info(s"Validate input data against Model Matrix definition: $modelDefinitionId. " +
-      s"Data source: $source. " +
-      s"Database: $dbName @ ${dbConfig.origin()}")
+      s"Data source: $source")
 
     val features = blockOn(db.run(modelDefinitionFeatures.features(modelDefinitionId))).filter(_.feature.active == true)
     require(features.nonEmpty, s"No active features are defined for model definition: $modelDefinitionId. " +
