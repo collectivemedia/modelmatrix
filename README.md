@@ -60,11 +60,14 @@ All tests that require Spark or Postgres are running as a part of integration te
     sbt test
     sbt it:test
     
-## Assembling CLI jar
+## Assembling CLI application
 
-To run CLI you need to assembly application jar first
+To run CLI you need to build application distribution first (zip or tar.gz)
 
-    sbt assembly        
+    sbt universal:packageBin        
+    sbt universal:packageXzTarball
+    
+Application will be packaged in `modelmatrix-cli/target/universal`
 
 ## Git Workflow
 
