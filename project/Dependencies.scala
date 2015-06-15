@@ -37,7 +37,6 @@ object Dependencies {
     Seq(
       scopt
     , guava
-    , sparkCSV
     , scalazStream
     , flyway
     )

@@ -15,7 +15,6 @@ object Dependency {
 
     // Spark
     val Spark              = "1.3.0-cdh5.4.2"
-    val SparkCSV           = "1.0.3"
 
     // Database
     val Slick              = "3.0.0"
@@ -58,7 +57,6 @@ object Dependency {
   val sparkYarn           = "org.apache.spark"          %% "spark-yarn"                  % V.Spark % "provided"
   val sparkHive           = "org.apache.spark"          %% "spark-hive"                  % V.Spark % "provided"
   val sparkMLLib          = "org.apache.spark"          %% "spark-mllib"                 % V.Spark % "provided"
-  val sparkCSV            = "com.databricks"            %% "spark-csv"                   % V.SparkCSV
 
   // Test Dependencies
 
