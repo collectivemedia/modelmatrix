@@ -35,7 +35,7 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">ViewSource</span><span class="params">(<span name="modelDefinitionId">modelDefinitionId: <span class="extype" name="scala.Int">Int</span></span>, <span name="dbName">dbName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="dbConfig">dbConfig: <span class="extype" name="com.typesafe.config.Config">Config</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ec">ec: <a href="../../../../../scalaz/package.html#@@[T,Tag]=scalaz.package.Tagged[T,Tag]" class="extmbr" name="scalaz.@@">@@</a>[<span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span>, <a href="../../catalog/ModelMatrixCatalog.html" class="extype" name="com.collective.modelmatrix.catalog.ModelMatrixCatalog">ModelMatrixCatalog</a>]</span>)</span><span class="result"> extends <a href="../Script.html" class="extype" name="com.collective.modelmatrix.cli.Script">Script</a> with <a href="../CliModelCatalog.html" class="extype" name="com.collective.modelmatrix.cli.CliModelCatalog">CliModelCatalog</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">ViewSource</span><span class="params">(<span name="modelDefinitionId">modelDefinitionId: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ec">ec: <a href="../../../../../scalaz/package.html#@@[T,Tag]=scalaz.package.Tagged[T,Tag]" class="extmbr" name="scalaz.@@">@@</a>[<span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span>, <a href="../../catalog/ModelMatrixCatalog.html" class="extype" name="com.collective.modelmatrix.catalog.ModelMatrixCatalog">ModelMatrixCatalog</a>]</span>)</span><span class="result"> extends <a href="../Script.html" class="extype" name="com.collective.modelmatrix.cli.Script">Script</a> with <a href="../CliModelCatalog.html" class="extype" name="com.collective.modelmatrix.cli.CliModelCatalog">CliModelCatalog</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
@@ -80,7 +80,7 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="com.collective.modelmatrix.cli.definition.ViewSource#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(modelDefinitionId:Int,dbName:String,dbConfig:com.typesafe.config.Config)(implicitec:scalaz.@@[scala.concurrent.ExecutionContext,com.collective.modelmatrix.catalog.ModelMatrixCatalog]):com.collective.modelmatrix.cli.definition.ViewSource"></a>
+      <a id="&lt;init&gt;(modelDefinitionId:Int)(implicitec:scalaz.@@[scala.concurrent.ExecutionContext,com.collective.modelmatrix.catalog.ModelMatrixCatalog]):com.collective.modelmatrix.cli.definition.ViewSource"></a>
       <a id="&lt;init&gt;:ViewSource"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -88,7 +88,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">ViewSource</span><span class="params">(<span name="modelDefinitionId">modelDefinitionId: <span class="extype" name="scala.Int">Int</span></span>, <span name="dbName">dbName: <span class="extype" name="scala.Predef.String">String</span></span>, <span name="dbConfig">dbConfig: <span class="extype" name="com.typesafe.config.Config">Config</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ec">ec: <a href="../../../../../scalaz/package.html#@@[T,Tag]=scalaz.package.Tagged[T,Tag]" class="extmbr" name="scalaz.@@">@@</a>[<span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span>, <a href="../../catalog/ModelMatrixCatalog.html" class="extype" name="com.collective.modelmatrix.catalog.ModelMatrixCatalog">ModelMatrixCatalog</a>]</span>)</span>
+        <span class="name">ViewSource</span><span class="params">(<span name="modelDefinitionId">modelDefinitionId: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="ec">ec: <a href="../../../../../scalaz/package.html#@@[T,Tag]=scalaz.package.Tagged[T,Tag]" class="extmbr" name="scalaz.@@">@@</a>[<span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span>, <a href="../../catalog/ModelMatrixCatalog.html" class="extype" name="com.collective.modelmatrix.catalog.ModelMatrixCatalog">ModelMatrixCatalog</a>]</span>)</span>
       </span>
       </h4>
       
@@ -250,32 +250,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="../CliModelCatalog.html" class="extype" name="com.collective.modelmatrix.cli.CliModelCatalog">CliModelCatalog</a></dd></dl></div>
-    </li><li name="com.collective.modelmatrix.cli.definition.ViewSource#dbConfig" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="dbConfig:com.typesafe.config.Config"></a>
-      <a id="dbConfig:Config"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">dbConfig</span><span class="result">: <span class="extype" name="com.typesafe.config.Config">Config</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.collective.modelmatrix.cli.definition.ViewSource">ViewSource</a> → <a href="../CliModelCatalog.html" class="extype" name="com.collective.modelmatrix.cli.CliModelCatalog">CliModelCatalog</a></dd></dl></div>
-    </li><li name="com.collective.modelmatrix.cli.definition.ViewSource#dbName" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="dbName:String"></a>
-      <a id="dbName:String"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">val</span>
-      </span>
-      <span class="symbol">
-        <span class="name">dbName</span><span class="result">: <span class="extype" name="scala.Predef.String">String</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.collective.modelmatrix.cli.definition.ViewSource">ViewSource</a> → <a href="../CliModelCatalog.html" class="extype" name="com.collective.modelmatrix.cli.CliModelCatalog">CliModelCatalog</a></dd></dl></div>
     </li><li name="com.collective.modelmatrix.cli.CliModelCatalog#driver" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="driver:slick.driver.PostgresDriver.type"></a>
       <a id="driver:PostgresDriver.type"></a>

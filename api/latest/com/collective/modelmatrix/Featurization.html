@@ -240,22 +240,45 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="com.collective.modelmatrix.Featurization#featurize" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="featurize(input:scalaz.@@[org.apache.spark.sql.DataFrame,com.collective.modelmatrix.transform.Transformer.FeaturesWithId],idColumn:String):(org.apache.spark.sql.types.DataType,org.apache.spark.rdd.RDD[com.collective.modelmatrix.IdentifiedPoint])"></a>
-      <a id="featurize(@@[DataFrame,FeaturesWithId],String):(DataType,RDD[IdentifiedPoint])"></a>
+    </li><li name="com.collective.modelmatrix.Featurization#featurize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="featurize(input:scalaz.@@[org.apache.spark.sql.DataFrame,com.collective.modelmatrix.transform.Transformer.Features]):org.apache.spark.rdd.RDD[org.apache.spark.mllib.linalg.Vector]"></a>
+      <a id="featurize(@@[DataFrame,Features]):RDD[Vector]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">featurize</span><span class="params">(<span name="input">input: <a href="../../../scalaz/package.html#@@[T,Tag]=scalaz.package.Tagged[T,Tag]" class="extmbr" name="scalaz.@@">@@</a>[<span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span>, <a href="transform/Transformer$$FeaturesWithId.html" class="extype" name="com.collective.modelmatrix.transform.Transformer.FeaturesWithId">FeaturesWithId</a>]</span>, <span name="idColumn">idColumn: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: (<span class="extype" name="org.apache.spark.sql.types.DataType">DataType</span>, <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<a href="IdentifiedPoint.html" class="extype" name="com.collective.modelmatrix.IdentifiedPoint">IdentifiedPoint</a>])</span>
+        <span class="name">featurize</span><span class="params">(<span name="input">input: <a href="../../../scalaz/package.html#@@[T,Tag]=scalaz.package.Tagged[T,Tag]" class="extmbr" name="scalaz.@@">@@</a>[<span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span>, <a href="transform/Transformer$$Features.html" class="extype" name="com.collective.modelmatrix.transform.Transformer.Features">Features</a>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.mllib.linalg.Vector">Vector</span>]</span>
       </span>
       </h4>
-      <p class="shortcomment cmt">Featurize input dataset
-</p><div class="fullcomment"><div class="comment cmt"><p>Featurize input dataset
-</p></div><dl class="paramcmts block"><dt>returns</dt><dd class="cmt"><p>id data type and featurized rows
-</p></dd></dl></div>
+      
+    </li><li name="com.collective.modelmatrix.Featurization#featurize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="featurize(input:scalaz.@@[org.apache.spark.sql.DataFrame,com.collective.modelmatrix.transform.Transformer.Features],labeled:com.collective.modelmatrix.FeaturizationType.Labeled):org.apache.spark.rdd.RDD[org.apache.spark.mllib.regression.LabeledPoint]"></a>
+      <a id="featurize(@@[DataFrame,Features],Labeled):RDD[LabeledPoint]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">featurize</span><span class="params">(<span name="input">input: <a href="../../../scalaz/package.html#@@[T,Tag]=scalaz.package.Tagged[T,Tag]" class="extmbr" name="scalaz.@@">@@</a>[<span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span>, <a href="transform/Transformer$$Features.html" class="extype" name="com.collective.modelmatrix.transform.Transformer.Features">Features</a>]</span>, <span name="labeled">labeled: <a href="FeaturizationType$$Labeled.html" class="extype" name="com.collective.modelmatrix.FeaturizationType.Labeled">Labeled</a></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.mllib.regression.LabeledPoint">LabeledPoint</span>]</span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.Featurization#featurize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="featurize(input:scalaz.@@[org.apache.spark.sql.DataFrame,com.collective.modelmatrix.transform.Transformer.Features],identified:com.collective.modelmatrix.FeaturizationType.Identified):(org.apache.spark.sql.types.DataType,org.apache.spark.rdd.RDD[com.collective.modelmatrix.IdentifiedPoint])"></a>
+      <a id="featurize(@@[DataFrame,Features],Identified):(DataType,RDD[IdentifiedPoint])"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">featurize</span><span class="params">(<span name="input">input: <a href="../../../scalaz/package.html#@@[T,Tag]=scalaz.package.Tagged[T,Tag]" class="extmbr" name="scalaz.@@">@@</a>[<span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span>, <a href="transform/Transformer$$Features.html" class="extype" name="com.collective.modelmatrix.transform.Transformer.Features">Features</a>]</span>, <span name="identified">identified: <a href="FeaturizationType$$Identified.html" class="extype" name="com.collective.modelmatrix.FeaturizationType.Identified">Identified</a></span>)</span><span class="result">: (<span class="extype" name="org.apache.spark.sql.types.DataType">DataType</span>, <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<a href="IdentifiedPoint.html" class="extype" name="com.collective.modelmatrix.IdentifiedPoint">IdentifiedPoint</a>])</span>
+      </span>
+      </h4>
+      
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>

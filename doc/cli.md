@@ -5,44 +5,50 @@ title: Command Line Interface
 
 # <a name="command-line-interface">Command Line Interface</a>
 
-To get list of all available commands simply run `mm` without arguments:
+First you need to build Model Matrix CLI application distribution file:
 
-    modelmatrix/mm
+    sbt> universal:packageBin
+    
+CLI will be packaged as zip file and should be available at:
+    
+    modelmatrix/modelmatrix-cli/target/universal/
+
+To get list of all available commands simply run `bin/modelmatrix-cli` without arguments:
+
+    modelmatrix-cli-0.0.2/bin/modelmatrix-cli
 
 ## <a name="specify-database">Specify Model Matrix Database</a>
     
-If you want to use custom database settings you can provide them in 
-separate database configuration and pass it to CLI with db options:
+If you want to use custom database settings you should update `application.conf` 
+that is located at `modelmatrix-cli-0.0.2/conf/application.conf`
     
-    # Inside datasci-db.conf
-    datasci-db {
-     url = "jdbc:postgresql://localhost/datasci?user=datasci&password=datasci"
-     driver = org.postgresql.Driver
-     keepAliveConnection = true      
-    }    
+    ## Provide database configuration for modelmatrix catalog db
+    # modelmatrix {
+    #   catalog.db {
+    #     url = "jdbc:postgresql://postgrestest001/modelmatrix?user=ezhulenev"
+    #     driver = org.postgresql.Driver
+    #     keepAliveConnection = true
+    #   }
+    # }
     
-and later pass additional options to CLI:
-    
-    ./mm <cli-command> --dbConf ./datasci-db.conf --dbName datasci-db
-
 ## <a name="mmc-definition">Model Matrix definitions</a>
 
 #### List available model matrix definitions
 
-    ./mm definition list [--name <name>]
+    bin/modelmatrix-cli definition list [--name <name>]
 
 #### View model matrix definition
 
-    ./mm definition view features <model-definition-id>    
-    ./mm definition view source <model-definition-id>
+    bin/modelmatrix-cli definition view features --definition-id <model-definition-id>    
+    bin/modelmatrix-cli definition view source --definition-id <model-definition-id>
          
 #### Validate model matrix definition config
 
-    ./mm definition validate <model-config>
+    bin/modelmatrix-cli definition validate --config <model-config>
         
 #### Add model matrix definition
 
-    ./mm definition add [options] <model-config>
+    bin/modelmatrix-cli definition add [options] --config <model-config>
     
 | Option      | Example                       | Description                            |
 | ----------- | ----------------------------- | -------------------------------------- |
@@ -53,33 +59,36 @@ and later pass additional options to CLI:
 ### Examples    
 
     # Validate config
-    ./mm definition validate ./model-matrix-v123.conf
+    bin/modelmatrix-cli definition validate --config ./model-matrix-v123.conf
     
     # Create new definition if it's valid
-    ./mm definition add --name "v123" --comment "testing" ./model-matrix-v123.conf
+    bin/modelmatrix-cli definition add \
+          --name "v123" \
+          --comment "testing" \
+          --config ./model-matrix-v123.conf
     
     # Check that it appears in list of all definitions
-    ./mm definition list
+    bin/modelmatrix-cli definition list
     
     # Find it by name
-    ./mm definition list --name v123
+    bin/modelmatrix-cli definition list --name v123
     
     # View feature definitions
-    ./mm definitions view <model-definition-id> # id returned from 'add' command
+    bin/modelmatrix-cli definitions view --definition-id <model-definition-id>
 
 ## <a name="mmc-instance">Model Matrix instances</a>
 
 #### List available model matrix instances
 
-    ./mm instance list [--name <name>] [--definition <model-definition-id>]
+    bin/modelmatrix-cli instance list [--name <name>] [--definition <model-definition-id>]
 
 #### View model matrix instance features
 
-    ./mm instance view features <model-instance-id>    
+    bin/modelmatrix-cli instance view features --instance-id <model-instance-id>    
     
 #### View model matrix instance columns
     
-    ./mm instance view columns <model-instance-id>
+    bin/modelmatrix-cli instance view columns [options] --instance-id <model-instance-id>
     
 | Option      | Example                       | Description                            |
 | ----------- | ----------------------------- | -------------------------------------- |
@@ -91,11 +100,11 @@ and later pass additional options to CLI:
 
 Check that input data compatible with model definition and can be used to build model instance
 
-    ./mm instance validate <model-definition-id> <input-source>
+    bin/modelmatrix-cli instance validate --definition-id <model-definition-id> --source <input-source>
         
 #### Create model matrix instance from input data
 
-    ./mm instance create [options] <model-definition-id> <input-source>
+    bin/modelmatrix-cli instance create [options] --definition-id <model-definition-id> --source <input-source>
     
 | Option         | Example                       | Description                                       |
 | -------------- | ----------------------------- | --------------------------------------------------|
@@ -106,25 +115,36 @@ Check that input data compatible with model definition and can be used to build 
 ### Examples    
 
     # Validate Hive table source
-    ./mm instance validate 1 hive://mm.clicks_2015_05_05
+    bin/modelmatrix-cli instance validate \
+          --definition-id 1 \
+          --source hive://mm.clicks_2015_05_05
     
     # Create new instance if it's valid
-    ./mm instance create --name "2015-05-05" --comment "latest clicks model" --concurrency 10 1 hive://mm.clicks_2015_05_05
+    bin/modelmatrix-cli instance create \
+          --name "2015-05-05" \
+          --comment "latest clicks model" \
+          --concurrency 10 \
+          --definition-id 1 \
+          --source hive://mm.clicks_2015_05_05
     
     # Check that it appears in list of all instances
-    ./mm instance list
+    bin/modelmatrix-cli instance list
     
     # Find it by name
-    ./mm instance list --name 2015-05
+    bin/modelmatrix-cli instance list --name 2015-05
     
     # View features 
-    ./mm instance view features <id> # id returned from 'create' command
+    bin/modelmatrix-cli instance view features \
+          --instance-id <id> # id returned from 'create' command
     
     # View columns
-    ./mm instance view columns <id> # id returned from 'create' command
+    bin/modelmatrix-cli instance view columns \
+           --instance-id <id> # id returned from 'create' command
     
     # View ony geographic columns
-    ./mm instance view columns --group geographic <id> # id returned from 'create' command
+    bin/modelmatrix-cli instance view columns \
+          --group geographic \
+          --instance-id <id> # id returned from 'create' command
 
 ## <a name="feature-extraction">Feature extraction</a>
 
@@ -132,28 +152,36 @@ Check that input data compatible with model definition and can be used to build 
 
 Check that input data compatible with model instance and can be "featurized"
 
-    ./mm featurize validate <model-instance-id> <input-source>
+    bin/modelmatrix-cli featurize validate --instance-id <model-instance-id> --source <input-source>
         
 #### Build sparse feature matrix from input data
 
-    ./mm featurize sparse <model-instance-id> <input-source> <output-sink> <id-column>
+    bin/modelmatrix-cli featurize sparse \
+          --instance id <model-instance-id> \
+          --source <input-source> \
+          --target <output-sink> \
+          --id-column <id-column>
 
 `<id-column>` - the name of a column that will be used as row id
     
 ### Examples    
 
     # Validate Hive table source
-    ./mm featurize validate 1 hive://mm.clicks_2015_05_05
+    bin/modelmatrix-cli featurize validate \
+          --instance-id 1 \
+          --source hive://mm.clicks_2015_05_05
     
     # Create sparse feature matrix in Hive
-    ./mm featurize sparse 1 hive://mm.clicks_2015_05_05 hive://mm.clicks_features_2015_05_05 auction_id
+    bin/modelmatrix-cli featurize sparse \
+          --instance-id 1 \
+          --source hive://mm.clicks_2015_05_05 \
+          --target hive://mm.clicks_features_2015_05_05 \
+          --id-column auction_id
 
 ## <a name="source-sink">Source and Sink</a>
 
 HDFS and Hive can be used as source or sink for Model Matrix CLI
 
-    ./mm ... hive://mm.clicks_2015_05_05
-    ./mm ... csv://file:///Users/mm/clicks_2015_05_05.csv
-    ./mm ... csv://hdfs:///Users/mm/clicks_2015_05_05.csv
-    ./mm ... parquet://file:///Users/mm/clicks_2015_05_05.csv
-    ./mm ... parquet://hdfs:///Users/mm/clicks_2015_05_05.csv
+    bin/modelmatrix-cli ... hive://mm.clicks_2015_05_05
+    bin/modelmatrix-cli ... parquet://file:///Users/mm/clicks_2015_05_05.parquet
+    bin/modelmatrix-cli ... parquet://hdfs:///Users/mm/clicks_2015_05_05.parquet

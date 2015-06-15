@@ -290,36 +290,36 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="com.collective.modelmatrix.ModelMatrixClient#featurize" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="featurize(features:Seq[com.collective.modelmatrix.catalog.ModelInstanceFeature],df:org.apache.spark.sql.DataFrame,idColumn:String):(org.apache.spark.sql.types.DataType,org.apache.spark.rdd.RDD[com.collective.modelmatrix.IdentifiedPoint])"></a>
-      <a id="featurize(Seq[ModelInstanceFeature],DataFrame,String):(DataType,RDD[IdentifiedPoint])"></a>
+      <a id="featurize(features:Seq[com.collective.modelmatrix.catalog.ModelInstanceFeature],df:org.apache.spark.sql.DataFrame,label:String):org.apache.spark.rdd.RDD[org.apache.spark.mllib.regression.LabeledPoint]"></a>
+      <a id="featurize(Seq[ModelInstanceFeature],DataFrame,String):RDD[LabeledPoint]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">featurize</span><span class="params">(<span name="features">features: <span class="extype" name="scala.Seq">Seq</span>[<a href="catalog/ModelInstanceFeature.html" class="extype" name="com.collective.modelmatrix.catalog.ModelInstanceFeature">ModelInstanceFeature</a>]</span>, <span name="df">df: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>, <span name="idColumn">idColumn: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: (<span class="extype" name="org.apache.spark.sql.types.DataType">DataType</span>, <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<a href="IdentifiedPoint.html" class="extype" name="com.collective.modelmatrix.IdentifiedPoint">IdentifiedPoint</a>])</span>
+        <span class="name">featurize</span><span class="params">(<span name="features">features: <span class="extype" name="scala.Seq">Seq</span>[<a href="catalog/ModelInstanceFeature.html" class="extype" name="com.collective.modelmatrix.catalog.ModelInstanceFeature">ModelInstanceFeature</a>]</span>, <span name="df">df: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>, <span name="label">label: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.mllib.regression.LabeledPoint">LabeledPoint</span>]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Apply model instance transformations to data frame
 </p><div class="fullcomment"><div class="comment cmt"><p>Apply model instance transformations to data frame
-</p></div><dl class="paramcmts block"><dt class="param">features</dt><dd class="cmt"><p>model instance features</p></dd><dt class="param">df</dt><dd class="cmt"><p>data frame</p></dd><dt class="param">idColumn</dt><dd class="cmt"><p>id column</p></dd><dt>returns</dt><dd class="cmt"><p>RDD of featurized vectors
+</p></div><dl class="paramcmts block"><dt class="param">features</dt><dd class="cmt"><p>model instance features</p></dd><dt class="param">df</dt><dd class="cmt"><p>data frame</p></dd><dt class="param">label</dt><dd class="cmt"><p>label column</p></dd><dt>returns</dt><dd class="cmt"><p>RDD of featurized vectors
 </p></dd></dl></div>
     </li><li name="com.collective.modelmatrix.ModelMatrixClient#featurize" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="featurize(modelInstanceId:Int,df:org.apache.spark.sql.DataFrame,idColumn:String):(org.apache.spark.sql.types.DataType,org.apache.spark.rdd.RDD[com.collective.modelmatrix.IdentifiedPoint])"></a>
-      <a id="featurize(Int,DataFrame,String):(DataType,RDD[IdentifiedPoint])"></a>
+      <a id="featurize(modelInstanceId:Int,df:org.apache.spark.sql.DataFrame,label:String):org.apache.spark.rdd.RDD[org.apache.spark.mllib.regression.LabeledPoint]"></a>
+      <a id="featurize(Int,DataFrame,String):RDD[LabeledPoint]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">featurize</span><span class="params">(<span name="modelInstanceId">modelInstanceId: <span class="extype" name="scala.Int">Int</span></span>, <span name="df">df: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>, <span name="idColumn">idColumn: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: (<span class="extype" name="org.apache.spark.sql.types.DataType">DataType</span>, <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<a href="IdentifiedPoint.html" class="extype" name="com.collective.modelmatrix.IdentifiedPoint">IdentifiedPoint</a>])</span>
+        <span class="name">featurize</span><span class="params">(<span name="modelInstanceId">modelInstanceId: <span class="extype" name="scala.Int">Int</span></span>, <span name="df">df: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>, <span name="label">label: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.mllib.regression.LabeledPoint">LabeledPoint</span>]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Apply model instance transformations to data frame
 </p><div class="fullcomment"><div class="comment cmt"><p>Apply model instance transformations to data frame
-</p></div><dl class="paramcmts block"><dt class="param">modelInstanceId</dt><dd class="cmt"><p>model instance id</p></dd><dt class="param">df</dt><dd class="cmt"><p>data frame</p></dd><dt class="param">idColumn</dt><dd class="cmt"><p>id column</p></dd><dt>returns</dt><dd class="cmt"><p>RDD of featurized vectors
+</p></div><dl class="paramcmts block"><dt class="param">modelInstanceId</dt><dd class="cmt"><p>model instance id</p></dd><dt class="param">df</dt><dd class="cmt"><p>data frame</p></dd><dt class="param">label</dt><dd class="cmt"><p>label column</p></dd><dt>returns</dt><dd class="cmt"><p>RDD of featurized vectors
 </p></dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
