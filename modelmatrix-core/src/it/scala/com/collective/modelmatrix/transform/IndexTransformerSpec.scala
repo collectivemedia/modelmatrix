@@ -39,7 +39,7 @@ class IndexTransformerSpec extends FlatSpec with TestSparkContext {
   val adSite = ModelFeature(isActive, "Ad", "ad_site", "adv_site", Index(2, withAllOther))
 
   val df = sqlContext.createDataFrame(sc.parallelize(input), schema)
-  val transformer = new IndexTransformer(Transformer.selectFeatures(df, Seq(adSite)) match {
+  val transformer = new IndexTransformer(Transformer.extractFeatures(df, Seq(adSite)) match {
     case -\/(err) => sys.error(s"Can't extract features: $err")
     case \/-(suc) => suc
   })

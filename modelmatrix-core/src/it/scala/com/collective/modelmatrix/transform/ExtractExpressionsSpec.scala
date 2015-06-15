@@ -77,7 +77,7 @@ class ExtractExpressionsSpec extends FlatSpec with TestSparkContext {
   val logPrice = ModelFeature(isActive, "expr", "log_price", "log(adv_price)", Bins(5, 0, 0))
   val greatestPrice = ModelFeature(isActive, "expr", "log_price", "greatest(adv_price, 0.1)", Bins(5, 0, 0))
 
-  val df = Transformer.selectFeatures(
+  val df = Transformer.extractFeatures(
     sqlContext.createDataFrame(sc.parallelize(input), schema),
     Seq(adId, adSite, adPrice, adIdSitePair, os, dayOfWeek, hourOfDay, notNullSite, notNullPrice, logPrice, greatestPrice)
   ) match {

@@ -6,7 +6,6 @@ import com.collective.modelmatrix.catalog.{ModelDefinitionFeature, ModelMatrixCa
 import com.collective.modelmatrix.cli.{CliModelCatalog, CliSparkContext, Script, Source, _}
 import com.collective.modelmatrix.transform._
 import com.collective.modelmatrix.{BinColumn, CategorialColumn, ModelFeature, ModelMatrix}
-import com.typesafe.config.Config
 import org.apache.spark.sql.types.DataType
 import org.slf4j.LoggerFactory
 import slick.dbio.DBIO
@@ -23,9 +22,7 @@ case class AddInstance(
   name: Option[String],
   comment: Option[String],
   concurrencyLevel: Int,
-  cacheSource: Boolean,
-  dbName: String,
-  dbConfig: Config
+  cacheSource: Boolean
 )(implicit val ec: ExecutionContext @@ ModelMatrixCatalog)
   extends Script with CliModelCatalog with CliSparkContext with Transformers {
 
@@ -52,8 +49,7 @@ case class AddInstance(
       s"Source: $source. " +
       s"Name: $name. " +
       s"Comment: $comment. " +
-      s"Concurrency: $concurrencyLevel. " +
-      s"Database: $dbName @ ${dbConfig.origin()}")
+      s"Concurrency: $concurrencyLevel")
 
     val features = blockOn(db.run(modelDefinitionFeatures.features(modelDefinitionId)))
       .filter(_.feature.active == true)
@@ -62,7 +58,7 @@ case class AddInstance(
       s"Ensure that this model definition exists")
 
     val df = if (cacheSource) source.asDataFrame.cache() else source.asDataFrame
-    Transformer.selectFeatures(df, features.map(_.feature)) match {
+    Transformer.extractFeatures(df, features.map(_.feature)) match {
       // One of extract expressions failed
       case -\/(extractionErrors) =>
         Console.out.println(s"Source feature extraction failed:")

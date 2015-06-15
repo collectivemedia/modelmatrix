@@ -1,10 +1,10 @@
 package com.collective.modelmatrix.cli.featurize
 
+import com.collective.modelmatrix.FeaturizationType.Identified
 import com.collective.modelmatrix.catalog.ModelMatrixCatalog
 import com.collective.modelmatrix.cli.{Source, _}
 import com.collective.modelmatrix.transform.Transformer
 import com.collective.modelmatrix.{Featurization, IdentifiedPoint, ModelMatrix}
-import com.typesafe.config.Config
 import org.apache.spark.mllib.linalg.{DenseVector, SparseVector}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
@@ -18,9 +18,7 @@ case class SparseFeaturization(
   source: Source,
   sink: Sink,
   idColumn: String,
-  cacheSource: Boolean,
-  dbName: String,
-  dbConfig: Config
+  cacheSource: Boolean
 )(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) extends Script with CliModelCatalog with CliSparkContext {
 
   private val log = LoggerFactory.getLogger(classOf[ValidateInputData])
@@ -39,8 +37,7 @@ case class SparseFeaturization(
     log.info(s"Run sparse featurization using Model Matrix instance: $modelInstanceId. " +
       s"Input source: $source. " +
       s"Featurized sink: $sink. " +
-      s"Id column: $idColumn" +
-      s"Database: $dbName @ ${dbConfig.origin()}")
+      s"Id column: $idColumn")
 
     implicit val sqlContext = ModelMatrix.hiveContext(sc)
 
@@ -51,21 +48,21 @@ case class SparseFeaturization(
     val featurization = new Featurization(features)
 
     val df = if (cacheSource) source.asDataFrame.cache() else source.asDataFrame
-    Transformer.selectFeaturesWithId(df, idColumn, features.map(_.feature)) match {
+    Transformer.extractFeatures(df, features.map(_.feature), idColumn) match {
       // Feature extraction failed
       case -\/(extractionErrors) =>
         Console.out.println(s"Feature extraction failed:")
         extractionErrors.printASCIITable()
 
       // Extracted feature type validation failed
-      case \/-(extracted) if featurization.validate(Transformer.removeIdColumn(extracted)).exists(_.isLeft) =>
-        val errors = featurization.validate(Transformer.removeIdColumn(extracted)).collect { case -\/(err) => err }
+      case \/-(extracted) if featurization.validate(extracted).exists(_.isLeft) =>
+        val errors = featurization.validate(extracted).collect { case -\/(err) => err }
         Console.out.println(s"Input schema errors:")
         errors.printASCIITable()
 
       // Looks good, let's do featurization
       case \/-(extracted) =>
-        val (idType, featurized) = featurization.featurize(extracted, idColumn)
+        val (idType, featurized) = featurization.featurize(extracted, Identified(idColumn))
 
         // Switch from 0-based Vector index to 1-based ColumnId
         val rows = featurized.flatMap {

@@ -35,12 +35,10 @@ object Dependencies {
     spark ++
     test ++
     Seq(
-      log4j
-    , slf4jLog4j
-    , scopt
+      scopt
     , guava
-    , sparkCSV
     , scalazStream
+    , flyway
     )
 
   val modelmatrixClient =

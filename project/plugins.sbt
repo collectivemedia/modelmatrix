@@ -19,3 +19,6 @@ addSbtPlugin("com.eed3si9n" % "sbt-unidoc" % "0.3.2")
 
 // Publish to bintray
 addSbtPlugin("me.lessis" % "bintray-sbt" % "0.3.0")
+
+// Package CLI application
+addSbtPlugin("com.typesafe.sbt" % "sbt-native-packager" % "1.0.2")

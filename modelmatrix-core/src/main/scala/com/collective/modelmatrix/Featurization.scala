@@ -3,10 +3,11 @@ package com.collective.modelmatrix
 import java.nio.ByteBuffer
 
 import com.collective.modelmatrix.CategorialColumn.{AllOther, CategorialValue}
+import com.collective.modelmatrix.FeaturizationType.{Identified, Labeled}
 import com.collective.modelmatrix.catalog._
-import com.collective.modelmatrix.transform.Transformer
-import com.collective.modelmatrix.transform.Transformer.{Features, FeaturesWithId}
+import com.collective.modelmatrix.transform.Transformer.Features
 import org.apache.spark.mllib.linalg.{Vector, Vectors}
+import org.apache.spark.mllib.regression.LabeledPoint
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Column, DataFrame, Row}
@@ -15,8 +16,6 @@ import scodec.bits.ByteVector
 
 import scalaz._
 import scalaz.syntax.either._
-
-case class IdentifiedPoint(id: Any, features: Vector)
 
 sealed trait FeaturizationError {
   def feature: String
@@ -36,6 +35,16 @@ object FeaturizationError {
   ) extends FeaturizationError {
     def errorMessage: String = s"Feature column: $feature type: $found doesn't match expected: $expected"
   }
+}
+
+case class IdentifiedPoint(id: Any, features: Vector)
+
+object FeaturizationType {
+
+  case class Labeled(labelColumn: String)
+
+  case class Identified(idColumn: String)
+
 }
 
 class Featurization(features: Seq[ModelInstanceFeature]) extends Serializable {
@@ -59,6 +68,7 @@ class Featurization(features: Seq[ModelInstanceFeature]) extends Serializable {
   type FeatureColumnId = (ModelFeature, Int)
 
   def validate(input: DataFrame @@ Features): Seq[FeaturizationError \/ Column] = {
+
     def featureDataType(feature: String): Option[DataType] = {
       scalaz.Tag.unwrap(input).schema.find(_.name == feature).map(_.dataType)
     }
@@ -84,44 +94,46 @@ class Featurization(features: Seq[ModelInstanceFeature]) extends Serializable {
     }
   }
 
-  /**
-   * Featurize input dataset
-   *
-   * @return id data type and featurized rows
-   */
-  def featurize(input: DataFrame @@ FeaturesWithId, idColumn: String): (DataType, RDD[IdentifiedPoint]) = {
-    log.info(s"Extract features from input DataFrame with id column: $idColumn. Total number of columns: $totalNumberOfColumns")
+  private def readColumns(row: Row, rebaseIdx: Int => Int = identity): Seq[(Int, Double)] = {
+    val featuresColumnIdx: Map[ModelFeature, Int] =
+      features.zipWithIndex.map { case (f, idx) => (f.feature, rebaseIdx(idx)) }.toMap
+
+    features.flatMap {
+      case ModelInstanceIdentityFeature(_, _, f, tpe, columnId) =>
+        identityColumn(row)(f, featuresColumnIdx(f), tpe, columnId).toSeq
+      case ModelInstanceTopFeature(_, _, f, tpe, cols) =>
+        categorialColumn(row)(f, featuresColumnIdx(f), tpe, cols).toSeq
+      case ModelInstanceIndexFeature(_, _, f, tpe, cols) =>
+        categorialColumn(row)(f, featuresColumnIdx(f), tpe, cols).toSeq
+      case ModelInstanceBinsFeature(_, _, f, tpe, cols) =>
+        binColumn(row)(f, featuresColumnIdx(f), tpe, cols).toSeq
+    }
+  }
+
+  private def validateColumns(input: DataFrame @@ Features): Seq[Column] = {
+    val validation = validate(input)
+    val errors = validation.collect { case -\/(error) => error }
+    require(errors.isEmpty,
+      s"\nFound ${errors.size} input data errors: \n ${formatFeatureErrors(errors)}")
+
+    validation.collect { case \/-(column) => column }
+  }
+
+  def featurize(input: DataFrame @@ Features, identified: Identified): (DataType, RDD[IdentifiedPoint]) = {
+    import identified.idColumn
+
+    log.info(s"Extract identified points from input DataFrame. Id columns: $idColumn. " +
+      s"Total number of columns: $totalNumberOfColumns")
 
     val df = scalaz.Tag.unwrap(input)
-
-    // Check that schema satisfies input data
-    val validationErrors = validate(Transformer.removeIdColumn(input)).collect { case -\/(error) => error }
-    require(validationErrors.isEmpty,
-      s"\nFound ${validationErrors.size} input data errors: \n ${formatFeatureErrors(validationErrors)}")
 
     // Check that id columns exists and has correct type
     require(df.schema.fields.exists(_.name == idColumn), s"Can't find id column: $idColumn")
     val idType = df.schema.fields.find(_.name == idColumn).get.dataType
 
-    // Collect feature columns
-    val columns = validate(Transformer.removeIdColumn(input)).collect { case \/-(column) => column }
-
-    val featuresColumnIdx: Map[ModelFeature, Int] =
-      features.zipWithIndex.map { case (f, idx) => (f.feature, idx + 1) }.toMap
-
-    val rdd = df.select(new Column(idColumn) +: columns: _*).map { row =>
+    val rdd = df.select(new Column(idColumn) +: validateColumns(input): _*).map { row =>
       val id = row.get(0)
-      val columnValues = features.flatMap {
-        case ModelInstanceIdentityFeature(_, _, f, tpe, columnId) =>
-          identityColumn(row)(f, featuresColumnIdx(f), tpe, columnId).toSeq
-        case ModelInstanceTopFeature(_, _, f, tpe, cols) =>
-          categorialColumn(row)(f, featuresColumnIdx(f), tpe, cols).toSeq
-        case ModelInstanceIndexFeature(_, _, f, tpe, cols) =>
-          categorialColumn(row)(f, featuresColumnIdx(f), tpe, cols).toSeq
-        case ModelInstanceBinsFeature(_, _, f, tpe, cols) =>
-          binColumn(row)(f, featuresColumnIdx(f), tpe, cols).toSeq
-      }
-
+      val columnValues = readColumns(row, _ + 1)
       // Column values 1-based and Vector values are 0-based
       val vectorValues = columnValues.map { case (idx, v) => (idx - 1, v) }
 
@@ -131,6 +143,39 @@ class Featurization(features: Seq[ModelInstanceFeature]) extends Serializable {
     (idType, rdd)
   }
 
+  def featurize(input: DataFrame @@ Features, labeled: Labeled): RDD[LabeledPoint] = {
+    import labeled.labelColumn
+
+    log.info(s"Extract labeled points from input DataFrame. Label column: $labelColumn. " +
+      s"Total number of columns: $totalNumberOfColumns")
+
+    val df = scalaz.Tag.unwrap(input)
+
+    // Check label column
+    val labelColumnType = df.schema.fields.find(_.name == labelColumn).map(_.dataType)
+    require(labelColumnType.isDefined, s"Label column '$labelColumn' is not found in data frame")
+    require(labelColumnType.get == DoubleType, s"Invalid label column type: ${labelColumnType.get}")
+
+    df.select(new Column(labelColumn) +: validateColumns(input): _*).map { row =>
+      val label = row.getDouble(0)
+      val columnValues = readColumns(row, _ + 1)
+      // Column values 1-based and Vector values are 0-based
+      val vectorValues = columnValues.map { case (idx, v) => (idx - 1, v) }
+
+      LabeledPoint(label, Vectors.sparse(totalNumberOfColumns, vectorValues))
+    }
+  }
+
+  def featurize(input: DataFrame @@ Features): RDD[Vector] = {
+    log.info(s"Extract features from input DataFrame. Total number of columns: $totalNumberOfColumns")
+
+    scalaz.Tag.unwrap(input).select(validateColumns(input): _*).map { row =>
+      val columnValues = readColumns(row)
+      // Column values 1-based and Vector values are 0-based
+      val vectorValues = columnValues.map { case (idx, v) => (idx - 1, v) }
+      Vectors.sparse(totalNumberOfColumns, vectorValues)
+    }
+  }
 
   private def identityColumn(row: Row)(
     feature: ModelFeature,

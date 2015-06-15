@@ -2,7 +2,6 @@ package com.collective.modelmatrix.cli.instance
 
 import com.collective.modelmatrix.catalog.ModelMatrixCatalog
 import com.collective.modelmatrix.cli.{CliModelCatalog, Script}
-import com.typesafe.config.Config
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.ExecutionContext
@@ -10,7 +9,7 @@ import scalaz._
 
 
 case class ListInstances(
-  modelDefinitionId: Option[Int], name: Option[String], dbName: String, dbConfig: Config
+  modelDefinitionId: Option[Int], name: Option[String]
 )(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) extends Script with CliModelCatalog {
 
   private val log = LoggerFactory.getLogger(classOf[ListInstances])
@@ -22,8 +21,7 @@ case class ListInstances(
 
     log.info(s"List Model Matrix instances. " +
       s"Definition id: ${modelDefinitionId.getOrElse("-")}. " +
-      s"Name: ${name.getOrElse("-")}. " +
-      s"Database: $dbName @ ${dbConfig.origin()}")
+      s"Name: ${name.getOrElse("-")}")
 
     blockOn(db.run(modelInstances.list(modelDefinitionId, name))).printASCIITable()
   }

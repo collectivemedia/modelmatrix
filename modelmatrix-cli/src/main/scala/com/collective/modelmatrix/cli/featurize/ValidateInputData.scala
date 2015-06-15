@@ -4,7 +4,6 @@ import com.collective.modelmatrix.catalog.ModelMatrixCatalog
 import com.collective.modelmatrix.cli.{CliModelCatalog, CliSparkContext, Script, Source}
 import com.collective.modelmatrix.transform.Transformer
 import com.collective.modelmatrix.{Featurization, ModelMatrix}
-import com.typesafe.config.Config
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.ExecutionContext
@@ -13,9 +12,7 @@ import scalaz._
 case class ValidateInputData(
   modelInstanceId: Int,
   source: Source,
-  cacheSource: Boolean,
-  dbName: String,
-  dbConfig: Config
+  cacheSource: Boolean
 )(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) extends Script with CliModelCatalog with CliSparkContext {
 
   private val log = LoggerFactory.getLogger(classOf[ValidateInputData])
@@ -25,8 +22,7 @@ case class ValidateInputData(
 
   def run(): Unit = {
     log.info(s"Validate input data against Model Matrix instance: $modelInstanceId. " +
-      s"Data source: $source. " +
-      s"Database: $dbName @ ${dbConfig.origin()}")
+      s"Data source: $source")
 
     implicit val sqlContext = ModelMatrix.hiveContext(sc)
 
@@ -37,7 +33,7 @@ case class ValidateInputData(
     val featurization = new Featurization(features)
 
     val df = if (cacheSource) source.asDataFrame.cache() else source.asDataFrame
-    Transformer.selectFeatures(df, features.map(_.feature)) match {
+    Transformer.extractFeatures(df, features.map(_.feature)) match {
       // One of extract expressions failed
       case -\/(extractionErrors) =>
         Console.out.println(s"Feature extraction failed:")

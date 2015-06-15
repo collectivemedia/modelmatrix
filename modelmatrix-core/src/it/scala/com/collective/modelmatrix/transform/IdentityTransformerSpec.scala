@@ -31,7 +31,7 @@ class IdentityTransformerSpec extends FlatSpec with TestSparkContext {
   val adId = ModelFeature(isActive, "Ad", "ad_id", "adv_id", Identity)
 
   val df = sqlContext.createDataFrame(sc.parallelize(input), schema)
-  val transformer = new IdentityTransformer(Transformer.selectFeatures(df, Seq(adSite, adId)) match {
+  val transformer = new IdentityTransformer(Transformer.extractFeatures(df, Seq(adSite, adId)) match {
     case -\/(err) => sys.error(s"Can't extract features: $err")
     case \/-(suc) => suc
   })

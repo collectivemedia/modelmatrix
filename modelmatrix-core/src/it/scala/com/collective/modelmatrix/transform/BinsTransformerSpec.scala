@@ -40,7 +40,7 @@ class BinsTransformerSpec extends FlatSpec with TestSparkContext {
   val sitePerformance = ModelFeature(isActive, "Site", "site_performance", "pct_click", Bins(3, 0, 0))
 
   val df = sqlContext.createDataFrame(sc.parallelize(input), schema)
-  val transformer = new BinsTransformer(Transformer.selectFeatures(df, Seq(adSite, sitePerformance)) match {
+  val transformer = new BinsTransformer(Transformer.extractFeatures(df, Seq(adSite, sitePerformance)) match {
     case -\/(err) => sys.error(s"Can't extract features: $err")
     case \/-(suc) => suc
   })

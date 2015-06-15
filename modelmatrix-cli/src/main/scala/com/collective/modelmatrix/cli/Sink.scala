@@ -9,7 +9,6 @@ sealed trait Sink {
 }
 
 object Sink {
-  private val csv = "csv://(.*)".r
   private val hive = "hive://(.*)".r
   private val parquet = "parquet://(.*)".r
 
@@ -21,7 +20,6 @@ object Sink {
   }
 
   def apply(sink: String): Sink = sink match {
-    case csv(path) => CsvSink(path)
     case hive(table) => HiveSink(table)
     case parquet(path) => ParquetSink(path)
   }
@@ -33,30 +31,6 @@ object NoSink extends Sink {
   }
 
   override def toString: String = "Sink is not defined"
-}
-
-case class CsvSink(
-  path: String,
-  useHeader: Boolean = true,
-  delimiter: Char = ',',
-  quote: Char = '"',
-  escape: Char = '\\'
-) extends Sink {
-
-  import com.databricks.spark.csv._
-
-  private val parameters = Map(
-    "header" -> useHeader.toString,
-    "delimiter" -> delimiter.toString,
-    "quote" -> quote.toString,
-    "escape" -> escape.toString
-  )
-  def saveDataFrame(df: DataFrame)(implicit sqlContext: SQLContext): Unit = {
-    df.saveAsCsvFile(path, parameters)
-  }
-
-  override def toString: String =
-    s"CSV: $path"
 }
 
 case class HiveSink(

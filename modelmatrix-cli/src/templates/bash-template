@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+
+###  ------------------------------- ###
+###  Helper methods for BASH scripts ###
+###  ------------------------------- ###
+
+die() {
+  echo "$@" 1>&2
+  exit 1
+}
+
+realpath () {
+(
+  TARGET_FILE="$1"
+
+  cd "$(dirname "$TARGET_FILE")"
+  TARGET_FILE=$(basename "$TARGET_FILE")
+
+  COUNT=0
+  while [ -L "$TARGET_FILE" -a $COUNT -lt 100 ]
+  do
+      TARGET_FILE=$(readlink "$TARGET_FILE")
+      cd "$(dirname "$TARGET_FILE")"
+      TARGET_FILE=$(basename "$TARGET_FILE")
+      COUNT=$(($COUNT + 1))
+  done
+
+  if [ "$TARGET_FILE" == "." -o "$TARGET_FILE" == ".." ]; then
+    cd "$TARGET_FILE"
+    TARGET_FILEPATH=
+  else
+    TARGET_FILEPATH=/$TARGET_FILE
+  fi
+
+  echo "$(pwd -P)/$TARGET_FILE"
+)
+}
+
+###  ------------------------------- ###
+###  Main script                     ###
+###  ------------------------------- ###
+
+declare -r real_script_path="$(realpath "$0")"
+declare -r app_home="$(realpath "$(dirname "$real_script_path")")"
+
+# Check Spark config
+
+if [ -z ${SPARK_HOME} ]; then
+    die 'SPARK_HOME environment variable is not defined'
+fi
+
+if [ -z ${SPARK_MASTER} ]; then
+    die 'SPARK_MASTER environment variable is not defined'
+fi
+
+###  ------------------------------- ###
+### Submit Spark Application         ###
+###  ------------------------------- ###
+
+if [[ "$SPARK_MASTER" == "yarn-client" ]]; then
+
+    # Running in Yarn mode
+
+    $SPARK_HOME/bin/spark-submit \
+    --master $SPARK_MASTER \
+    --num-executors 5 \
+    --executor-memory 10g \
+    --executor-cores 6 \
+    --driver-memory 6g \
+    --driver-java-options "-Dlog4j.configuration=file:${app_home}/../conf/log4j.properties -Dconfig.file=${app_home}/../conf/application.conf" \
+    --class com.collective.modelmatrix.cli.ModelMatrixCli \
+    ${app_home}/../lib/model-matrix-cli.jar ${1+"$@"}
+
+else
+
+   # Submit to standalone cluster
+
+    $SPARK_HOME/bin/spark-submit \
+    --master $SPARK_MASTER \
+    --conf spark.io.compression.codec=lzf \
+    --driver-memory 6g \
+    --driver-java-options "-DXmx=6g -Dlog4j.configuration=file:${app_home}/../conf/log4j.properties -Dconfig.file=${app_home}/../conf/application.conf" \
+    --class com.collective.modelmatrix.cli.ModelMatrixCli \
+    ${app_home}/../lib/model-matrix-cli.jar ${1+"$@"}
+
+fi
+
+
+
+

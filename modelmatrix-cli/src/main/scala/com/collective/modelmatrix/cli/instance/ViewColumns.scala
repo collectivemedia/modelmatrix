@@ -3,7 +3,6 @@ package com.collective.modelmatrix.cli.instance
 import com.collective.modelmatrix.{BinColumn, CategorialColumn}
 import com.collective.modelmatrix.catalog._
 import com.collective.modelmatrix.cli._
-import com.typesafe.config.Config
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.ExecutionContext
@@ -11,7 +10,7 @@ import scalaz._
 
 
 case class ViewColumns(
-  modelInstanceId: Int, group: Option[String], feature: Option[String], dbName: String, dbConfig: Config
+  modelInstanceId: Int, group: Option[String], feature: Option[String]
 )(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) extends Script with CliModelCatalog {
 
   private val log = LoggerFactory.getLogger(classOf[ViewColumns])
@@ -21,8 +20,7 @@ case class ViewColumns(
 
   def run(): Unit = {
     log.info(s"View Model Matrix instance columns: $modelInstanceId. " +
-      s"Feature filter: ${feature.getOrElse("")}. " +
-      s"Database: $dbName @ ${dbConfig.origin()}")
+      s"Feature filter: ${feature.getOrElse("")}")
 
     blockOn(db.run(modelInstances.findById(modelInstanceId))) match {
       case Some(modelInstance) =>

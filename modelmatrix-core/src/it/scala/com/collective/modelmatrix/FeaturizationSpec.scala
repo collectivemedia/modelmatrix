@@ -3,15 +3,16 @@ package com.collective.modelmatrix
 import java.nio.ByteBuffer
 
 import com.collective.modelmatrix.FeaturizationError.FeatureColumnTypeDoesNotMatch
-import com.collective.modelmatrix.catalog.{ModelInstanceIndexFeature, ModelInstanceTopFeature, ModelInstanceIdentityFeature}
-import com.collective.modelmatrix.transform.{Transformer, Index, Top, Identity}
+import com.collective.modelmatrix.FeaturizationType.Identified
+import com.collective.modelmatrix.catalog.{ModelInstanceIdentityFeature, ModelInstanceIndexFeature, ModelInstanceTopFeature}
+import com.collective.modelmatrix.transform.{Identity, Index, Top, Transformer}
 import org.apache.spark.mllib.linalg.SparseVector
-import org.apache.spark.sql.{Row, SQLContext}
+import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
-import org.scalatest.{GivenWhenThen, FlatSpec}
+import org.scalatest.{FlatSpec, GivenWhenThen}
 import scodec.bits.ByteVector
 
-import scalaz.{\/-, -\/, \/}
+import scalaz.{-\/, \/, \/-}
 
 class FeaturizationSpec extends FlatSpec with GivenWhenThen with TestSparkContext {
 
@@ -59,7 +60,7 @@ class FeaturizationSpec extends FlatSpec with GivenWhenThen with TestSparkContex
   val totalColumns = 6
 
   val df = sqlContext.createDataFrame(sc.parallelize(input), schema)
-  val transformed = Transformer.selectFeaturesWithId(df, "auction_id", Seq(adPrice, adType, adSite)) match {
+  val transformed = Transformer.extractFeatures(df, Seq(adPrice, adType, adSite), "auction_id") match {
     case -\/(err) => sys.error(s"Can't extract features: $err")
     case \/-(suc) => suc
   }
@@ -67,14 +68,14 @@ class FeaturizationSpec extends FlatSpec with GivenWhenThen with TestSparkContex
   val featureExtraction = new Featurization(Seq(adPriceInstance, adTypeInstance, adSiteInstance))
 
   "Feature Extraction" should "validate input schema against provided features" in {
-    val validation = featureExtraction.validate(Transformer.removeIdColumn(transformed))
+    val validation = featureExtraction.validate(transformed)
     assert(validation.count(_.isRight) == 3)
   }
 
   it should "fail if extractType doesn't match" in {
     val brokenFeatureExtraction = new Featurization(Seq(adPriceInstance, adTypeInstance.copy(extractType = DoubleType), adSiteInstance))
 
-    val validation = brokenFeatureExtraction.validate(Transformer.removeIdColumn(transformed))
+    val validation = brokenFeatureExtraction.validate(transformed)
     assert(validation.count(_.isLeft) == 1)
 
     val error = validation.find(_.isLeft).head
@@ -83,7 +84,7 @@ class FeaturizationSpec extends FlatSpec with GivenWhenThen with TestSparkContex
 
   it should "featurize input data frame" in {
 
-    val featurized = featureExtraction.featurize(transformed, "auction_id")._2.collect().toSeq.map(p => p.id.asInstanceOf[Long] -> p.features).toMap
+    val featurized = featureExtraction.featurize(transformed, Identified("auction_id"))._2.collect().toSeq.map(p => p.id.asInstanceOf[Long] -> p.features).toMap
     assert(featurized.size == 4)
 
     // Columns:
@@ -117,13 +118,13 @@ class FeaturizationSpec extends FlatSpec with GivenWhenThen with TestSparkContex
     Given("row with null ad price and ad site")
     val withNullPriceAndSite = input :+ Row(5l, null /* ad price */, 2 /* ad type */, null /* ad site */)
     val df = sqlContext.createDataFrame(sc.parallelize(withNullPriceAndSite), schema)
-    val transformed = Transformer.selectFeaturesWithId(df, "auction_id", Seq(adPrice, adType, adSite)) match {
+    val transformed = Transformer.extractFeatures(df, Seq(adPrice, adType, adSite), "auction_id") match {
       case -\/(err) => sys.error(s"Can't extract features: $err")
       case \/-(suc) => suc
     }
 
     Then("it should be successfully featurized")
-    val featurized = featureExtraction.featurize(transformed, "auction_id")._2.collect().toSeq.map(p => p.id.asInstanceOf[Long] -> p.features).toMap
+    val featurized = featureExtraction.featurize(transformed, Identified("auction_id"))._2.collect().toSeq.map(p => p.id.asInstanceOf[Long] -> p.features).toMap
     assert(featurized.size == 5)
 
     And("only ad type column should be defined")
@@ -133,5 +134,4 @@ class FeaturizationSpec extends FlatSpec with GivenWhenThen with TestSparkContex
     assert(features.asInstanceOf[SparseVector].indices.toSeq.map(_ + 1) == Seq(3))
     assert(features.asInstanceOf[SparseVector].values.toSeq == Seq(1.0))
   }
-
 }

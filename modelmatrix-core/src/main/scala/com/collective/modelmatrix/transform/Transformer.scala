@@ -4,7 +4,6 @@ import java.nio.ByteBuffer
 
 import com.collective.modelmatrix.CategorialColumn.CategorialValue
 import com.collective.modelmatrix.{CategorialColumn, ModelFeature}
-import org.apache.spark.SparkException
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types._
 import scodec.bits.ByteVector
@@ -53,13 +52,7 @@ object Transformer {
    */
   trait Features
 
-  /**
-   * Marker for DataFrame with applied extract expressions + Id columns
-   */
-  trait FeaturesWithId
-
   type FeaturesDataFrame = DataFrame  @@ Features
-  type FeaturesWithIdDataFrame = DataFrame @@ FeaturesWithId
 
   private def tryExtract(df: DataFrame, features: Seq[ModelFeature]): (Seq[FeatureExtractionError], Seq[String]) = {
     val tryExtract = features map { case feature =>
@@ -76,38 +69,27 @@ object Transformer {
     (errors, expressions)
   }
 
-  def selectFeatures(
+  /**
+   * Extract model features. Validates feature extract expression correctness.
+   *
+   * @param df       input data frame
+   * @param features model features
+   * @param columns  additional columns to select from input data frame
+   *
+   * @return Extract features with additional columns
+   */
+  def extractFeatures(
     df: DataFrame,
-    features: Seq[ModelFeature]
+    features: Seq[ModelFeature],
+    columns: String*
   ): Seq[FeatureExtractionError] \/ FeaturesDataFrame= {
     val (errors, expressions) = tryExtract(df, features)
     if (errors.nonEmpty) {
       \/.left(errors)
     } else {
-      val extracted = df.selectExpr(expressions: _*)
+      val extracted = df.selectExpr(expressions ++ columns: _*)
       \/.right(scalaz.Tag[DataFrame, Features](extracted))
     }
-  }
-
-  def selectFeaturesWithId(
-    df: DataFrame,
-    idColumn: String,
-    features: Seq[ModelFeature]
-  ): Seq[FeatureExtractionError] \/ FeaturesWithIdDataFrame = {
-    val (errors, expressions) = tryExtract(df, features)
-    if (errors.nonEmpty) {
-      \/.left(errors)
-    } else {
-      val extracted = df.selectExpr(idColumn +: expressions: _*)
-      \/.right(scalaz.Tag[DataFrame, FeaturesWithId](extracted))
-    }
-  }
-
-  /**
-   * Actually none of the columns are removed, just re-tagging DataFrame
-   */
-  def removeIdColumn(df: DataFrame @@ FeaturesWithId): DataFrame @@ Features = {
-    scalaz.Tag[DataFrame, Features](scalaz.Tag.unwrap(df))
   }
 
 }
