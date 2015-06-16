@@ -81,6 +81,8 @@ class Featurization(features: Seq[ModelInstanceFeature]) extends Serializable {
         if featureDataType(feature.feature).exists(_ == extractType) => new Column(feature.feature).right
       case ModelInstanceIndexFeature(_, _, feature, extractType, _)
         if featureDataType(feature.feature).exists(_ == extractType) => new Column(feature.feature).right
+      case ModelInstanceBinsFeature(_, _, feature, extractType, _)
+        if featureDataType(feature.feature).exists(_ == extractType) => new Column(feature.feature).right
 
       // Validation errors
       case f: ModelInstanceFeature if featureDataType(f.feature.feature).isEmpty =>
@@ -231,6 +233,9 @@ class Featurization(features: Seq[ModelInstanceFeature]) extends Serializable {
     extractType: DataType,
     columns: Seq[BinColumn]
   ): Option[(Int, Double)] = {
+
+    // If input value is null just skip it
+    if (row.isNullAt(idx)) return None
 
     // Get numeric representation of extracted feature
     val value = extractType match {
