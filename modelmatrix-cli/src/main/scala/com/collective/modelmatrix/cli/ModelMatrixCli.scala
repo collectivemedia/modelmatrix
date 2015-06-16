@@ -3,17 +3,19 @@ package com.collective.modelmatrix.cli
 import java.io.File
 import java.nio.file.Paths
 import java.util.concurrent.Executors
+import java.util.logging.Level
 
 import com.collective.modelmatrix.catalog.ModelMatrixCatalog
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import org.apache.log4j.Logger
 import org.apache.log4j.varia.NullAppender
+import parquet.hadoop.ParquetOutputCommitter
 
 import scala.concurrent.ExecutionContext
 import scala.util.control.NonFatal
 import scalaz.Tag
 
-object ModelMatrixCli extends App {
+object ModelMatrixCli extends App with TurnedOffParquetLogging {
 
   private implicit val catalogExecutionContext =
     Tag[ExecutionContext, ModelMatrixCatalog](ExecutionContext.fromExecutor(
@@ -264,5 +266,41 @@ object ModelMatrixCli extends App {
       setDaemon(daemon).
       setNameFormat(s"$prefix-%d").
       build()
+
+}
+
+trait TurnedOffParquetLogging {
+
+  def enableLogForwarding() {
+    // Note: the parquet.Log class has a static initializer that
+    // sets the java.util.logging Logger for "parquet". This
+    // checks first to see if there's any handlers already set
+    // and if not it creates them. If this method executes prior
+    // to that class being loaded then:
+    //  1) there's no handlers installed so there's none to
+    // remove. But when it IS finally loaded the desired affect
+    // of removing them is circumvented.
+    //  2) The parquet.Log static initializer calls setUseParentHanders(false)
+    // undoing the attempt to override the logging here.
+    //
+    // Therefore we need to force the class to be loaded.
+    // This should really be resolved by Parquet.
+    Class.forName(classOf[parquet.Log].getName)
+
+    // Note: Logger.getLogger("parquet") has a default logger
+    // that appends to Console which needs to be cleared.
+    val parquetLogger = java.util.logging.Logger.getLogger("parquet")
+    parquetLogger.getHandlers.foreach(parquetLogger.removeHandler)
+    // TODO(witgo): Need to set the log level ?
+    // if(parquetLogger.getLevel != null) parquetLogger.setLevel(null)
+    if (!parquetLogger.getUseParentHandlers) parquetLogger.setUseParentHandlers(true)
+
+    // Disables WARN log message in ParquetOutputCommitter.
+    // See https://issues.apache.org/jira/browse/SPARK-5968 for details
+    Class.forName(classOf[ParquetOutputCommitter].getName)
+    java.util.logging.Logger.getLogger(classOf[ParquetOutputCommitter].getName).setLevel(Level.OFF)
+  }
+
+  enableLogForwarding()
 
 }
