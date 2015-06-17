@@ -38,7 +38,7 @@ object FeaturizationError {
 
 class Featurization(features: Seq[ModelInstanceFeature]) extends Serializable {
 
-  private val log = LoggerFactory.getLogger(classOf[ModelInstanceFeature])
+  private val log = LoggerFactory.getLogger(classOf[Featurization])
 
   import FeaturizationError._
 
@@ -173,7 +173,7 @@ class Featurization(features: Seq[ModelInstanceFeature]) extends Serializable {
       case tpe => sys.error(s"Unsupported identity extract type: $tpe. Feature: ${feature.feature}")
     }
 
-    Some((idx, doubleValue))
+    Some((columnId, doubleValue))
   }
 
   private def categorialColumn(row: Row)(

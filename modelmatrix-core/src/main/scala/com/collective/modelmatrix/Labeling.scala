@@ -39,7 +39,7 @@ object Labeling {
     val expressions: Seq[String] = Seq(exp)
 
     def label(values: Seq[Any]): L = {
-      require(values.length == 1, s"Wrong number of evaluated columns: ${values.length}. Expected: 1")
+      require(values.length == 1, s"Wrong number of label columns: ${values.length}. Expected: 1")
       f(values.head.asInstanceOf[T1])
     }
   }
@@ -48,7 +48,7 @@ object Labeling {
     val expressions: Seq[String] = Seq(exp1, exp2)
 
     def label(values: Seq[Any]): L = {
-      require(values.length == 2, s"Wrong number of evaluated Strings: ${values.length}. Expected: 2")
+      require(values.length == 2, s"Wrong number of label columns: ${values.length}. Expected: 2")
       f(values(0).asInstanceOf[T1], values(1).asInstanceOf[T2])
     }
   }
@@ -57,7 +57,7 @@ object Labeling {
     val expressions: Seq[String] = Seq(exp1, exp2, exp3)
 
     def label(values: Seq[Any]): L = {
-      require(values.length == 3, s"Wrong number of evaluated Strings: ${values.length}. Expected: 3")
+      require(values.length == 3, s"Wrong number of label columns: ${values.length}. Expected: 3")
       f(values(0).asInstanceOf[T1], values(1).asInstanceOf[T2], values(2).asInstanceOf[T3])
     }
   }
@@ -66,7 +66,7 @@ object Labeling {
     val expressions: Seq[String] = Seq(exp1, exp2, exp3, exp4)
 
     def label(values: Seq[Any]): L = {
-      require(values.length == 3, s"Wrong number of evaluated Strings: ${values.length}. Expected: 3")
+      require(values.length == 4, s"Wrong number of label columns: ${values.length}. Expected: 4")
       f(values(0).asInstanceOf[T1], values(1).asInstanceOf[T2], values(2).asInstanceOf[T3], values(3).asInstanceOf[T4])
     }
   }
@@ -75,7 +75,7 @@ object Labeling {
     val expressions: Seq[String] = Seq(exp1, exp2, exp3, exp4, exp5)
 
     def label(values: Seq[Any]): L = {
-      require(values.length == 3, s"Wrong number of evaluated Strings: ${values.length}. Expected: 3")
+      require(values.length == 5, s"Wrong number of label columns: ${values.length}. Expected: 5")
       f(values(0).asInstanceOf[T1], values(1).asInstanceOf[T2], values(2).asInstanceOf[T3], values(3).asInstanceOf[T4], values(4).asInstanceOf[T5])
     }
   }

@@ -136,19 +136,19 @@ abstract class CategorialTransformer(features: DataFrame @@ Transformer.Features
     value: Value
   ): CategorialValue = value match {
     case Value(s: Short, cnt) if extractType == ShortType =>
-      val bb = ByteBuffer.allocate(2).putShort(s)
+      val bb = ByteBuffer.allocate(2).putShort(s).array()
       CategorialValue(previousColumnId + 1, s.toString, ByteVector(bb), cnt, previousCumCnt + cnt)
 
     case Value(i: Int, cnt) if extractType == IntegerType =>
-      val bb = ByteBuffer.allocate(4).putInt(i)
+      val bb = ByteBuffer.allocate(4).putInt(i).array()
       CategorialValue(previousColumnId + 1, i.toString, ByteVector(bb), cnt, previousCumCnt + cnt)
 
     case Value(l: Long, cnt) if extractType == LongType =>
-      val bb = ByteBuffer.allocate(8).putLong(l)
+      val bb = ByteBuffer.allocate(8).putLong(l).array()
       CategorialValue(previousColumnId + 1, l.toString, ByteVector(bb), cnt, previousCumCnt + cnt)
 
     case Value(d: Double, cnt) if extractType == DoubleType =>
-      val bb = ByteBuffer.allocate(8).putDouble(d)
+      val bb = ByteBuffer.allocate(8).putDouble(d).array()
       CategorialValue(previousColumnId + 1, d.toString, ByteVector(bb), cnt, previousCumCnt + cnt)
 
     case Value(s: String, cnt) if extractType == StringType =>
