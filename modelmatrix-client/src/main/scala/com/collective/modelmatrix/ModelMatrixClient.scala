@@ -1,11 +1,10 @@
 package com.collective.modelmatrix
 
-import com.collective.modelmatrix.FeaturizationType.Labeled
 import com.collective.modelmatrix.catalog.ModelInstanceFeature
 import com.collective.modelmatrix.transform.Transformer
 import com.collective.modelmatrix.transform.Transformer.FeatureExtractionError
 import org.apache.spark.SparkContext
-import org.apache.spark.mllib.regression.LabeledPoint
+import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.DataFrame
 import org.slf4j.LoggerFactory
@@ -18,6 +17,12 @@ class ModelMatrixFeatureExtractionException(errors: Seq[FeatureExtractionError])
 class ModelMatrixFeaturizationException(errors: Seq[FeaturizationError])
   extends RuntimeException(s"Failed to run featurization. Bad features: [${errors.map(e => e.feature).mkString(", ")}]")
 
+/**
+ * Model Matrix client class that hides database interaction and provides
+ * higher level API than classes in core
+ *
+ * @param sc Spark Context
+ */
 class ModelMatrixClient(sc: SparkContext) extends ClientModelCatalog {
   private val log = LoggerFactory.getLogger(classOf[ModelMatrixClient])
 
@@ -38,18 +43,18 @@ class ModelMatrixClient(sc: SparkContext) extends ClientModelCatalog {
    *
    * @param modelInstanceId model instance id
    * @param df data frame
-   * @param label label column
+   * @param labeling row labeling
    * @return RDD of featurized vectors
    */
-  def featurize(modelInstanceId: Int, df: DataFrame, label: String): RDD[LabeledPoint] = {
+  def featurize[L](modelInstanceId: Int, df: DataFrame, labeling: Labeling[L]): RDD[(L, Vector)] = {
 
-    log.info(s"Featurization data frame using Model Matrix instance: $modelInstanceId. Label column: $label")
+    log.info(s"Featurization data frame using Model Matrix instance: $modelInstanceId")
 
     val features = blockOn(db.run(modelInstanceFeatures.features(modelInstanceId)))
     require(features.nonEmpty, s"No features are defined for model instance: $modelInstanceId. " +
       s"Ensure that this model instance exists")
 
-    featurize(features, df, label)
+    featurize(features, df, labeling)
   }
 
   /**
@@ -57,16 +62,16 @@ class ModelMatrixClient(sc: SparkContext) extends ClientModelCatalog {
    *
    * @param features model instance features
    * @param df data frame
-   * @param label label column
+   * @param labeling row labeling
    * @return RDD of featurized vectors
    */
-  def featurize(features: Seq[ModelInstanceFeature], df: DataFrame, label: String): RDD[LabeledPoint] = {
+  def featurize[L](features: Seq[ModelInstanceFeature], df: DataFrame, labeling: Labeling[L]): RDD[(L, Vector)] = {
 
     require(features.nonEmpty, s"Can't do featurization without features")
 
     val featurization = new Featurization(features)
 
-    Transformer.extractFeatures(df, features.map(_.feature), label) match {
+    Transformer.extractFeatures(df, features.map(_.feature), labeling) match {
       // Feature extraction failed
       case -\/(extractionErrors) =>
         extractionErrors.foreach { err =>
@@ -75,15 +80,15 @@ class ModelMatrixClient(sc: SparkContext) extends ClientModelCatalog {
         throw new ModelMatrixFeatureExtractionException(extractionErrors)
 
       // Featurization schema is not compatible
-      case \/-(extracted) if featurization.validate(extracted).exists(_.isLeft) =>
-        val errors = featurization.validate(extracted).collect { case -\/(err) => err }
+      case \/-(extracted) if featurization.validateLabeled(extracted).exists(_.isLeft) =>
+        val errors = featurization.validateLabeled(extracted).collect { case -\/(err) => err }
         errors.foreach { err =>
           log.error(s"Featurization error: ${err.errorMessage}")
         }
         throw new ModelMatrixFeaturizationException(errors)
 
       // All good, let's do featurization
-      case \/-(extracted) => featurization.featurize(extracted, Labeled(label))
+      case \/-(extracted) => featurization.featurize(extracted, labeling)
     }
   }
 
