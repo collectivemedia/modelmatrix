@@ -37,11 +37,11 @@ Local PostgreSQL database required for integration tests
 #### Install schema
 
 Schema migrations managed by [Flyway](http://flywaydb.org), 
-schema DDL and migrations located in: `modelmatrix-core/src/main/resources/db/migration`
+schema DDL and migrations located in: `modelmatrix-cli/src/main/resources/db/migration`
 
 Install schema for development:
 
-    sbt> project modelmatrix-core  
+    sbt> project modelmatrix-cli  
     sbt> flywayMigrate 
     
 If you need to install schema into different database, you have to provide flyway properties at sbt startup
