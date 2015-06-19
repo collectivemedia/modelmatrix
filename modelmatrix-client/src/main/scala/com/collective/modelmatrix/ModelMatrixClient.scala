@@ -130,6 +130,8 @@ class ModelMatrixClient(sc: SparkContext) extends ClientModelCatalog with Transf
     val features = blockOn(db.run(modelDefinitionFeatures.features(modelDefinitionId)))
       .filter(_.feature.active == true)
 
+    log.debug(s"Found ${features.size} model features for definition: $modelDefinitionId")
+
     require(features.nonEmpty, s"No active features are defined for model definition: $modelDefinitionId. " +
       s"Ensure that this model definition exists")
 
