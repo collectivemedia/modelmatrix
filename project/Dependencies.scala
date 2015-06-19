@@ -46,6 +46,7 @@ object Dependencies {
     test ++
     Seq(
       guava
+    , scalazStream
     )
 
 }

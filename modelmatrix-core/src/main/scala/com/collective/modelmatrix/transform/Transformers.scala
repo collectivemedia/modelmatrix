@@ -1,10 +1,9 @@
-package com.collective.modelmatrix.cli.instance
+package com.collective.modelmatrix.transform
 
 import com.collective.modelmatrix.ModelFeature
-import com.collective.modelmatrix.transform._
-import org.apache.spark.sql.{DataFrame, SQLContext}
+import org.apache.spark.sql.{SQLContext, DataFrame}
 
-import scalaz.{@@, \/}
+import scalaz._
 
 trait Transformers {
 
@@ -21,11 +20,11 @@ trait Transformers {
 
     def validate(feature: ModelFeature): FeatureTransformationError \/ TypedModelFeature =
       (identity.validate orElse
-       top.validate orElse
-       index.validate orElse
-       bins.validate orElse
-       unknownFeature
-      )(feature)
+        top.validate orElse
+        index.validate orElse
+        bins.validate orElse
+        unknownFeature
+        )(feature)
 
   }
 }
