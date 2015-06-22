@@ -62,7 +62,7 @@ object ModelMatrix extends ModelMatrixUDF {
 
     protected implicit val catalogExecutionContext: ExecutionContext @@ ModelMatrixCatalog =
       Tag[ExecutionContext, ModelMatrixCatalog](ExecutionContext.fromExecutor(
-        Executors.newFixedThreadPool(10, threadFactory("catalog-db-pool", daemon = true)))
+        Executors.newFixedThreadPool(10, threadFactory("modelmatrix-catalog-db-pool", daemon = true)))
       )
 
     private def threadFactory(prefix: String, daemon: Boolean) =
