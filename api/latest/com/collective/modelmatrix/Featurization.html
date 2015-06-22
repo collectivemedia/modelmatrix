@@ -241,41 +241,28 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="com.collective.modelmatrix.Featurization#featurize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="featurize(input:scalaz.@@[org.apache.spark.sql.DataFrame,com.collective.modelmatrix.transform.Transformer.Features]):org.apache.spark.rdd.RDD[org.apache.spark.mllib.linalg.Vector]"></a>
-      <a id="featurize(@@[DataFrame,Features]):RDD[Vector]"></a>
+      <a id="featurize[L](input:scalaz.@@[org.apache.spark.sql.DataFrame,com.collective.modelmatrix.transform.Transformer.LabeledFeatures[L]],labeling:com.collective.modelmatrix.Labeling[L]):org.apache.spark.rdd.RDD[(L,org.apache.spark.mllib.linalg.Vector)]"></a>
+      <a id="featurize[L](@@[DataFrame,LabeledFeatures[L]],Labeling[L]):RDD[(L,Vector)]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">featurize</span><span class="params">(<span name="input">input: <a href="../../../scalaz/package.html#@@[T,Tag]=scalaz.package.Tagged[T,Tag]" class="extmbr" name="scalaz.@@">@@</a>[<span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span>, <a href="transform/Transformer$$Features.html" class="extype" name="com.collective.modelmatrix.transform.Transformer.Features">Features</a>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.mllib.linalg.Vector">Vector</span>]</span>
+        <span class="name">featurize</span><span class="tparams">[<span name="L">L</span>]</span><span class="params">(<span name="input">input: <a href="../../../scalaz/package.html#@@[T,Tag]=scalaz.package.Tagged[T,Tag]" class="extmbr" name="scalaz.@@">@@</a>[<span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span>, <a href="transform/Transformer$$LabeledFeatures.html" class="extype" name="com.collective.modelmatrix.transform.Transformer.LabeledFeatures">LabeledFeatures</a>[<span class="extype" name="com.collective.modelmatrix.Featurization.featurize.L">L</span>]]</span>, <span name="labeling">labeling: <a href="Labeling.html" class="extype" name="com.collective.modelmatrix.Labeling">Labeling</a>[<span class="extype" name="com.collective.modelmatrix.Featurization.featurize.L">L</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="com.collective.modelmatrix.Featurization.featurize.L">L</span>, <span class="extype" name="org.apache.spark.mllib.linalg.Vector">Vector</span>)]</span>
       </span>
       </h4>
       
     </li><li name="com.collective.modelmatrix.Featurization#featurize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="featurize(input:scalaz.@@[org.apache.spark.sql.DataFrame,com.collective.modelmatrix.transform.Transformer.Features],labeled:com.collective.modelmatrix.FeaturizationType.Labeled):org.apache.spark.rdd.RDD[org.apache.spark.mllib.regression.LabeledPoint]"></a>
-      <a id="featurize(@@[DataFrame,Features],Labeled):RDD[LabeledPoint]"></a>
+      <a id="featurize[L](input:scalaz.@@[org.apache.spark.sql.DataFrame,com.collective.modelmatrix.transform.Transformer.Features]):org.apache.spark.rdd.RDD[org.apache.spark.mllib.linalg.Vector]"></a>
+      <a id="featurize[L](@@[DataFrame,Features]):RDD[Vector]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">featurize</span><span class="params">(<span name="input">input: <a href="../../../scalaz/package.html#@@[T,Tag]=scalaz.package.Tagged[T,Tag]" class="extmbr" name="scalaz.@@">@@</a>[<span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span>, <a href="transform/Transformer$$Features.html" class="extype" name="com.collective.modelmatrix.transform.Transformer.Features">Features</a>]</span>, <span name="labeled">labeled: <a href="FeaturizationType$$Labeled.html" class="extype" name="com.collective.modelmatrix.FeaturizationType.Labeled">Labeled</a></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.mllib.regression.LabeledPoint">LabeledPoint</span>]</span>
-      </span>
-      </h4>
-      
-    </li><li name="com.collective.modelmatrix.Featurization#featurize" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="featurize(input:scalaz.@@[org.apache.spark.sql.DataFrame,com.collective.modelmatrix.transform.Transformer.Features],identified:com.collective.modelmatrix.FeaturizationType.Identified):(org.apache.spark.sql.types.DataType,org.apache.spark.rdd.RDD[com.collective.modelmatrix.IdentifiedPoint])"></a>
-      <a id="featurize(@@[DataFrame,Features],Identified):(DataType,RDD[IdentifiedPoint])"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">featurize</span><span class="params">(<span name="input">input: <a href="../../../scalaz/package.html#@@[T,Tag]=scalaz.package.Tagged[T,Tag]" class="extmbr" name="scalaz.@@">@@</a>[<span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span>, <a href="transform/Transformer$$Features.html" class="extype" name="com.collective.modelmatrix.transform.Transformer.Features">Features</a>]</span>, <span name="identified">identified: <a href="FeaturizationType$$Identified.html" class="extype" name="com.collective.modelmatrix.FeaturizationType.Identified">Identified</a></span>)</span><span class="result">: (<span class="extype" name="org.apache.spark.sql.types.DataType">DataType</span>, <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<a href="IdentifiedPoint.html" class="extype" name="com.collective.modelmatrix.IdentifiedPoint">IdentifiedPoint</a>])</span>
+        <span class="name">featurize</span><span class="tparams">[<span name="L">L</span>]</span><span class="params">(<span name="input">input: <a href="../../../scalaz/package.html#@@[T,Tag]=scalaz.package.Tagged[T,Tag]" class="extmbr" name="scalaz.@@">@@</a>[<span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span>, <a href="transform/Transformer$$Features.html" class="extype" name="com.collective.modelmatrix.transform.Transformer.Features">Features</a>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.mllib.linalg.Vector">Vector</span>]</span>
       </span>
       </h4>
       
@@ -403,15 +390,28 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="com.collective.modelmatrix.Featurization#validate" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="validate(input:scalaz.@@[org.apache.spark.sql.DataFrame,com.collective.modelmatrix.transform.Transformer.Features]):Seq[scalaz.\/[com.collective.modelmatrix.FeaturizationError,org.apache.spark.sql.Column]]"></a>
-      <a id="validate(@@[DataFrame,Features]):Seq[\/[FeaturizationError,Column]]"></a>
+      <a id="validate[L](input:scalaz.@@[org.apache.spark.sql.DataFrame,com.collective.modelmatrix.transform.Transformer.Features]):Seq[scalaz.\/[com.collective.modelmatrix.FeaturizationError,org.apache.spark.sql.Column]]"></a>
+      <a id="validate[L](@@[DataFrame,Features]):Seq[\/[FeaturizationError,Column]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">validate</span><span class="params">(<span name="input">input: <a href="../../../scalaz/package.html#@@[T,Tag]=scalaz.package.Tagged[T,Tag]" class="extmbr" name="scalaz.@@">@@</a>[<span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span>, <a href="transform/Transformer$$Features.html" class="extype" name="com.collective.modelmatrix.transform.Transformer.Features">Features</a>]</span>)</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scalaz.\/">\/</span>[<a href="FeaturizationError.html" class="extype" name="com.collective.modelmatrix.FeaturizationError">FeaturizationError</a>, <span class="extype" name="org.apache.spark.sql.Column">Column</span>]]</span>
+        <span class="name">validate</span><span class="tparams">[<span name="L">L</span>]</span><span class="params">(<span name="input">input: <a href="../../../scalaz/package.html#@@[T,Tag]=scalaz.package.Tagged[T,Tag]" class="extmbr" name="scalaz.@@">@@</a>[<span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span>, <a href="transform/Transformer$$Features.html" class="extype" name="com.collective.modelmatrix.transform.Transformer.Features">Features</a>]</span>)</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scalaz.\/">\/</span>[<a href="FeaturizationError.html" class="extype" name="com.collective.modelmatrix.FeaturizationError">FeaturizationError</a>, <span class="extype" name="org.apache.spark.sql.Column">Column</span>]]</span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.Featurization#validateLabeled" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="validateLabeled[L](input:scalaz.@@[org.apache.spark.sql.DataFrame,com.collective.modelmatrix.transform.Transformer.LabeledFeatures[L]]):Seq[scalaz.\/[com.collective.modelmatrix.FeaturizationError,org.apache.spark.sql.Column]]"></a>
+      <a id="validateLabeled[L](@@[DataFrame,LabeledFeatures[L]]):Seq[\/[FeaturizationError,Column]]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">validateLabeled</span><span class="tparams">[<span name="L">L</span>]</span><span class="params">(<span name="input">input: <a href="../../../scalaz/package.html#@@[T,Tag]=scalaz.package.Tagged[T,Tag]" class="extmbr" name="scalaz.@@">@@</a>[<span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span>, <a href="transform/Transformer$$LabeledFeatures.html" class="extype" name="com.collective.modelmatrix.transform.Transformer.LabeledFeatures">LabeledFeatures</a>[<span class="extype" name="com.collective.modelmatrix.Featurization.validateLabeled.L">L</span>]]</span>)</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<span class="extype" name="scalaz.\/">\/</span>[<a href="FeaturizationError.html" class="extype" name="com.collective.modelmatrix.FeaturizationError">FeaturizationError</a>, <span class="extype" name="org.apache.spark.sql.Column">Column</span>]]</span>
       </span>
       </h4>
       

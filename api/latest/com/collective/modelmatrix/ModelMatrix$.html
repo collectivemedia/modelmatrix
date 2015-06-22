@@ -24,9 +24,9 @@
         </head>
         <body class="value">
       <div id="definition">
-        <img src="../../../lib/object_big.png" />
+        <a href="ModelMatrix.html" title="Go to companion"><img src="../../../lib/object_to_class_big.png" /></a>
         <p id="owner"><a href="../../package.html" class="extype" name="com">com</a>.<a href="../package.html" class="extype" name="com.collective">collective</a>.<a href="package.html" class="extype" name="com.collective.modelmatrix">modelmatrix</a></p>
-        <h1>ModelMatrix</h1>
+        <h1><a href="ModelMatrix.html" title="Go to companion">ModelMatrix</a></h1>
       </div>
 
       <h4 id="signature" class="signature">
@@ -35,13 +35,13 @@
         <span class="kind">object</span>
       </span>
       <span class="symbol">
-        <span class="name">ModelMatrix</span>
+        <span class="name">ModelMatrix</span><span class="result"> extends <a href="ModelMatrixUDF.html" class="extype" name="com.collective.modelmatrix.ModelMatrixUDF">ModelMatrixUDF</a></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><a href="ModelMatrixUDF.html" class="extype" name="com.collective.modelmatrix.ModelMatrixUDF">ModelMatrixUDF</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -59,7 +59,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="com.collective.modelmatrix.ModelMatrix"><span>ModelMatrix</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="com.collective.modelmatrix.ModelMatrix"><span>ModelMatrix</span></li><li class="in" name="com.collective.modelmatrix.ModelMatrixUDF"><span>ModelMatrixUDF</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -79,7 +79,36 @@
         <div id="allMembers">
         
 
-        
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="ModelMatrixCatalogAccessextendsAnyRef"></a>
+      <a id="ModelMatrixCatalogAccess:ModelMatrixCatalogAccess"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ModelMatrix$$ModelMatrixCatalogAccess.html"><span class="name">ModelMatrixCatalogAccess</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="PostgresModelMatrixCatalogextendsModelMatrix.ModelMatrixCatalogAccess"></a>
+      <a id="PostgresModelMatrixCatalog:PostgresModelMatrixCatalog"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="ModelMatrix$$PostgresModelMatrixCatalog.html"><span class="name">PostgresModelMatrixCatalog</span></a><span class="result"> extends <a href="ModelMatrix$$ModelMatrixCatalogAccess.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess">ModelMatrixCatalogAccess</a></span>
+      </span>
+      </h4>
+      
+    </li></ol>
+            </div>
 
         
 
@@ -318,6 +347,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="com.collective.modelmatrix.ModelMatrixUDF#registerUDF" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="registerUDF(udf:org.apache.spark.sql.UDFRegistration):Unit"></a>
+      <a id="registerUDF(UDFRegistration):Unit"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">registerUDF</span><span class="params">(<span name="udf">udf: <span class="extype" name="org.apache.spark.sql.UDFRegistration">UDFRegistration</span></span>)</span><span class="result">: <span class="extype" name="scala.Unit">Unit</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="ModelMatrixUDF.html" class="extype" name="com.collective.modelmatrix.ModelMatrixUDF">ModelMatrixUDF</a></dd></dl></div>
     </li><li name="com.collective.modelmatrix.ModelMatrix#sqlContext" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="sqlContext(sc:org.apache.spark.SparkContext):org.apache.spark.sql.SQLContext"></a>
       <a id="sqlContext(SparkContext):SQLContext"></a>
@@ -423,7 +465,9 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="scala.AnyRef">
+        <div class="parent" name="com.collective.modelmatrix.ModelMatrixUDF">
+              <h3>Inherited from <a href="ModelMatrixUDF.html" class="extype" name="com.collective.modelmatrix.ModelMatrixUDF">ModelMatrixUDF</a></h3>
+            </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">
               <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>

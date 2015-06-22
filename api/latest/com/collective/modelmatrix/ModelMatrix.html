@@ -2,9 +2,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html>
         <head>
-          <title>ModelMatrixClient - com.collective.modelmatrix.ModelMatrixClient</title>
-          <meta name="description" content="ModelMatrixClient - com.collective.modelmatrix.ModelMatrixClient" />
-          <meta name="keywords" content="ModelMatrixClient com.collective.modelmatrix.ModelMatrixClient" />
+          <title>ModelMatrix - com.collective.modelmatrix.ModelMatrix</title>
+          <meta name="description" content="ModelMatrix - com.collective.modelmatrix.ModelMatrix" />
+          <meta name="keywords" content="ModelMatrix com.collective.modelmatrix.ModelMatrix" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -12,7 +12,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../index.html';
-            var hash = 'com.collective.modelmatrix.ModelMatrixClient';
+            var hash = 'com.collective.modelmatrix.ModelMatrix';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -24,9 +24,9 @@
         </head>
         <body class="type">
       <div id="definition">
-        <img src="../../../lib/class_big.png" />
+        <a href="ModelMatrix$.html" title="Go to companion"><img src="../../../lib/class_to_object_big.png" /></a>
         <p id="owner"><a href="../../package.html" class="extype" name="com">com</a>.<a href="../package.html" class="extype" name="com.collective">collective</a>.<a href="package.html" class="extype" name="com.collective.modelmatrix">modelmatrix</a></p>
-        <h1>ModelMatrixClient</h1>
+        <h1><a href="ModelMatrix$.html" title="Go to companion">ModelMatrix</a></h1>
       </div>
 
       <h4 id="signature" class="signature">
@@ -35,13 +35,15 @@
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <span class="name">ModelMatrixClient</span><span class="result"> extends <span class="extype" name="com.collective.modelmatrix.ClientModelCatalog">ClientModelCatalog</span></span>
+        <span class="name">ModelMatrix</span><span class="result"> extends <a href="ModelMatrix$$PostgresModelMatrixCatalog.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog">PostgresModelMatrixCatalog</a> with <a href="transform/Transformers.html" class="extype" name="com.collective.modelmatrix.transform.Transformers">Transformers</a> with <a href="TransformationProcess.html" class="extype" name="com.collective.modelmatrix.TransformationProcess">TransformationProcess</a></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><div class="comment cmt"><p>Model Matrix class that hides database interaction and provides
+higher level API
+</p></div><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="com.collective.modelmatrix.ClientModelCatalog">ClientModelCatalog</span>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><a href="TransformationProcess.html" class="extype" name="com.collective.modelmatrix.TransformationProcess">TransformationProcess</a>, <a href="transform/Transformers.html" class="extype" name="com.collective.modelmatrix.transform.Transformers">transform.Transformers</a>, <a href="ModelMatrix$$PostgresModelMatrixCatalog.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog">PostgresModelMatrixCatalog</a>, <a href="ModelMatrix$$ModelMatrixCatalogAccess.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess">ModelMatrixCatalogAccess</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -59,7 +61,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="com.collective.modelmatrix.ModelMatrixClient"><span>ModelMatrixClient</span></li><li class="in" name="com.collective.modelmatrix.ClientModelCatalog"><span>ClientModelCatalog</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="com.collective.modelmatrix.ModelMatrix"><span>ModelMatrix</span></li><li class="in" name="com.collective.modelmatrix.TransformationProcess"><span>TransformationProcess</span></li><li class="in" name="com.collective.modelmatrix.transform.Transformers"><span>Transformers</span></li><li class="in" name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog"><span>PostgresModelMatrixCatalog</span></li><li class="in" name="com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess"><span>ModelMatrixCatalogAccess</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -79,23 +81,53 @@
         <div id="allMembers">
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
-              <ol><li name="com.collective.modelmatrix.ModelMatrixClient#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(sc:org.apache.spark.SparkContext):com.collective.modelmatrix.ModelMatrixClient"></a>
-      <a id="&lt;init&gt;:ModelMatrixClient"></a>
+              <ol><li name="com.collective.modelmatrix.ModelMatrix#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="&lt;init&gt;(sc:org.apache.spark.SparkContext):com.collective.modelmatrix.ModelMatrix"></a>
+      <a id="&lt;init&gt;:ModelMatrix"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">ModelMatrixClient</span><span class="params">(<span name="sc">sc: <span class="extype" name="org.apache.spark.SparkContext">SparkContext</span></span>)</span>
+        <span class="name">ModelMatrix</span><span class="params">(<span name="sc">sc: <span class="extype" name="org.apache.spark.SparkContext">SparkContext</span></span>)</span>
       </span>
       </h4>
-      
+      <p class="shortcomment cmt"></p><div class="fullcomment"><div class="comment cmt"></div><dl class="paramcmts block"><dt class="param">sc</dt><dd class="cmt"><p>Spark Context
+</p></dd></dl></div>
     </li></ol>
             </div>
 
-        
+        <div id="types" class="types members">
+              <h3>Type Members</h3>
+              <ol><li name="com.collective.modelmatrix.TransformationProcess.ModelMatrixTransformation" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
+      <a id="ModelMatrixTransformationextendsAnyRef"></a>
+      <a id="ModelMatrixTransformation:(TransformationProcess.this)#ModelMatrixTransformation"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="TransformationProcess$ModelMatrixTransformation.html"><span class="name">ModelMatrixTransformation</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="TransformationProcess.html" class="extype" name="com.collective.modelmatrix.TransformationProcess">TransformationProcess</a></dd></dl></div>
+    </li><li name="com.collective.modelmatrix.transform.Transformers.Transformers" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="TransformersextendsAnyRef"></a>
+      <a id="Transformers:Transformers"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="transform/Transformers$Transformers.html"><span class="name">Transformers</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="transform/Transformers.html" class="extype" name="com.collective.modelmatrix.transform.Transformers">Transformers</a></dd></dl></div>
+    </li></ol>
+            </div>
 
         
 
@@ -179,7 +211,7 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="com.collective.modelmatrix.ClientModelCatalog#blockOn" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess#blockOn" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="blockOn[T](f:scala.concurrent.Future[T],duration:scala.concurrent.duration.FiniteDuration):T"></a>
       <a id="blockOn[T](Future[T],FiniteDuration):T"></a>
       <h4 class="signature">
@@ -188,11 +220,11 @@
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">blockOn</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="f">f: <span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="com.collective.modelmatrix.ClientModelCatalog.blockOn.T">T</span>]</span>, <span name="duration">duration: <span class="extype" name="scala.concurrent.duration.FiniteDuration">FiniteDuration</span> = <span class="symbol">10.seconds</span></span>)</span><span class="result">: <span class="extype" name="com.collective.modelmatrix.ClientModelCatalog.blockOn.T">T</span></span>
+        <span class="name">blockOn</span><span class="tparams">[<span name="T">T</span>]</span><span class="params">(<span name="f">f: <span class="extype" name="scala.concurrent.Future">Future</span>[<span class="extype" name="com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess.blockOn.T">T</span>]</span>, <span name="duration">duration: <span class="extype" name="scala.concurrent.duration.FiniteDuration">FiniteDuration</span> = <span class="symbol">10.seconds</span></span>)</span><span class="result">: <span class="extype" name="com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess.blockOn.T">T</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>ClientModelCatalog</dd></dl></div>
-    </li><li name="com.collective.modelmatrix.ClientModelCatalog#catalog" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="ModelMatrix$$ModelMatrixCatalogAccess.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess">ModelMatrixCatalogAccess</a></dd></dl></div>
+    </li><li name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog#catalog" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="catalog:com.collective.modelmatrix.catalog.ModelMatrixCatalog"></a>
       <a id="catalog:ModelMatrixCatalog"></a>
       <h4 class="signature">
@@ -204,7 +236,20 @@
         <span class="name">catalog</span><span class="result">: <a href="catalog/ModelMatrixCatalog.html" class="extype" name="com.collective.modelmatrix.catalog.ModelMatrixCatalog">ModelMatrixCatalog</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>ClientModelCatalog</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="ModelMatrix$$PostgresModelMatrixCatalog.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog">PostgresModelMatrixCatalog</a></dd></dl></div>
+    </li><li name="com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess#catalogExecutionContext" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="catalogExecutionContext:scalaz.@@[scala.concurrent.ExecutionContext,com.collective.modelmatrix.catalog.ModelMatrixCatalog]"></a>
+      <a id="catalogExecutionContext:@@[ExecutionContext,ModelMatrixCatalog]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit </span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">catalogExecutionContext</span><span class="result">: <a href="../../../scalaz/package.html#@@[T,Tag]=scalaz.package.Tagged[T,Tag]" class="extmbr" name="scalaz.@@">@@</a>[<span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span>, <a href="catalog/ModelMatrixCatalog.html" class="extype" name="com.collective.modelmatrix.catalog.ModelMatrixCatalog">ModelMatrixCatalog</a>]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="ModelMatrix$$ModelMatrixCatalogAccess.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess">ModelMatrixCatalogAccess</a></dd></dl></div>
     </li><li name="scala.AnyRef#clone" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="clone():Object"></a>
       <a id="clone():AnyRef"></a>
@@ -224,8 +269,37 @@
     </span>)</span>
               
         </dd></dl></div>
-    </li><li name="com.collective.modelmatrix.ClientModelCatalog#db" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="db:ClientModelCatalog.this.driver.backend.Database"></a>
+    </li><li name="com.collective.modelmatrix.TransformationProcess#computeModelMatrixTransformation" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="computeModelMatrixTransformation(features:Seq[(com.collective.modelmatrix.catalog.ModelDefinitionFeature,com.collective.modelmatrix.transform.TypedModelFeature)],concurrencyLevel:Int)(implicitt:TransformationProcess.this.Transformers):scalaz.concurrent.Task[TransformationProcess.this.ModelMatrixTransformation]"></a>
+      <a id="computeModelMatrixTransformation(Seq[(ModelDefinitionFeature,TypedModelFeature)],Int)(Transformers):Task[ModelMatrixTransformation]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">computeModelMatrixTransformation</span><span class="params">(<span name="features">features: <span class="extype" name="scala.Seq">Seq</span>[(<a href="catalog/ModelDefinitionFeature.html" class="extype" name="com.collective.modelmatrix.catalog.ModelDefinitionFeature">ModelDefinitionFeature</a>, <a href="transform/TypedModelFeature.html" class="extype" name="com.collective.modelmatrix.transform.TypedModelFeature">TypedModelFeature</a>)]</span>, <span name="concurrencyLevel">concurrencyLevel: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="t">t: <a href="#TransformersextendsAnyRef" class="extmbr" name="com.collective.modelmatrix.transform.Transformers.Transformers">Transformers</a></span>)</span><span class="result">: <span class="extype" name="scalaz.concurrent.Task">Task</span>[<a href="#ModelMatrixTransformationextendsAnyRef" class="extmbr" name="com.collective.modelmatrix.TransformationProcess.ModelMatrixTransformation">ModelMatrixTransformation</a>]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="TransformationProcess.html" class="extype" name="com.collective.modelmatrix.TransformationProcess">TransformationProcess</a></dd></dl></div>
+    </li><li name="com.collective.modelmatrix.ModelMatrix#createModelMatrixInstance" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="createModelMatrixInstance(modelDefinitionId:Int,df:org.apache.spark.sql.DataFrame,name:Option[String],comment:Option[String],concurrencyLevel:Int):Int"></a>
+      <a id="createModelMatrixInstance(Int,DataFrame,Option[String],Option[String],Int):Int"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">createModelMatrixInstance</span><span class="params">(<span name="modelDefinitionId">modelDefinitionId: <span class="extype" name="scala.Int">Int</span></span>, <span name="df">df: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>, <span name="name">name: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="comment">comment: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Predef.String">String</span>]</span>, <span name="concurrencyLevel">concurrencyLevel: <span class="extype" name="scala.Int">Int</span></span>)</span><span class="result">: <span class="extype" name="scala.Int">Int</span></span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Create Model Matrix instance
+</p><div class="fullcomment"><div class="comment cmt"><p>Create Model Matrix instance
+</p></div><dl class="paramcmts block"><dt class="param">modelDefinitionId</dt><dd class="cmt"><p>model matrix definition id</p></dd><dt class="param">df</dt><dd class="cmt"><p>data frame</p></dd><dt class="param">name</dt><dd class="cmt"><p>instance id</p></dd><dt class="param">comment</dt><dd class="cmt"><p>instance comment</p></dd><dt class="param">concurrencyLevel</dt><dd class="cmt"><p>number of concurrent transformation calculations</p></dd><dt>returns</dt><dd class="cmt"><p>model matrix instance id
+</p></dd></dl></div>
+    </li><li name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog#db" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="db:PostgresModelMatrixCatalog.this.driver.backend.Database"></a>
       <a id="db:Database"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -236,8 +310,8 @@
         <span class="name">db</span><span class="result">: <span class="extype" name="slick.jdbc.JdbcBackend.Database">Database</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>ClientModelCatalog</dd></dl></div>
-    </li><li name="com.collective.modelmatrix.ClientModelCatalog#driver" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="ModelMatrix$$PostgresModelMatrixCatalog.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog">PostgresModelMatrixCatalog</a> → <a href="ModelMatrix$$ModelMatrixCatalogAccess.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess">ModelMatrixCatalogAccess</a></dd></dl></div>
+    </li><li name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog#driver" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="driver:slick.driver.PostgresDriver.type"></a>
       <a id="driver:PostgresDriver.type"></a>
       <h4 class="signature">
@@ -249,20 +323,20 @@
         <span class="name">driver</span><span class="result">: <span class="extype" name="slick.driver.PostgresDriver">PostgresDriver</span>.type</span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>ClientModelCatalog</dd></dl></div>
-    </li><li name="com.collective.modelmatrix.ClientModelCatalog#ec" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="ec:scalaz.@@[scala.concurrent.ExecutionContext,com.collective.modelmatrix.catalog.ModelMatrixCatalog]"></a>
-      <a id="ec:@@[ExecutionContext,ModelMatrixCatalog]"></a>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="ModelMatrix$$PostgresModelMatrixCatalog.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog">PostgresModelMatrixCatalog</a> → <a href="ModelMatrix$$ModelMatrixCatalogAccess.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess">ModelMatrixCatalogAccess</a></dd></dl></div>
+    </li><li name="com.collective.modelmatrix.TransformationProcess#ec" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="ec:scala.concurrent.ExecutionContext"></a>
+      <a id="ec:ExecutionContext"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">implicit </span>
         <span class="kind">val</span>
       </span>
       <span class="symbol">
-        <span class="name">ec</span><span class="result">: <a href="../../../scalaz/package.html#@@[T,Tag]=scalaz.package.Tagged[T,Tag]" class="extmbr" name="scalaz.@@">@@</a>[<span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span>, <a href="catalog/ModelMatrixCatalog.html" class="extype" name="com.collective.modelmatrix.catalog.ModelMatrixCatalog">ModelMatrixCatalog</a>]</span>
+        <span class="name">ec</span><span class="result">: <span class="extype" name="scala.concurrent.ExecutionContext">ExecutionContext</span></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>ClientModelCatalog</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="TransformationProcess.html" class="extype" name="com.collective.modelmatrix.TransformationProcess">TransformationProcess</a></dd></dl></div>
     </li><li name="scala.AnyRef#eq" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="eq(x$1:AnyRef):Boolean"></a>
       <a id="eq(AnyRef):Boolean"></a>
@@ -289,37 +363,37 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="com.collective.modelmatrix.ModelMatrixClient#featurize" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="featurize(features:Seq[com.collective.modelmatrix.catalog.ModelInstanceFeature],df:org.apache.spark.sql.DataFrame,label:String):org.apache.spark.rdd.RDD[org.apache.spark.mllib.regression.LabeledPoint]"></a>
-      <a id="featurize(Seq[ModelInstanceFeature],DataFrame,String):RDD[LabeledPoint]"></a>
+    </li><li name="com.collective.modelmatrix.ModelMatrix#featurize" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="featurize[L](features:Seq[com.collective.modelmatrix.catalog.ModelInstanceFeature],df:org.apache.spark.sql.DataFrame,labeling:com.collective.modelmatrix.Labeling[L]):org.apache.spark.rdd.RDD[(L,org.apache.spark.mllib.linalg.Vector)]"></a>
+      <a id="featurize[L](Seq[ModelInstanceFeature],DataFrame,Labeling[L]):RDD[(L,Vector)]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">featurize</span><span class="params">(<span name="features">features: <span class="extype" name="scala.Seq">Seq</span>[<a href="catalog/ModelInstanceFeature.html" class="extype" name="com.collective.modelmatrix.catalog.ModelInstanceFeature">ModelInstanceFeature</a>]</span>, <span name="df">df: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>, <span name="label">label: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.mllib.regression.LabeledPoint">LabeledPoint</span>]</span>
+        <span class="name">featurize</span><span class="tparams">[<span name="L">L</span>]</span><span class="params">(<span name="features">features: <span class="extype" name="scala.Seq">Seq</span>[<a href="catalog/ModelInstanceFeature.html" class="extype" name="com.collective.modelmatrix.catalog.ModelInstanceFeature">ModelInstanceFeature</a>]</span>, <span name="df">df: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>, <span name="labeling">labeling: <a href="Labeling.html" class="extype" name="com.collective.modelmatrix.Labeling">Labeling</a>[<span class="extype" name="com.collective.modelmatrix.ModelMatrix.featurize.L">L</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="com.collective.modelmatrix.ModelMatrix.featurize.L">L</span>, <span class="extype" name="org.apache.spark.mllib.linalg.Vector">Vector</span>)]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Apply model instance transformations to data frame
 </p><div class="fullcomment"><div class="comment cmt"><p>Apply model instance transformations to data frame
-</p></div><dl class="paramcmts block"><dt class="param">features</dt><dd class="cmt"><p>model instance features</p></dd><dt class="param">df</dt><dd class="cmt"><p>data frame</p></dd><dt class="param">label</dt><dd class="cmt"><p>label column</p></dd><dt>returns</dt><dd class="cmt"><p>RDD of featurized vectors
+</p></div><dl class="paramcmts block"><dt class="param">features</dt><dd class="cmt"><p>model instance features</p></dd><dt class="param">df</dt><dd class="cmt"><p>data frame</p></dd><dt class="param">labeling</dt><dd class="cmt"><p>row labeling</p></dd><dt>returns</dt><dd class="cmt"><p>RDD of featurized vectors
 </p></dd></dl></div>
-    </li><li name="com.collective.modelmatrix.ModelMatrixClient#featurize" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="featurize(modelInstanceId:Int,df:org.apache.spark.sql.DataFrame,label:String):org.apache.spark.rdd.RDD[org.apache.spark.mllib.regression.LabeledPoint]"></a>
-      <a id="featurize(Int,DataFrame,String):RDD[LabeledPoint]"></a>
+    </li><li name="com.collective.modelmatrix.ModelMatrix#featurize" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="featurize[L](modelInstanceId:Int,df:org.apache.spark.sql.DataFrame,labeling:com.collective.modelmatrix.Labeling[L]):org.apache.spark.rdd.RDD[(L,org.apache.spark.mllib.linalg.Vector)]"></a>
+      <a id="featurize[L](Int,DataFrame,Labeling[L]):RDD[(L,Vector)]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">featurize</span><span class="params">(<span name="modelInstanceId">modelInstanceId: <span class="extype" name="scala.Int">Int</span></span>, <span name="df">df: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>, <span name="label">label: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[<span class="extype" name="org.apache.spark.mllib.regression.LabeledPoint">LabeledPoint</span>]</span>
+        <span class="name">featurize</span><span class="tparams">[<span name="L">L</span>]</span><span class="params">(<span name="modelInstanceId">modelInstanceId: <span class="extype" name="scala.Int">Int</span></span>, <span name="df">df: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>, <span name="labeling">labeling: <a href="Labeling.html" class="extype" name="com.collective.modelmatrix.Labeling">Labeling</a>[<span class="extype" name="com.collective.modelmatrix.ModelMatrix.featurize.L">L</span>]</span>)</span><span class="result">: <span class="extype" name="org.apache.spark.rdd.RDD">RDD</span>[(<span class="extype" name="com.collective.modelmatrix.ModelMatrix.featurize.L">L</span>, <span class="extype" name="org.apache.spark.mllib.linalg.Vector">Vector</span>)]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Apply model instance transformations to data frame
 </p><div class="fullcomment"><div class="comment cmt"><p>Apply model instance transformations to data frame
-</p></div><dl class="paramcmts block"><dt class="param">modelInstanceId</dt><dd class="cmt"><p>model instance id</p></dd><dt class="param">df</dt><dd class="cmt"><p>data frame</p></dd><dt class="param">label</dt><dd class="cmt"><p>label column</p></dd><dt>returns</dt><dd class="cmt"><p>RDD of featurized vectors
+</p></div><dl class="paramcmts block"><dt class="param">modelInstanceId</dt><dd class="cmt"><p>model instance id</p></dd><dt class="param">df</dt><dd class="cmt"><p>data frame</p></dd><dt class="param">labeling</dt><dd class="cmt"><p>row labeling</p></dd><dt>returns</dt><dd class="cmt"><p>RDD of featurized vectors
 </p></dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
@@ -366,7 +440,7 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="com.collective.modelmatrix.ModelMatrixClient#instanceTransformations" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="com.collective.modelmatrix.ModelMatrix#instanceTransformations" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="instanceTransformations(modelInstanceId:Int):Seq[com.collective.modelmatrix.catalog.ModelInstanceFeature]"></a>
       <a id="instanceTransformations(Int):Seq[ModelInstanceFeature]"></a>
       <h4 class="signature">
@@ -395,7 +469,7 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>Any</dd></dl></div>
-    </li><li name="com.collective.modelmatrix.ClientModelCatalog#modelDefinitionFeatures" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+    </li><li name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog#modelDefinitionFeatures" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="modelDefinitionFeatures:com.collective.modelmatrix.catalog.ModelDefinitionFeatures"></a>
       <a id="modelDefinitionFeatures:ModelDefinitionFeatures"></a>
       <h4 class="signature">
@@ -407,8 +481,8 @@
         <span class="name">modelDefinitionFeatures</span><span class="result">: <a href="catalog/ModelDefinitionFeatures.html" class="extype" name="com.collective.modelmatrix.catalog.ModelDefinitionFeatures">ModelDefinitionFeatures</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>ClientModelCatalog</dd></dl></div>
-    </li><li name="com.collective.modelmatrix.ClientModelCatalog#modelDefinitions" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="ModelMatrix$$PostgresModelMatrixCatalog.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog">PostgresModelMatrixCatalog</a> → <a href="ModelMatrix$$ModelMatrixCatalogAccess.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess">ModelMatrixCatalogAccess</a></dd></dl></div>
+    </li><li name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog#modelDefinitions" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="modelDefinitions:com.collective.modelmatrix.catalog.ModelDefinitions"></a>
       <a id="modelDefinitions:ModelDefinitions"></a>
       <h4 class="signature">
@@ -420,8 +494,8 @@
         <span class="name">modelDefinitions</span><span class="result">: <a href="catalog/ModelDefinitions.html" class="extype" name="com.collective.modelmatrix.catalog.ModelDefinitions">ModelDefinitions</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>ClientModelCatalog</dd></dl></div>
-    </li><li name="com.collective.modelmatrix.ClientModelCatalog#modelInstanceFeatures" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="ModelMatrix$$PostgresModelMatrixCatalog.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog">PostgresModelMatrixCatalog</a> → <a href="ModelMatrix$$ModelMatrixCatalogAccess.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess">ModelMatrixCatalogAccess</a></dd></dl></div>
+    </li><li name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog#modelInstanceFeatures" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="modelInstanceFeatures:com.collective.modelmatrix.catalog.ModelInstanceFeatures"></a>
       <a id="modelInstanceFeatures:ModelInstanceFeatures"></a>
       <h4 class="signature">
@@ -433,8 +507,8 @@
         <span class="name">modelInstanceFeatures</span><span class="result">: <a href="catalog/ModelInstanceFeatures.html" class="extype" name="com.collective.modelmatrix.catalog.ModelInstanceFeatures">ModelInstanceFeatures</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>ClientModelCatalog</dd></dl></div>
-    </li><li name="com.collective.modelmatrix.ClientModelCatalog#modelInstances" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="ModelMatrix$$PostgresModelMatrixCatalog.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog">PostgresModelMatrixCatalog</a> → <a href="ModelMatrix$$ModelMatrixCatalogAccess.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess">ModelMatrixCatalogAccess</a></dd></dl></div>
+    </li><li name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog#modelInstances" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="modelInstances:com.collective.modelmatrix.catalog.ModelInstances"></a>
       <a id="modelInstances:ModelInstances"></a>
       <h4 class="signature">
@@ -446,7 +520,7 @@
         <span class="name">modelInstances</span><span class="result">: <a href="catalog/ModelInstances.html" class="extype" name="com.collective.modelmatrix.catalog.ModelInstances">ModelInstances</a></span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd>ClientModelCatalog</dd></dl></div>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="ModelMatrix$$PostgresModelMatrixCatalog.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog">PostgresModelMatrixCatalog</a> → <a href="ModelMatrix$$ModelMatrixCatalogAccess.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess">ModelMatrixCatalogAccess</a></dd></dl></div>
     </li><li name="scala.AnyRef#ne" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="ne(x$1:AnyRef):Boolean"></a>
       <a id="ne(AnyRef):Boolean"></a>
@@ -578,8 +652,14 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="com.collective.modelmatrix.ClientModelCatalog">
-              <h3>Inherited from <span class="extype" name="com.collective.modelmatrix.ClientModelCatalog">ClientModelCatalog</span></h3>
+        <div class="parent" name="com.collective.modelmatrix.TransformationProcess">
+              <h3>Inherited from <a href="TransformationProcess.html" class="extype" name="com.collective.modelmatrix.TransformationProcess">TransformationProcess</a></h3>
+            </div><div class="parent" name="com.collective.modelmatrix.transform.Transformers">
+              <h3>Inherited from <a href="transform/Transformers.html" class="extype" name="com.collective.modelmatrix.transform.Transformers">transform.Transformers</a></h3>
+            </div><div class="parent" name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog">
+              <h3>Inherited from <a href="ModelMatrix$$PostgresModelMatrixCatalog.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog">PostgresModelMatrixCatalog</a></h3>
+            </div><div class="parent" name="com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess">
+              <h3>Inherited from <a href="ModelMatrix$$ModelMatrixCatalogAccess.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess">ModelMatrixCatalogAccess</a></h3>
             </div><div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">

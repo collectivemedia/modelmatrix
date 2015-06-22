@@ -106,7 +106,7 @@
         <a href="Transformer$$Features.html"><span class="name">Features</span></a><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
-      <p class="comment cmt">Marker for DataFrame with applied extract expressions
+      <p class="comment cmt">Marker for DataFrame with feature columns only
 </p>
     </li><li name="com.collective.modelmatrix.transform.Transformer.FeaturesDataFrame" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
       <a id="FeaturesDataFrame=scalaz.@@[org.apache.spark.sql.DataFrame,com.collective.modelmatrix.transform.Transformer.Features]"></a>
@@ -118,6 +118,33 @@
       </span>
       <span class="symbol">
         <span class="name">FeaturesDataFrame</span><span class="result"> = <span class="extype" name="scala.AnyRef">AnyRef</span> { ... /* 2 definitions in type refinement */ }</span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.transform.Transformer.LabeledFeatures" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="LabeledFeatures[L]extendsAnyRef"></a>
+      <a id="LabeledFeatures[L]:LabeledFeatures[L]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
+      </span>
+      <span class="symbol">
+        <a href="Transformer$$LabeledFeatures.html"><span class="name">LabeledFeatures</span></a><span class="tparams">[<span name="L">L</span>]</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
+      </span>
+      </h4>
+      <p class="comment cmt">Marker for DataFrame with labeling columns
+</p>
+    </li><li name="com.collective.modelmatrix.transform.Transformer.LabeledFeaturesDataFrame" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="LabeledFeaturesDataFrame[L]=scalaz.@@[org.apache.spark.sql.DataFrame,com.collective.modelmatrix.transform.Transformer.LabeledFeatures[L]]"></a>
+      <a id="LabeledFeaturesDataFrame[L]:LabeledFeaturesDataFrame[L]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">type</span>
+      </span>
+      <span class="symbol">
+        <span class="name">LabeledFeaturesDataFrame</span><span class="tparams">[<span name="L">L</span>]</span><span class="result"> = <span class="extype" name="scala.AnyRef">AnyRef</span> { ... /* 2 definitions in type refinement */ }</span>
       </span>
       </h4>
       
@@ -252,20 +279,36 @@
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
     </li><li name="com.collective.modelmatrix.transform.Transformer#extractFeatures" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="extractFeatures(df:org.apache.spark.sql.DataFrame,features:Seq[com.collective.modelmatrix.ModelFeature],columns:String*):scalaz.\/[Seq[com.collective.modelmatrix.transform.Transformer.FeatureExtractionError],com.collective.modelmatrix.transform.Transformer.FeaturesDataFrame]"></a>
-      <a id="extractFeatures(DataFrame,Seq[ModelFeature],String*):\/[Seq[FeatureExtractionError],FeaturesDataFrame]"></a>
+      <a id="extractFeatures[L](df:org.apache.spark.sql.DataFrame,features:Seq[com.collective.modelmatrix.ModelFeature],labeling:com.collective.modelmatrix.Labeling[L]):scalaz.\/[Seq[com.collective.modelmatrix.transform.Transformer.FeatureExtractionError],com.collective.modelmatrix.transform.Transformer.LabeledFeaturesDataFrame[L]]"></a>
+      <a id="extractFeatures[L](DataFrame,Seq[ModelFeature],Labeling[L]):\/[Seq[FeatureExtractionError],LabeledFeaturesDataFrame[L]]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier"></span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">extractFeatures</span><span class="params">(<span name="df">df: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>, <span name="features">features: <span class="extype" name="scala.Seq">Seq</span>[<a href="../ModelFeature.html" class="extype" name="com.collective.modelmatrix.ModelFeature">ModelFeature</a>]</span>, <span name="columns">columns: <span class="extype" name="scala.Predef.String">String</span>*</span>)</span><span class="result">: <span class="extype" name="scalaz.\/">\/</span>[<span class="extype" name="scala.Seq">Seq</span>[<a href="Transformer$$FeatureExtractionError.html" class="extype" name="com.collective.modelmatrix.transform.Transformer.FeatureExtractionError">FeatureExtractionError</a>], <a href="#FeaturesDataFrame=scalaz.@@[org.apache.spark.sql.DataFrame,com.collective.modelmatrix.transform.Transformer.Features]" class="extmbr" name="com.collective.modelmatrix.transform.Transformer.FeaturesDataFrame">FeaturesDataFrame</a>]</span>
+        <span class="name">extractFeatures</span><span class="tparams">[<span name="L">L</span>]</span><span class="params">(<span name="df">df: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>, <span name="features">features: <span class="extype" name="scala.Seq">Seq</span>[<a href="../ModelFeature.html" class="extype" name="com.collective.modelmatrix.ModelFeature">ModelFeature</a>]</span>, <span name="labeling">labeling: <a href="../Labeling.html" class="extype" name="com.collective.modelmatrix.Labeling">Labeling</a>[<span class="extype" name="com.collective.modelmatrix.transform.Transformer.extractFeatures.L">L</span>]</span>)</span><span class="result">: <span class="extype" name="scalaz.\/">\/</span>[<span class="extype" name="scala.Seq">Seq</span>[<a href="Transformer$$FeatureExtractionError.html" class="extype" name="com.collective.modelmatrix.transform.Transformer.FeatureExtractionError">FeatureExtractionError</a>], <a href="#LabeledFeaturesDataFrame[L]=scalaz.@@[org.apache.spark.sql.DataFrame,com.collective.modelmatrix.transform.Transformer.LabeledFeatures[L]]" class="extmbr" name="com.collective.modelmatrix.transform.Transformer.LabeledFeaturesDataFrame">LabeledFeaturesDataFrame</a>[<span class="extype" name="com.collective.modelmatrix.transform.Transformer.extractFeatures.L">L</span>]]</span>
       </span>
       </h4>
       <p class="shortcomment cmt">Extract model features.</p><div class="fullcomment"><div class="comment cmt"><p>Extract model features. Validates feature extract expression correctness.
-</p></div><dl class="paramcmts block"><dt class="param">df</dt><dd class="cmt"><p>input data frame</p></dd><dt class="param">features</dt><dd class="cmt"><p>model features</p></dd><dt class="param">columns</dt><dd class="cmt"><p>additional columns to select from input data frame
-</p></dd><dt>returns</dt><dd class="cmt"><p>Extract features with additional columns
+</p></div><dl class="paramcmts block"><dt class="param">df</dt><dd class="cmt"><p>input data frame</p></dd><dt class="param">features</dt><dd class="cmt"><p>model features</p></dd><dt class="param">labeling</dt><dd class="cmt"><p>labeling used to select additional columns
+</p></dd><dt>returns</dt><dd class="cmt"><p>Extracted features with additional labeling columns
+</p></dd></dl></div>
+    </li><li name="com.collective.modelmatrix.transform.Transformer#extractFeatures" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="extractFeatures(df:org.apache.spark.sql.DataFrame,features:Seq[com.collective.modelmatrix.ModelFeature]):scalaz.\/[Seq[com.collective.modelmatrix.transform.Transformer.FeatureExtractionError],com.collective.modelmatrix.transform.Transformer.FeaturesDataFrame]"></a>
+      <a id="extractFeatures(DataFrame,Seq[ModelFeature]):\/[Seq[FeatureExtractionError],FeaturesDataFrame]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">extractFeatures</span><span class="params">(<span name="df">df: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>, <span name="features">features: <span class="extype" name="scala.Seq">Seq</span>[<a href="../ModelFeature.html" class="extype" name="com.collective.modelmatrix.ModelFeature">ModelFeature</a>]</span>)</span><span class="result">: <span class="extype" name="scalaz.\/">\/</span>[<span class="extype" name="scala.Seq">Seq</span>[<a href="Transformer$$FeatureExtractionError.html" class="extype" name="com.collective.modelmatrix.transform.Transformer.FeatureExtractionError">FeatureExtractionError</a>], <a href="#FeaturesDataFrame=scalaz.@@[org.apache.spark.sql.DataFrame,com.collective.modelmatrix.transform.Transformer.Features]" class="extmbr" name="com.collective.modelmatrix.transform.Transformer.FeaturesDataFrame">FeaturesDataFrame</a>]</span>
+      </span>
+      </h4>
+      <p class="shortcomment cmt">Extract model features.</p><div class="fullcomment"><div class="comment cmt"><p>Extract model features. Validates feature extract expression correctness.
+</p></div><dl class="paramcmts block"><dt class="param">df</dt><dd class="cmt"><p>input data frame</p></dd><dt class="param">features</dt><dd class="cmt"><p>model features
+</p></dd><dt>returns</dt><dd class="cmt"><p>Extracted features
 </p></dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
