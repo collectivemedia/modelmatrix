@@ -2,25 +2,16 @@ package com.collective.modelmatrix.cli
 
 import java.io.File
 import java.nio.file.Paths
-import java.util.concurrent.Executors
 import java.util.logging.Level
 
-import com.collective.modelmatrix.catalog.ModelMatrixCatalog
-import com.google.common.util.concurrent.ThreadFactoryBuilder
 import org.apache.log4j.Logger
 import org.apache.log4j.varia.NullAppender
 import parquet.hadoop.ParquetOutputCommitter
 
-import scala.concurrent.ExecutionContext
 import scala.util.control.NonFatal
-import scalaz.Tag
+
 
 object ModelMatrixCli extends App with TurnedOffParquetLogging {
-
-  private implicit val catalogExecutionContext =
-    Tag[ExecutionContext, ModelMatrixCatalog](ExecutionContext.fromExecutor(
-      Executors.newFixedThreadPool(10, threadFactory("catalog-db-pool", daemon = true)))
-    )
 
   private val defaultMMConfig = Paths.get("./model-matrix.conf")
   private val defaultMMFeatures = "features"
@@ -260,12 +251,6 @@ object ModelMatrixCli extends App with TurnedOffParquetLogging {
 
     case None => // arguments are bad, usage message will have been displayed
   }
-
-  private def threadFactory(prefix: String, daemon: Boolean) =
-    new ThreadFactoryBuilder().
-      setDaemon(daemon).
-      setNameFormat(s"$prefix-%d").
-      build()
 
 }
 

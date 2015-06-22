@@ -1,17 +1,17 @@
 package com.collective.modelmatrix.cli.instance
 
-import com.collective.modelmatrix.{BinColumn, CategorialColumn}
+import com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog
 import com.collective.modelmatrix.catalog._
 import com.collective.modelmatrix.cli._
+import com.collective.modelmatrix.{BinColumn, CategorialColumn}
 import org.slf4j.LoggerFactory
 
-import scala.concurrent.ExecutionContext
 import scalaz._
 
 
 case class ViewColumns(
   modelInstanceId: Int, group: Option[String], feature: Option[String]
-)(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) extends Script with CliModelCatalog {
+) extends Script with PostgresModelMatrixCatalog {
 
   private val log = LoggerFactory.getLogger(classOf[ViewColumns])
 

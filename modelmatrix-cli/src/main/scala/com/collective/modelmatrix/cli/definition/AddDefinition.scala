@@ -3,12 +3,11 @@ package com.collective.modelmatrix.cli.definition
 import java.nio.file.Path
 import java.time.Instant
 
-import com.collective.modelmatrix.catalog.ModelMatrixCatalog
-import com.collective.modelmatrix.cli.{CliModelCatalog, ModelConfigurationParser, Script}
-import com.typesafe.config.{Config, ConfigFactory, ConfigResolveOptions}
+import com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog
+import com.collective.modelmatrix.cli.{ModelConfigurationParser, Script}
+import com.typesafe.config.{ConfigFactory, ConfigResolveOptions}
 import org.slf4j.LoggerFactory
 
-import scala.concurrent.ExecutionContext
 import scalaz._
 
 case class AddDefinition(
@@ -16,11 +15,11 @@ case class AddDefinition(
   configPath: String,
   name: Option[String],
   comment: Option[String]
-)(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) extends Script with CliModelCatalog {
+) extends Script with PostgresModelMatrixCatalog {
 
   private val log = LoggerFactory.getLogger(classOf[AddDefinition])
 
-  private implicit val unwrap = Tag.unwrap(ec)
+  private implicit val ec = Tag.unwrap(catalogExecutionContext)
 
   private val parser = new ModelConfigurationParser(
     ConfigFactory.parseFile(config.toFile).resolve(ConfigResolveOptions.defaults()),

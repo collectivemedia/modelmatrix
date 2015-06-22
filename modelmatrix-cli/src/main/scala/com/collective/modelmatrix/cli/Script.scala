@@ -12,10 +12,6 @@ trait Script {
 
   def as[T]: T = this.asInstanceOf[T]
 
-  protected def blockOn[T](f: Future[T], duration: FiniteDuration = 10.seconds) = {
-    Await.result(f, duration)
-  }
-
 }
 
 object Script {

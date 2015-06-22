@@ -24,6 +24,7 @@ object Dependencies {
     Seq(
       slf4jApi
     , scalazCore
+    , scalazStream
     , config
     , scodecBits
     , slick
@@ -39,14 +40,6 @@ object Dependencies {
     , guava
     , scalazStream
     , flyway
-    )
-
-  val modelmatrixClient =
-    spark ++
-    test ++
-    Seq(
-      guava
-    , scalazStream
     )
 
 }

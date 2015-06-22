@@ -1,67 +1,36 @@
 package com.collective.modelmatrix
 
-import java.time.temporal.ChronoField
-import java.time.{Instant, DayOfWeek, ZoneId}
+import java.util.concurrent.Executors
 
+import com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog
+import com.collective.modelmatrix.catalog.{ModelDefinitionFeature, ModelInstanceFeature, _}
+import com.collective.modelmatrix.transform.Transformer.FeatureExtractionError
+import com.collective.modelmatrix.transform._
+import com.google.common.util.concurrent.ThreadFactoryBuilder
+import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.spark.SparkContext
+import org.apache.spark.mllib.linalg.Vector
+import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.hive.HiveContext
-import org.apache.spark.sql.{SQLContext, UDFRegistration}
+import org.apache.spark.sql.{DataFrame, SQLContext}
+import org.slf4j.LoggerFactory
+import slick.driver.{JdbcProfile, PostgresDriver}
 
-object ModelMatrix {
+import scala.concurrent.duration._
+import scala.concurrent.{Await, ExecutionContext, Future}
+import scalaz.{-\/, \/-, _}
 
-  private val strToEpochMilli: String => java.lang.Long = {
-    case s if s != null => s.toLong
-    case _ => null
-  }
 
-  private val concat: (String, String, String) => String = {
-    case (sep, s1, s2) if sep != null && s1 != null && s2 != null => s"$s1$sep$s2"
-    case _ => null
-  }
+class ModelMatrixFeatureExtractionException(errors: Seq[FeatureExtractionError])
+  extends RuntimeException(s"Failed extract model features: [${errors.map(e => e.feature.feature).mkString(", ")}]")
 
-  private val dayOfWeek: (java.lang.Long, String) => String = {
-    case (ts, zoneId) if ts != null =>
-      DayOfWeek.from(Instant.ofEpochMilli(ts).atZone(ZoneId.of(zoneId))).toString
-    case _ => null
-  }
+class ModelMatrixFeaturizationException(errors: Seq[FeaturizationError])
+  extends RuntimeException(s"Failed to run featurization. Bad features: [${errors.map(e => e.feature).mkString(", ")}]")
 
-  private val hourOfDay: (java.lang.Long, String) => java.lang.Integer = {
-    case (ts, zoneId) if ts != null =>
-      Instant.ofEpochMilli(ts).atZone(ZoneId.of(zoneId)).get(ChronoField.HOUR_OF_DAY)
-    case _ => null
-  }
+class ModelMatrixFeatureTransformationException(errors: Seq[(ModelDefinitionFeature, FeatureTransformationError)])
+  extends RuntimeException(s"Failed to run transformation. Bad features [${errors.map(_._1.feature).mkString(", ")}]")
 
-  private val nvlString: (String, String) => String = {
-    case (s, default) if s == null => default
-    case (s, _) => s
-  }
-
-  private val nvl: (java.lang.Double, java.lang.Double) => java.lang.Double = {
-    case (d, default) if d == null => default
-    case (d, _) => d
-  }
-
-  private val log: java.lang.Double => java.lang.Double = {
-    case d if d != null => math.log(d).asInstanceOf[java.lang.Double]
-    case _ => null
-  }
-
-  private val greatest: (java.lang.Double, java.lang.Double) => java.lang.Double = {
-    case (l, r) if l != null && r != null =>
-      math.max(l, r).asInstanceOf[java.lang.Double]
-    case _ => null
-  }
-
-  private def registerUDF(udf: UDFRegistration): Unit = {
-    udf.register("strToEpochMilli", strToEpochMilli)
-    udf.register("concat", concat)
-    udf.register("day_of_week", dayOfWeek)
-    udf.register("hour_of_day", hourOfDay)
-    udf.register("nvl_str", nvlString)
-    udf.register("nvl", nvl)
-    udf.register("log", log)
-    udf.register("greatest", greatest)
-  }
+object ModelMatrix extends ModelMatrixUDF {
 
   def sqlContext(sc: SparkContext): SQLContext = {
     val sqlContext = new SQLContext(sc)
@@ -73,6 +42,188 @@ object ModelMatrix {
     val sqlContext = new HiveContext(sc)
     registerUDF(sqlContext.udf)
     sqlContext
+  }
+
+  trait ModelMatrixCatalogAccess {
+    protected val driver: JdbcProfile
+
+    import driver.api._
+
+    protected val db: Database
+
+    protected def modelDefinitions: ModelDefinitions
+    protected def modelDefinitionFeatures: ModelDefinitionFeatures
+    protected def modelInstances: ModelInstances
+    protected def modelInstanceFeatures: ModelInstanceFeatures
+
+    protected def blockOn[T](f: Future[T], duration: FiniteDuration = 10.seconds) = {
+      Await.result(f, duration)
+    }
+
+    protected implicit val catalogExecutionContext: ExecutionContext @@ ModelMatrixCatalog =
+      Tag[ExecutionContext, ModelMatrixCatalog](ExecutionContext.fromExecutor(
+        Executors.newFixedThreadPool(10, threadFactory("catalog-db-pool", daemon = true)))
+      )
+
+    private def threadFactory(prefix: String, daemon: Boolean) =
+      new ThreadFactoryBuilder().
+        setDaemon(daemon).
+        setNameFormat(s"$prefix-%d").
+        build()
+  }
+
+  trait PostgresModelMatrixCatalog extends ModelMatrixCatalogAccess {
+
+    protected val driver = slick.driver.PostgresDriver
+    import driver.api._
+
+    private val dbName: String = "modelmatrix.catalog.db"
+    private val dbConfig: Config = ConfigFactory.load()
+
+    protected lazy val db = Database.forConfig(dbName, dbConfig)
+    protected lazy val catalog = new ModelMatrixCatalog(PostgresDriver)
+
+    protected lazy val modelDefinitions = new ModelDefinitions(catalog)
+    protected lazy val modelDefinitionFeatures = new ModelDefinitionFeatures(catalog)
+
+    protected lazy val modelInstances = new ModelInstances(catalog)
+    protected lazy val modelInstanceFeatures = new ModelInstanceFeatures(catalog)
+  }
+
+}
+
+/**
+ * Model Matrix class that hides database interaction and provides
+ * higher level API
+ *
+ * @param sc Spark Context
+ */
+class ModelMatrix(sc: SparkContext) extends PostgresModelMatrixCatalog with Transformers with TransformationProcess {
+  private val log = LoggerFactory.getLogger(classOf[ModelMatrix])
+
+  private implicit val sqlContext = ModelMatrix.hiveContext(sc)
+
+  /**
+   * Get Model Matrix instance transformations for given model instance id
+   *
+   * @param modelInstanceId model instance id
+   * @return model instance features
+   */
+  def instanceTransformations(modelInstanceId: Int): Seq[ModelInstanceFeature] = {
+    blockOn(db.run(modelInstanceFeatures.features(modelInstanceId)))
+  }
+
+  /**
+   * Apply model instance transformations to data frame
+   *
+   * @param modelInstanceId model instance id
+   * @param df data frame
+   * @param labeling row labeling
+   * @return RDD of featurized vectors
+   */
+  def featurize[L](modelInstanceId: Int, df: DataFrame, labeling: Labeling[L]): RDD[(L, Vector)] = {
+
+    log.info(s"Featurization data frame using Model Matrix instance: $modelInstanceId")
+
+    val features = blockOn(db.run(modelInstanceFeatures.features(modelInstanceId)))
+    require(features.nonEmpty, s"No features are defined for model instance: $modelInstanceId. " +
+      s"Ensure that this model instance exists")
+
+    featurize(features, df, labeling)
+  }
+
+  /**
+   * Apply model instance transformations to data frame
+   *
+   * @param features model instance features
+   * @param df data frame
+   * @param labeling row labeling
+   * @return RDD of featurized vectors
+   */
+  def featurize[L](features: Seq[ModelInstanceFeature], df: DataFrame, labeling: Labeling[L]): RDD[(L, Vector)] = {
+
+    require(features.nonEmpty, s"Can't do featurization without features")
+
+    val featurization = new Featurization(features)
+
+    Transformer.extractFeatures(df, features.map(_.feature), labeling) match {
+      // Feature extraction failed
+      case -\/(extractionErrors) =>
+        extractionErrors.foreach { err =>
+          log.error(s"Feature extraction error: ${err.feature.feature}. Error: ${err.error.getMessage}")
+        }
+        throw new ModelMatrixFeatureExtractionException(extractionErrors)
+
+      // Featurization schema is not compatible
+      case \/-(extracted) if featurization.validateLabeled(extracted).exists(_.isLeft) =>
+        val errors = featurization.validateLabeled(extracted).collect { case -\/(err) => err }
+        errors.foreach { err =>
+          log.error(s"Featurization error: ${err.errorMessage}")
+        }
+        throw new ModelMatrixFeaturizationException(errors)
+
+      // All good, let's do featurization
+      case \/-(extracted) => featurization.featurize(extracted, labeling)
+    }
+  }
+
+  /**
+   * Create Model Matrix instance
+   *
+   * @param modelDefinitionId model matrix definition id
+   * @param df                data frame
+   * @param name              instance id
+   * @param comment           instance comment
+   * @param concurrencyLevel  number of concurrent transformation calculations
+   * @return                  model matrix instance id
+   */
+  def createModelMatrixInstance(
+    modelDefinitionId: Int,
+    df: DataFrame,
+    name: Option[String],
+    comment: Option[String],
+    concurrencyLevel: Int
+  ): Int = {
+
+    log.info(s"Create new Model Matrix instance for definition: $modelDefinitionId. " +
+      s"Name: $name. Comment: $comment. Concurrency: $concurrencyLevel")
+
+    val features = blockOn(db.run(modelDefinitionFeatures.features(modelDefinitionId)))
+      .filter(_.feature.active == true)
+
+    log.debug(s"Found ${features.size} model features for definition: $modelDefinitionId")
+
+    require(features.nonEmpty, s"No active features are defined for model definition: $modelDefinitionId. " +
+      s"Ensure that this model definition exists")
+
+    Transformer.extractFeatures(df, features.map(_.feature)) match {
+      // Feature extraction failed
+      case -\/(extractionErrors) =>
+        extractionErrors.foreach { err =>
+          log.error(s"Feature extraction error: ${err.feature.feature}. Error: ${err.error.getMessage}")
+        }
+        throw new ModelMatrixFeatureExtractionException(extractionErrors)
+
+      // Features extracted, time to transform them!
+      case \/-(extracted) =>
+        implicit val transformers = new Transformers(extracted)
+
+        val validate = features.map(mdf => mdf -> transformers.validate(mdf.feature))
+
+        val featureErrors = validate.collect { case (mdf, -\/(error)) => mdf -> error }
+        val typedFeatures = validate.collect { case (mdf, \/-(typed)) => mdf -> typed }
+
+        // Oops, some schema problem
+        if (featureErrors.nonEmpty) {
+          featureErrors.foreach { err =>
+            log.error(s"Feature transformation error: ${err._1.feature}. Error: ${err._2.errorMessage}")
+          }
+          throw new ModelMatrixFeatureTransformationException(featureErrors)
+        }
+
+        val modelMatrixTransformation = computeModelMatrixTransformation(typedFeatures, concurrencyLevel).run
+        modelMatrixTransformation.save(name, comment)
+    }
   }
 
 }
