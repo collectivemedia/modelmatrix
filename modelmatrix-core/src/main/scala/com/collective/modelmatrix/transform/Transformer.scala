@@ -3,7 +3,7 @@ package com.collective.modelmatrix.transform
 import java.nio.ByteBuffer
 
 import com.collective.modelmatrix.CategorialColumn.CategorialValue
-import com.collective.modelmatrix.{CategorialColumn, ModelFeature}
+import com.collective.modelmatrix.{Labeling, CategorialColumn, ModelFeature}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types._
 import scodec.bits.ByteVector
@@ -48,11 +48,18 @@ object Transformer {
   case class FeatureExtractionError(feature: ModelFeature, error: Throwable)
 
   /**
-   * Marker for DataFrame with applied extract expressions
+   * Marker for DataFrame with feature columns only
    */
   trait Features
 
   type FeaturesDataFrame = DataFrame  @@ Features
+
+  /**
+   * Marker for DataFrame with labeling columns
+   */
+  trait LabeledFeatures[L]
+
+  type LabeledFeaturesDataFrame[L] = DataFrame  @@ LabeledFeatures[L]
 
   private def tryExtract(df: DataFrame, features: Seq[ModelFeature]): (Seq[FeatureExtractionError], Seq[String]) = {
     val tryExtract = features map { case feature =>
@@ -74,21 +81,42 @@ object Transformer {
    *
    * @param df       input data frame
    * @param features model features
-   * @param columns  additional columns to select from input data frame
    *
-   * @return Extract features with additional columns
+   * @return Extracted features
    */
   def extractFeatures(
     df: DataFrame,
-    features: Seq[ModelFeature],
-    columns: String*
+    features: Seq[ModelFeature]
   ): Seq[FeatureExtractionError] \/ FeaturesDataFrame= {
     val (errors, expressions) = tryExtract(df, features)
     if (errors.nonEmpty) {
       \/.left(errors)
     } else {
-      val extracted = df.selectExpr(expressions ++ columns: _*)
+      val extracted = df.selectExpr(expressions: _*)
       \/.right(scalaz.Tag[DataFrame, Features](extracted))
+    }
+  }
+
+  /**
+   * Extract model features. Validates feature extract expression correctness.
+   *
+   * @param df       input data frame
+   * @param features model features
+   * @param labeling labeling used to select additional columns
+   *
+   * @return Extracted features with additional labeling columns
+   */
+  def extractFeatures[L](
+    df: DataFrame,
+    features: Seq[ModelFeature],
+    labeling: Labeling[L]
+  ): Seq[FeatureExtractionError] \/ LabeledFeaturesDataFrame[L]= {
+    val (errors, expressions) = tryExtract(df, features)
+    if (errors.nonEmpty) {
+      \/.left(errors)
+    } else {
+      val extracted = df.selectExpr(expressions ++ labeling.expressions: _*)
+      \/.right(scalaz.Tag[DataFrame, LabeledFeatures[L]](extracted))
     }
   }
 
@@ -108,19 +136,19 @@ abstract class CategorialTransformer(features: DataFrame @@ Transformer.Features
     value: Value
   ): CategorialValue = value match {
     case Value(s: Short, cnt) if extractType == ShortType =>
-      val bb = ByteBuffer.allocate(2).putShort(s)
+      val bb = ByteBuffer.allocate(2).putShort(s).array()
       CategorialValue(previousColumnId + 1, s.toString, ByteVector(bb), cnt, previousCumCnt + cnt)
 
     case Value(i: Int, cnt) if extractType == IntegerType =>
-      val bb = ByteBuffer.allocate(4).putInt(i)
+      val bb = ByteBuffer.allocate(4).putInt(i).array()
       CategorialValue(previousColumnId + 1, i.toString, ByteVector(bb), cnt, previousCumCnt + cnt)
 
     case Value(l: Long, cnt) if extractType == LongType =>
-      val bb = ByteBuffer.allocate(8).putLong(l)
+      val bb = ByteBuffer.allocate(8).putLong(l).array()
       CategorialValue(previousColumnId + 1, l.toString, ByteVector(bb), cnt, previousCumCnt + cnt)
 
     case Value(d: Double, cnt) if extractType == DoubleType =>
-      val bb = ByteBuffer.allocate(8).putDouble(d)
+      val bb = ByteBuffer.allocate(8).putDouble(d).array()
       CategorialValue(previousColumnId + 1, d.toString, ByteVector(bb), cnt, previousCumCnt + cnt)
 
     case Value(s: String, cnt) if extractType == StringType =>

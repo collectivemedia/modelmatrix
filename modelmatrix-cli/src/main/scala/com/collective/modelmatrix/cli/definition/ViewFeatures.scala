@@ -1,15 +1,12 @@
 package com.collective.modelmatrix.cli.definition
 
-import com.collective.modelmatrix.catalog.ModelMatrixCatalog
-import com.collective.modelmatrix.cli.{CliModelCatalog, Script}
+import com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog
+import com.collective.modelmatrix.cli.Script
 import org.slf4j.LoggerFactory
-
-import scala.concurrent.ExecutionContext
-import scalaz._
 
 case class ViewFeatures(
   modelDefinitionId: Int
-)(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) extends Script with CliModelCatalog {
+) extends Script with PostgresModelMatrixCatalog {
 
   private val log = LoggerFactory.getLogger(classOf[ViewFeatures])
 

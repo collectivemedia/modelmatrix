@@ -159,7 +159,7 @@ object ASCIITableFormats {
         column match {
           case lower: BinColumn.LowerBin => s"(-Inf, ${lower.high})"
           case upper: BinColumn.UpperBin => s"[${upper.low}, +Inf)"
-          case value: BinColumn.BinValue => s"[${value.low}, ${value.high})}"
+          case value: BinColumn.BinValue => s"[${value.low}, ${value.high})"
         },
         column.count.toString,
         column.sampleSize.toString

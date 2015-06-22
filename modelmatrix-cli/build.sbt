@@ -29,3 +29,15 @@ mappings in Universal := {
 
 // the bash scripts classpath only needs the fat jar
 scriptClasspath := Seq( (assemblyJarName in assembly).value )
+
+// Configure MMC Schema migrations
+
+flywayUrl := "jdbc:postgresql://localhost/modelmatrix"
+
+flywayUser := "modelmatrix"
+
+flywayPassword := "modelmatrix"
+
+flywayTable := "mmc_schema_version"
+
+flywaySqlMigrationPrefix := "v"

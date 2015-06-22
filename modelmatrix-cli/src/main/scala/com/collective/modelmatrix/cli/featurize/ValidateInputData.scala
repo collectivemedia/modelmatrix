@@ -1,19 +1,18 @@
 package com.collective.modelmatrix.cli.featurize
 
-import com.collective.modelmatrix.catalog.ModelMatrixCatalog
-import com.collective.modelmatrix.cli.{CliModelCatalog, CliSparkContext, Script, Source}
+import com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog
+import com.collective.modelmatrix.cli.{CliSparkContext, Script, Source}
 import com.collective.modelmatrix.transform.Transformer
 import com.collective.modelmatrix.{Featurization, ModelMatrix}
 import org.slf4j.LoggerFactory
 
-import scala.concurrent.ExecutionContext
 import scalaz._
 
 case class ValidateInputData(
   modelInstanceId: Int,
   source: Source,
   cacheSource: Boolean
-)(implicit val ec: ExecutionContext @@ ModelMatrixCatalog) extends Script with CliModelCatalog with CliSparkContext {
+) extends Script with PostgresModelMatrixCatalog with CliSparkContext {
 
   private val log = LoggerFactory.getLogger(classOf[ValidateInputData])
 
