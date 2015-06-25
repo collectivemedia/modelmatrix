@@ -42,4 +42,7 @@ object Dependencies {
     , flyway
     )
 
+  val modelmatrixUdf =
+    Seq()
+
 }

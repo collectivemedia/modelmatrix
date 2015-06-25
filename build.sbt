@@ -73,8 +73,12 @@ lazy val root = Project("modelmatrix", file(".")).
 
 lazy val modelmatrixCore =
   ModelMatrixProject("modelmatrix-core")
+    .dependsOn(modelmatrixUdf)
 
 lazy val modelmatrixCli =
   ModelMatrixProject("modelmatrix-cli")
     .dependsOn(modelmatrixCore)
     .settings(flywaySettings: _*)
+
+lazy val modelmatrixUdf =
+  ModelMatrixProject("modelmatrix-udf")
