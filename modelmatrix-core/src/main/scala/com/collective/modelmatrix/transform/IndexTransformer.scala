@@ -57,7 +57,7 @@ class IndexTransformer(input: DataFrame @@ Transformer.Features) extends Categor
     }
     val topSupportValues = supportValues.sortBy(_.count)(implicitly[Ordering[Long]].reverse)
 
-    log.debug(s"Collected support values: ${supportValues.size}")
+    log.debug(s"Collected '$f' support values: ${supportValues.size}")
 
     // Transform categorial values
     val valueColumns = topSupportValues.foldLeft(Scan()) {

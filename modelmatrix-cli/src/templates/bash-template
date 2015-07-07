@@ -63,10 +63,16 @@ if [[ "$SPARK_MASTER" == "yarn-client" ]]; then
 
     $SPARK_HOME/bin/spark-submit \
     --master $SPARK_MASTER \
-    --num-executors 5 \
-    --executor-memory 10g \
+    --num-executors 10 \
+    --executor-memory 12g \
     --executor-cores 6 \
-    --driver-memory 6g \
+    --driver-memory 8g \
+    --conf spark.storage.memoryFraction=0.6 \
+    --conf spark.yarn.executor.memoryOverhead=2000 \
+    --conf spark.sql.autoBroadcastJoinThreshold=300000000 \
+    --conf spark.serializer=org.apache.spark.serializer.KryoSerializer \
+    --conf spark.speculation=true \
+    --conf spark.rdd.compress=true \
     --driver-java-options "-Dlog4j.configuration=file:${app_home}/../conf/log4j.properties -Dconfig.file=${app_home}/../conf/application.conf" \
     --class com.collective.modelmatrix.cli.ModelMatrixCli \
     ${app_home}/../lib/model-matrix-cli.jar ${1+"$@"}
@@ -78,7 +84,7 @@ else
     $SPARK_HOME/bin/spark-submit \
     --master $SPARK_MASTER \
     --conf spark.io.compression.codec=lzf \
-    --driver-memory 6g \
+    --driver-memory 8g \
     --driver-java-options "-DXmx=6g -Dlog4j.configuration=file:${app_home}/../conf/log4j.properties -Dconfig.file=${app_home}/../conf/application.conf" \
     --class com.collective.modelmatrix.cli.ModelMatrixCli \
     ${app_home}/../lib/model-matrix-cli.jar ${1+"$@"}
