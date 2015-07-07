@@ -16,8 +16,9 @@ case class SparseFeaturization(
   source: Source,
   sink: Sink,
   idColumn: String,
+  repartitionSource: Option[Int],
   cacheSource: Boolean
-) extends Script with PostgresModelMatrixCatalog with CliSparkContext {
+) extends Script with SourceTransformation with PostgresModelMatrixCatalog with CliSparkContext {
 
   private val log = LoggerFactory.getLogger(classOf[ValidateInputData])
 
@@ -45,7 +46,7 @@ case class SparseFeaturization(
 
     val featurization = new Featurization(features)
 
-    val df = if (cacheSource) source.asDataFrame.cache() else source.asDataFrame
+    val df = toDataFrame(source)
 
     val idLabeling = Labeling(idColumn, identity[Any])
 

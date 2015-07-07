@@ -11,8 +11,9 @@ import scalaz._
 case class ValidateInputData(
   modelDefinitionId: Int,
   source: Source,
+  repartitionSource: Option[Int],
   cacheSource: Boolean
-) extends Script with PostgresModelMatrixCatalog with CliSparkContext with Transformers {
+) extends Script with SourceTransformation with PostgresModelMatrixCatalog with CliSparkContext with Transformers {
 
   private val log = LoggerFactory.getLogger(classOf[ValidateInputData])
 
@@ -30,7 +31,8 @@ case class ValidateInputData(
     require(features.nonEmpty, s"No active features are defined for model definition: $modelDefinitionId. " +
       s"Ensure that this model definition exists")
 
-    val df = if (cacheSource) source.asDataFrame.cache() else source.asDataFrame
+    val df = toDataFrame(source)
+
     Transformer.extractFeatures(df, features.map(_.feature)) match {
       // One of extract expressions failed
       case -\/(extractionErrors) =>
