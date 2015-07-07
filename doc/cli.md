@@ -110,7 +110,8 @@ Check that input data compatible with model definition and can be used to build 
 | -------------- | ----------------------------- | --------------------------------------------------|
 | n, name        | -n "v123"                     | matrix model instance name                        |
 | c, comment     | -c "test on new data"         | matrix model instance comment                     |
-| t, concurrency | -t 10                         | number of concurrent transformations (Spark jobs) |
+| concurrency    | --concurrency 10              | number of concurrent transformations (Spark jobs) |
+| cache          | --cache true                  | cache source table                                |
     
 ### Examples    
 
@@ -124,6 +125,7 @@ Check that input data compatible with model definition and can be used to build 
           --name "2015-05-05" \
           --comment "latest clicks model" \
           --concurrency 10 \
+          --cache true \
           --definition-id 1 \
           --source hive://mm.clicks_2015_05_05
     
