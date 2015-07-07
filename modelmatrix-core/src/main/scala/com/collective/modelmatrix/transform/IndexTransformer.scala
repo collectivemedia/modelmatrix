@@ -38,31 +38,38 @@ class IndexTransformer(input: DataFrame @@ Transformer.Features) extends Categor
       s"All other: $allOther. " +
       s"Extract type: ${feature.extractType}")
 
-    // Group and count by extract value
     val df = scalaz.Tag.unwrap(input)
-    val values: Seq[Value] = df.filter(df(f).isNotNull).groupBy(f).count().collect().toSeq.map { row =>
+
+    import org.apache.spark.sql.functions._
+
+    // Group and count by extract value
+    val grouped: DataFrame = df.filter(df(f).isNotNull).groupBy(f).count()
+
+    // Get support threshold
+    val totalCount = grouped.sumOf("count")
+    val threshold = (support / 100) * totalCount
+
+    // Collect only support values
+    val supportValues: Seq[Value] = grouped.filter(col("count") > threshold).collect().toSeq.map { row =>
       val value = row.get(0)
       val cnt = row.getLong(1)
       Value(value, cnt)
     }
+    val topSupportValues = supportValues.sortBy(_.count)(implicitly[Ordering[Long]].reverse)
 
-    log.debug(s"Collected support values: ${values.size}")
-
-    val topValues = values.sortBy(_.count)(implicitly[Ordering[Long]].reverse)
-
-    // Get support threshold
-    val threshold = (support / 100) * topValues.map(_.count).sum
+    log.debug(s"Collected support values: ${supportValues.size}")
 
     // Transform categorial values
-    val valueColumns = topValues.filter(_.count > threshold).foldLeft(Scan()) {
+    val valueColumns = topSupportValues.foldLeft(Scan()) {
       case (state@Scan(columnId, cumulativeCnt, columns), value) =>
         val column = valueColumn(feature.extractType)(columnId, cumulativeCnt, value)
         Scan(column.columnId, column.cumulativeCount, columns :+ column)
     }
 
-    // Get all other columns if required
+    // Get all other column if required
     val allOtherColumns = if (allOther && support < 100.0) {
-      val allOtherCnt = topValues.filter(_.count <= threshold).map(_.count).sum
+      // Count for values that are not in support set
+      val allOtherCnt = grouped.filter(col("count") <= threshold).sumOf("count")
       Seq(AllOther(valueColumns.columnId + 1, allOtherCnt, valueColumns.cumulativeCnt + allOtherCnt))
     } else Seq.empty
 

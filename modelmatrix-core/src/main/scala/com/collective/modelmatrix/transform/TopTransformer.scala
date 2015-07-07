@@ -40,17 +40,20 @@ class TopTransformer(input: DataFrame @@ Transformer.Features) extends Categoria
 
     // Group and count by extract value
     val df = scalaz.Tag.unwrap(input)
-    val values: Seq[Value] = df.filter(df(f).isNotNull).groupBy(f).count().collect().toSeq.map { row =>
+
+    val grouped: DataFrame = df.filter(df(f).isNotNull).groupBy(f).count()
+
+    val featureValues: Seq[Value] = grouped.collect().toSeq.map { row =>
       val value = row.get(0)
       val cnt = row.getLong(1)
       Value(value, cnt)
     }
 
-    log.debug(s"Collected cover values: ${values.size}")
+    log.debug(s"Collected '$f' values: ${featureValues.size}")
 
-    val topValues = values.sortBy(_.count)(implicitly[Ordering[Long]].reverse)
+    val topValues = featureValues.sortBy(_.count)(implicitly[Ordering[Long]].reverse)
 
-   // Get number of columns below cover threshold
+    // Get number of columns below cover threshold
     val threshold = (cover / 100) * topValues.map(_.count).sum
     val columnsBelowThreshold = topValues.map(_.count).scanLeft(0L)((cum, cnt) => cum + cnt).takeWhile(_ < threshold).size
 
