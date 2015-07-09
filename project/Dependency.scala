@@ -11,6 +11,7 @@ object Dependency {
     val Scopt              = "3.3.0"
     val ScodecBits         = "1.0.6"
     val Flyway             = "3.2.1"
+    val Argonaut           = "6.1-M4"
     val Guava              = "14.0.1" // match to Spark Guava version
 
     // Spark
@@ -40,6 +41,7 @@ object Dependency {
   val scopt               = "com.github.scopt"          %% "scopt"                       % V.Scopt
   val scodecBits          = "org.scodec"                %% "scodec-bits"                 % V.ScodecBits
   val flyway              = "org.flywaydb"               % "flyway-core"                 % V.Flyway
+  val argonaut            = "io.argonaut"               %% "argonaut"                    % V.Argonaut
   val guava               = "com.google.guava"           % "guava"                       % V.Guava force()
 
   // Database

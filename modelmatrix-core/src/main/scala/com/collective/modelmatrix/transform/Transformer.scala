@@ -1,12 +1,9 @@
 package com.collective.modelmatrix.transform
 
-import java.nio.ByteBuffer
-
 import com.collective.modelmatrix.CategorialColumn.CategorialValue
-import com.collective.modelmatrix.{Labeling, CategorialColumn, ModelFeature}
+import com.collective.modelmatrix.{ModelMatrixEncoding, Labeling, CategorialColumn, ModelFeature}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types._
-import scodec.bits.ByteVector
 
 import scala.util.{Success, Failure, Try}
 import scalaz.{\/-, -\/, @@, \/}
@@ -136,23 +133,19 @@ abstract class CategorialTransformer(features: DataFrame @@ Transformer.Features
     value: Value
   ): CategorialValue = value match {
     case Value(s: Short, cnt) if extractType == ShortType =>
-      val bb = ByteBuffer.allocate(2).putShort(s).array()
-      CategorialValue(previousColumnId + 1, s.toString, ByteVector(bb), cnt, previousCumCnt + cnt)
+      CategorialValue(previousColumnId + 1, s.toString, ModelMatrixEncoding.encode(s), cnt, previousCumCnt + cnt)
 
     case Value(i: Int, cnt) if extractType == IntegerType =>
-      val bb = ByteBuffer.allocate(4).putInt(i).array()
-      CategorialValue(previousColumnId + 1, i.toString, ByteVector(bb), cnt, previousCumCnt + cnt)
+      CategorialValue(previousColumnId + 1, i.toString, ModelMatrixEncoding.encode(i), cnt, previousCumCnt + cnt)
 
     case Value(l: Long, cnt) if extractType == LongType =>
-      val bb = ByteBuffer.allocate(8).putLong(l).array()
-      CategorialValue(previousColumnId + 1, l.toString, ByteVector(bb), cnt, previousCumCnt + cnt)
+      CategorialValue(previousColumnId + 1, l.toString, ModelMatrixEncoding.encode(l), cnt, previousCumCnt + cnt)
 
     case Value(d: Double, cnt) if extractType == DoubleType =>
-      val bb = ByteBuffer.allocate(8).putDouble(d).array()
-      CategorialValue(previousColumnId + 1, d.toString, ByteVector(bb), cnt, previousCumCnt + cnt)
+      CategorialValue(previousColumnId + 1, d.toString, ModelMatrixEncoding.encode(d), cnt, previousCumCnt + cnt)
 
     case Value(s: String, cnt) if extractType == StringType =>
-      CategorialValue(previousColumnId + 1, s.toString, ByteVector(s.getBytes), cnt, previousCumCnt + cnt)
+      CategorialValue(previousColumnId + 1, s.toString, ModelMatrixEncoding.encode(s), cnt, previousCumCnt + cnt)
 
     case Value(v, cnt) =>
       sys.error(s"Unsupported value: $v. Class of: ${v.getClass}. Extract type: $extractType")

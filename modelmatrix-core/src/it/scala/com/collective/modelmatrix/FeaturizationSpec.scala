@@ -1,7 +1,5 @@
 package com.collective.modelmatrix
 
-import java.nio.ByteBuffer
-
 import com.collective.modelmatrix.FeaturizationError.FeatureColumnTypeDoesNotMatch
 import com.collective.modelmatrix.catalog.{ModelInstanceIdentityFeature, ModelInstanceIndexFeature, ModelInstanceTopFeature}
 import com.collective.modelmatrix.transform.{Identity, Index, Top, Transformer}
@@ -9,7 +7,6 @@ import org.apache.spark.mllib.linalg.SparseVector
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.scalatest.{FlatSpec, GivenWhenThen}
-import scodec.bits.ByteVector
 
 import scalaz.{-\/, \/, \/-}
 
@@ -48,21 +45,21 @@ class FeaturizationSpec extends FlatSpec with GivenWhenThen with TestSparkContex
   val adPriceInstance = ModelInstanceIdentityFeature(1, modelInstanceId, adPrice, DoubleType, 1)
 
   val adTypeInstance = ModelInstanceTopFeature(2, modelInstanceId, adType, IntegerType, Seq(
-    CategorialColumn.CategorialValue(2, "1", ByteVector(ByteBuffer.allocate(4).putInt(1).array()), 100, 100),
-    CategorialColumn.CategorialValue(3, "2", ByteVector(ByteBuffer.allocate(4).putInt(2).array()), 100, 200),
+    CategorialColumn.CategorialValue(2, "1", ModelMatrixEncoding.encode(1), 100, 100),
+    CategorialColumn.CategorialValue(3, "2", ModelMatrixEncoding.encode(2), 100, 200),
     CategorialColumn.AllOther(4, 200, 400)
   ))
 
   val adSiteInstance = ModelInstanceIndexFeature(3, modelInstanceId, adSite, StringType, Seq(
-    CategorialColumn.CategorialValue(5, "cnn.com", ByteVector("cnn.com".getBytes), 100, 100),
-    CategorialColumn.CategorialValue(6, "bbc.com", ByteVector("bbc.com".getBytes), 100, 200)
+    CategorialColumn.CategorialValue(5, "cnn.com", ModelMatrixEncoding.encode("cnn.com"), 100, 100),
+    CategorialColumn.CategorialValue(6, "bbc.com", ModelMatrixEncoding.encode("bbc.com"), 100, 200)
   ))
 
   val adStrategyInstance = ModelInstanceTopFeature(4, modelInstanceId, adStrategy, LongType, Seq(
-    CategorialColumn.CategorialValue(7, "1", ByteVector(ByteBuffer.allocate(8).putLong(1L).array()), 100, 100),
-    CategorialColumn.CategorialValue(8, "2", ByteVector(ByteBuffer.allocate(8).putLong(2L).array()), 100, 200),
-    CategorialColumn.CategorialValue(9, "3", ByteVector(ByteBuffer.allocate(8).putLong(3L).array()), 100, 200),
-    CategorialColumn.CategorialValue(10, "4", ByteVector(ByteBuffer.allocate(8).putLong(4L).array()), 100, 200)
+    CategorialColumn.CategorialValue(7, "1", ModelMatrixEncoding.encode(1L), 100, 100),
+    CategorialColumn.CategorialValue(8, "2", ModelMatrixEncoding.encode(2L), 100, 200),
+    CategorialColumn.CategorialValue(9, "3", ModelMatrixEncoding.encode(3L), 100, 200),
+    CategorialColumn.CategorialValue(10, "4", ModelMatrixEncoding.encode(4L), 100, 200)
   ))
 
   val totalColumns = 10

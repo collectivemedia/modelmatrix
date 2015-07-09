@@ -11,7 +11,6 @@ import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.{Column, DataFrame, Row}
 import org.slf4j.LoggerFactory
-import scodec.bits.ByteVector
 
 import scalaz._
 import scalaz.syntax.either._
@@ -188,11 +187,11 @@ class Featurization(features: Seq[ModelInstanceFeature]) extends Serializable {
 
     // Get byte representation of extracted feature
     val byteVector = extractType match {
-      case ShortType => ByteVector(ByteBuffer.allocate(2).putShort(row.getShort(idx)).array())
-      case IntegerType => ByteVector(ByteBuffer.allocate(4).putInt(row.getInt(idx)).array())
-      case LongType => ByteVector(ByteBuffer.allocate(8).putLong(row.getLong(idx)).array())
-      case DoubleType => ByteVector(ByteBuffer.allocate(8).putDouble(row.getDouble(idx)).array())
-      case StringType => ByteVector(row.getString(idx).getBytes)
+      case ShortType => ModelMatrixEncoding.encode(row.getShort(idx))
+      case IntegerType => ModelMatrixEncoding.encode(row.getInt(idx))
+      case LongType => ModelMatrixEncoding.encode(row.getLong(idx))
+      case DoubleType => ModelMatrixEncoding.encode(row.getDouble(idx))
+      case StringType => ModelMatrixEncoding.encode(row.getString(idx))
       case tpe => sys.error(s"Unsupported categorial extract type: $tpe. Feature: ${feature.feature}. Columns: ${columns.size}")
     }
 

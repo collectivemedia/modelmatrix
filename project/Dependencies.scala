@@ -43,6 +43,6 @@ object Dependencies {
     )
 
   val modelmatrixUdf =
-    Seq()
+    Seq(scodecBits)
 
 }
