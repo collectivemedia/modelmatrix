@@ -1,9 +1,7 @@
 package com.collective.modelmatrix.cli
 
+import org.apache.spark.sql.{SQLContext, DataFrame}
 import scopt.OptionParser
-
-import scala.concurrent.duration.{FiniteDuration, _}
-import scala.concurrent.{Await, Future}
 
 
 trait Script {
@@ -19,5 +17,20 @@ object Script {
     def run(): Unit = {
       parser.showUsageAsError
     }
+  }
+}
+
+trait SourceTransformation { self: Script =>
+
+  def repartitionSource: Option[Int]
+  def cacheSource: Boolean
+
+  private type TransformSource = DataFrame => DataFrame
+
+  private val cache: TransformSource = df => if (cacheSource) df.cache() else df
+  private val repartition: TransformSource = df => repartitionSource.map(df.repartition).getOrElse(df)
+
+  protected def toDataFrame(source: Source)(implicit sqlContext: SQLContext): DataFrame = {
+    (repartition andThen cache)(source.asDataFrame)
   }
 }

@@ -76,7 +76,7 @@ trait TransformationProcess {
 
         val insert = for {
           modelInstanceId <- addModelInstance
-          featureId <- DBIO.sequence(commands.map {
+          featureId <- DBIO.sequence(commands.sortBy(_._1.id /* save features ordered by definition id */).map {
             case (ModelDefinitionFeature(featureDefinitionId, _, _), AddIdentityFeature(extractType)) =>
               columnId += 1
               modelInstanceFeatures.addIdentityFeature(modelInstanceId, featureDefinitionId, extractType, columnId)

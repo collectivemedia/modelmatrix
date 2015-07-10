@@ -17,6 +17,7 @@ object ModelMatrixCli extends App with TurnedOffParquetLogging {
   private val defaultMMFeatures = "features"
   private val defaultMMName: Option[String] = None
   private val defaultMMComment: Option[String] = None
+  private val defaultSourceRepartition: Option[Int] = None
   private val defaultSourceCache: Boolean = false
 
   private val defaultIdColumn = "id"
@@ -132,10 +133,12 @@ object ModelMatrixCli extends App with TurnedOffParquetLogging {
       ),
 
       cmd("validate").text("validate model matrix definition against input data")
-        .action((_, _) => instance.ValidateInputData(0, NoSource, defaultSourceCache))
+        .action((_, _) => instance.ValidateInputData(0, NoSource, defaultSourceRepartition, defaultSourceCache))
         .children(
           opt[Boolean]("cache").optional().text("cache source data frame")
             .action { (c, s) => s.asInstanceOf[instance.ValidateInputData].copy(cacheSource = c) },
+          opt[Int]("repartition").optional().text("repartition source data frame")
+            .action { (n, s) => s.asInstanceOf[instance.ValidateInputData].copy(repartitionSource = Some(n)) },
           opt[Int]("definition-id").required().text("model matrix definition id")
             .action { (id, s) => s.as[instance.ValidateInputData].copy(id) },
           opt[String]("source").required().text("input data source")
@@ -150,6 +153,7 @@ object ModelMatrixCli extends App with TurnedOffParquetLogging {
         defaultMMName,
         defaultMMComment,
         10,
+        defaultSourceRepartition,
         defaultSourceCache)
         )
         .children(
@@ -161,6 +165,8 @@ object ModelMatrixCli extends App with TurnedOffParquetLogging {
             .action { (c, s) => s.as[instance.AddInstance].copy(concurrencyLevel = c) },
           opt[Boolean]("cache").optional().text("cache source data frame")
             .action { (c, s) => s.asInstanceOf[instance.AddInstance].copy(cacheSource = c) },
+          opt[Int]("repartition").optional().text("repartition source data frame")
+            .action { (n, s) => s.asInstanceOf[instance.AddInstance].copy(repartitionSource = Some(n)) },
           opt[Int]("definition-id").required().text("model matrix definition id")
             .action { (id, s) => s.as[instance.AddInstance].copy(id) },
           opt[String]("source").required().text("input data source")
@@ -176,10 +182,12 @@ object ModelMatrixCli extends App with TurnedOffParquetLogging {
     cmd("featurize").text("featurize input data with model matrix instance:").children(
 
       cmd("validate").text("validate input data against model matrix instance")
-        .action((_, _) => featurize.ValidateInputData(0, NoSource, defaultSourceCache))
+        .action((_, _) => featurize.ValidateInputData(0, NoSource, defaultSourceRepartition, defaultSourceCache))
         .children(
           opt[Boolean]("cache").optional().text("cache source data frame")
             .action { (c, s) => s.asInstanceOf[featurize.ValidateInputData].copy(cacheSource = c) },
+          opt[Int]("repartition").optional().text("repartition source data frame")
+            .action { (n, s) => s.asInstanceOf[featurize.ValidateInputData].copy(repartitionSource = Some(n)) },
           opt[Int]("instance-id").required().text("model matrix instance id")
             .action { (id, s) => s.as[featurize.ValidateInputData].copy(id) },
           opt[String]("source").required().text("input data source")
@@ -193,11 +201,14 @@ object ModelMatrixCli extends App with TurnedOffParquetLogging {
         NoSource,
         NoSink,
         defaultIdColumn,
+        defaultSourceRepartition,
         defaultSourceCache)
         )
         .children(
           opt[Boolean]("cache").optional().text("cache source data frame")
             .action { (c, s) => s.asInstanceOf[featurize.SparseFeaturization].copy(cacheSource = c) },
+          opt[Int]("repartition").optional().text("repartition source data frame")
+            .action { (n, s) => s.asInstanceOf[featurize.SparseFeaturization].copy(repartitionSource = Some(n)) },
           opt[Int]("instance-id").required().text("model matrix instance id")
             .action { (id, s) => s.as[featurize.SparseFeaturization].copy(id) },
           opt[String]("source").required().text("input data source")

@@ -16,6 +16,8 @@ case class InstallSchema() extends Script {
     val url = config.getString("url")
 
     val flyway = new Flyway
+    flyway.setBaselineOnMigrate(true)
+    flyway.setBaselineVersionAsString("000")
     flyway.setTable("mmc_schema_version")
     flyway.setDataSource(url, null, null)
     flyway.setSqlMigrationPrefix("v")

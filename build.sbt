@@ -66,7 +66,7 @@ lazy val root = Project("modelmatrix", file(".")).
   settings(publish :=()).
   settings(publishLocal :=()).
   settings(unidocSettings: _*).
-  aggregate(modelmatrixCore, modelmatrixCli)
+  aggregate(modelmatrixCore, modelmatrixCli, modelmatrixUdf)
 
 
 // Model Matrix projects

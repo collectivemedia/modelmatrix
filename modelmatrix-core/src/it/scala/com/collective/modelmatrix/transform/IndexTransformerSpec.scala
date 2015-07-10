@@ -1,7 +1,7 @@
 package com.collective.modelmatrix.transform
 
 import com.collective.modelmatrix.CategorialColumn.{AllOther, CategorialValue}
-import com.collective.modelmatrix.{ModelMatrix, ModelFeature, TestSparkContext}
+import com.collective.modelmatrix.{ModelMatrixEncoding, ModelMatrix, ModelFeature, TestSparkContext}
 import org.apache.spark.sql.{Row, SQLContext}
 import org.apache.spark.sql.types.{StringType, StructField, StructType}
 import org.scalatest.FlatSpec
@@ -63,21 +63,21 @@ class IndexTransformerSpec extends FlatSpec with TestSparkContext {
     assert(columns(0).columnId == 1)
     assert(columns(0).isInstanceOf[CategorialValue])
     assert(columns(0).asInstanceOf[CategorialValue].sourceName == "cnn.com")
-    assert(columns(0).asInstanceOf[CategorialValue].sourceValue == ByteVector("cnn.com".getBytes))
+    assert(columns(0).asInstanceOf[CategorialValue].sourceValue == ModelMatrixEncoding.encode("cnn.com"))
     assert(columns(0).asInstanceOf[CategorialValue].count == 5000)
     assert(columns(0).asInstanceOf[CategorialValue].cumulativeCount == 5000)
 
     assert(columns(1).columnId == 2)
     assert(columns(1).isInstanceOf[CategorialValue])
     assert(columns(1).asInstanceOf[CategorialValue].sourceName == "bbc.com")
-    assert(columns(1).asInstanceOf[CategorialValue].sourceValue == ByteVector("bbc.com".getBytes))
+    assert(columns(1).asInstanceOf[CategorialValue].sourceValue == ModelMatrixEncoding.encode("bbc.com"))
     assert(columns(1).asInstanceOf[CategorialValue].count == 4000)
     assert(columns(1).asInstanceOf[CategorialValue].cumulativeCount == 9000)
 
     assert(columns(2).columnId == 3)
     assert(columns(2).isInstanceOf[CategorialValue])
     assert(columns(2).asInstanceOf[CategorialValue].sourceName == "hbo.com")
-    assert(columns(2).asInstanceOf[CategorialValue].sourceValue == ByteVector("hbo.com".getBytes))
+    assert(columns(2).asInstanceOf[CategorialValue].sourceValue == ModelMatrixEncoding.encode("hbo.com"))
     assert(columns(2).asInstanceOf[CategorialValue].count == 400)
     assert(columns(2).asInstanceOf[CategorialValue].cumulativeCount == 9400)
 

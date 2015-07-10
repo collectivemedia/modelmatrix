@@ -2,7 +2,7 @@ package com.collective.modelmatrix.cli.instance
 
 import com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog
 import com.collective.modelmatrix._
-import com.collective.modelmatrix.cli.{CliSparkContext, Script, Source}
+import com.collective.modelmatrix.cli.{SourceTransformation, CliSparkContext, Script, Source}
 import com.collective.modelmatrix.transform._
 import org.slf4j.LoggerFactory
 
@@ -15,8 +15,14 @@ case class AddInstance(
   name: Option[String],
   comment: Option[String],
   concurrencyLevel: Int,
+  repartitionSource: Option[Int],
   cacheSource: Boolean
-) extends Script with PostgresModelMatrixCatalog with CliSparkContext with Transformers with TransformationProcess {
+)
+  extends Script with SourceTransformation
+  with PostgresModelMatrixCatalog
+  with CliSparkContext
+  with Transformers
+  with TransformationProcess {
 
   private val log = LoggerFactory.getLogger(classOf[AddInstance])
 
@@ -40,7 +46,8 @@ case class AddInstance(
     require(features.nonEmpty, s"No active features are defined for model definition: $modelDefinitionId. " +
       s"Ensure that this model definition exists")
 
-    val df = if (cacheSource) source.asDataFrame.cache() else source.asDataFrame
+    val df = toDataFrame(source)
+
     Transformer.extractFeatures(df, features.map(_.feature)) match {
       // One of extract expressions failed
       case -\/(extractionErrors) =>

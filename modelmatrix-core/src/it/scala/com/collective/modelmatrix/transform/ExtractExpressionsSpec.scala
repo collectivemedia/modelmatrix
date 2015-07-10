@@ -5,7 +5,7 @@ import java.time.{DayOfWeek, Instant, ZoneOffset}
 import java.util.UUID
 
 import com.collective.modelmatrix.CategorialColumn.CategorialValue
-import com.collective.modelmatrix.{ModelFeature, ModelMatrix, TestSparkContext}
+import com.collective.modelmatrix.{ModelMatrixEncoding, ModelFeature, ModelMatrix, TestSparkContext}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.scalatest.FlatSpec
@@ -131,21 +131,21 @@ class ExtractExpressionsSpec extends FlatSpec with TestSparkContext {
     assert(columns(0).columnId == 1)
     assert(columns(0).isInstanceOf[CategorialValue])
     assert(columns(0).asInstanceOf[CategorialValue].sourceName == "Yosemite_OSX")
-    assert(columns(0).asInstanceOf[CategorialValue].sourceValue == ByteVector("Yosemite_OSX".getBytes))
+    assert(columns(0).asInstanceOf[CategorialValue].sourceValue == ModelMatrixEncoding.encode("Yosemite_OSX"))
     assert(columns(0).asInstanceOf[CategorialValue].count == 5000)
     assert(columns(0).asInstanceOf[CategorialValue].cumulativeCount == 5000)
 
     assert(columns(1).columnId == 2)
     assert(columns(1).isInstanceOf[CategorialValue])
     assert(columns(1).asInstanceOf[CategorialValue].sourceName == "Mavericks_OSX")
-    assert(columns(1).asInstanceOf[CategorialValue].sourceValue == ByteVector("Mavericks_OSX".getBytes))
+    assert(columns(1).asInstanceOf[CategorialValue].sourceValue == ModelMatrixEncoding.encode("Mavericks_OSX"))
     assert(columns(1).asInstanceOf[CategorialValue].count == 4400)
     assert(columns(1).asInstanceOf[CategorialValue].cumulativeCount == 9400)
 
     assert(columns(2).columnId == 3)
     assert(columns(2).isInstanceOf[CategorialValue])
     assert(columns(2).asInstanceOf[CategorialValue].sourceName == "MountainLion_OSX")
-    assert(columns(2).asInstanceOf[CategorialValue].sourceValue == ByteVector("MountainLion_OSX".getBytes))
+    assert(columns(2).asInstanceOf[CategorialValue].sourceValue == ModelMatrixEncoding.encode("MountainLion_OSX"))
     assert(columns(2).asInstanceOf[CategorialValue].count == 700)
     assert(columns(2).asInstanceOf[CategorialValue].cumulativeCount == 10100)
   }
@@ -159,12 +159,12 @@ class ExtractExpressionsSpec extends FlatSpec with TestSparkContext {
     assert(columns(0).columnId == 1)
     assert(columns(0).isInstanceOf[CategorialValue])
     assert(columns(0).asInstanceOf[CategorialValue].sourceName == DayOfWeekNow)
-    assert(columns(0).asInstanceOf[CategorialValue].sourceValue == ByteVector(DayOfWeekNow.getBytes))
+    assert(columns(0).asInstanceOf[CategorialValue].sourceValue == ModelMatrixEncoding.encode(DayOfWeekNow))
 
     assert(columns(1).columnId == 2)
     assert(columns(1).isInstanceOf[CategorialValue])
     assert(columns(1).asInstanceOf[CategorialValue].sourceName == DayOfWeekYesterday)
-    assert(columns(1).asInstanceOf[CategorialValue].sourceValue == ByteVector(DayOfWeekYesterday.getBytes))
+    assert(columns(1).asInstanceOf[CategorialValue].sourceValue == ModelMatrixEncoding.encode(DayOfWeekYesterday))
   }
 
   it should "calculate top hour of days" in {
