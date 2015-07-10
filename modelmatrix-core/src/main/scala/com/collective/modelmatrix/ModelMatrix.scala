@@ -96,12 +96,14 @@ object ModelMatrix extends ModelMatrixUDF {
  * Model Matrix class that hides database interaction and provides
  * higher level API
  *
- * @param sc Spark Context
+ * @param sqlContext Spark SQL Context
  */
-class ModelMatrix(sc: SparkContext) extends PostgresModelMatrixCatalog with Transformers with TransformationProcess {
+class ModelMatrix(sqlContext: SQLContext) extends PostgresModelMatrixCatalog with Transformers with TransformationProcess {
   private val log = LoggerFactory.getLogger(classOf[ModelMatrix])
 
-  private implicit val sqlContext = ModelMatrix.hiveContext(sc)
+  def this(sc: SparkContext) = this(ModelMatrix.hiveContext(sc))
+
+  private implicit val _sqlContext = sqlContext
 
   /**
    * Get Model Matrix instance transformations for given model instance id
