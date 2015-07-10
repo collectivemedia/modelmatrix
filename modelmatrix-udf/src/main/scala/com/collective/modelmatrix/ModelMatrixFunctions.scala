@@ -4,7 +4,7 @@ import java.time.temporal.ChronoField
 import java.time.{DayOfWeek, Instant, ZoneId}
 
 
-object ModelMatrixFunctions {
+class ModelMatrixFunctions {
 
   def nvl[T](v: T, default: T): T = {
     if (v == null) default else v
@@ -23,3 +23,5 @@ object ModelMatrixFunctions {
   }
 
 }
+
+object ModelMatrixFunctions extends ModelMatrixFunctions

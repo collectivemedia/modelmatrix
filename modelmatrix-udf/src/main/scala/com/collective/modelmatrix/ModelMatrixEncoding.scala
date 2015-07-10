@@ -8,7 +8,7 @@ import scodec.bits.ByteVector
  * Model Matrix stores original feature value as Array[Byte] and uses
  * scodec.bites.ByteVector for encoding/decoding
  */
-object ModelMatrixEncoding {
+class ModelMatrixEncoding {
 
   trait Encode[T] {
     def encode(obj: T): ByteVector
@@ -59,3 +59,5 @@ object ModelMatrixEncoding {
   def decode[T: Decode](obj: ByteVector): T = implicitly[Decode[T]].decode(obj)
 
 }
+
+object ModelMatrixEncoding extends ModelMatrixEncoding
