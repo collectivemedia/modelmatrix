@@ -24,8 +24,8 @@ class ExtractExpressionsSpec extends FlatSpec with TestSparkContext {
   val now = Instant.now().atZone(ZoneOffset.UTC)
   val yesterday = now.minus(1, ChronoUnit.DAYS).minus(1, ChronoUnit.HOURS).withZoneSameInstant(ZoneOffset.UTC)
 
-  val DayOfWeekNow = DayOfWeek.from(now).toString
-  val DayOfWeekYesterday = DayOfWeek.from(yesterday).toString
+  val DayOfWeekNow = DayOfWeek.from(now).getValue
+  val DayOfWeekYesterday = DayOfWeek.from(yesterday).getValue
 
   val HourOfDayNow = now.get(ChronoField.HOUR_OF_DAY)
   val HourOfDayYesterday = yesterday.get(ChronoField.HOUR_OF_DAY)
@@ -104,7 +104,7 @@ class ExtractExpressionsSpec extends FlatSpec with TestSparkContext {
     assert(valid(2) == TypedModelFeature(adPrice, DoubleType).right)
     assert(valid(3) == TypedModelFeature(adIdSitePair, StringType).right)
     assert(valid(4) == TypedModelFeature(os, StringType).right)
-    assert(valid(5) == TypedModelFeature(dayOfWeek, StringType).right)
+    assert(valid(5) == TypedModelFeature(dayOfWeek, IntegerType).right)
     assert(valid(6) == TypedModelFeature(hourOfDay, IntegerType).right)
     assert(valid(7) == TypedModelFeature(notNullSite, StringType).right)
     assert(valid(8) == TypedModelFeature(notNullPrice, DoubleType).right)
@@ -158,12 +158,12 @@ class ExtractExpressionsSpec extends FlatSpec with TestSparkContext {
 
     assert(columns(0).columnId == 1)
     assert(columns(0).isInstanceOf[CategoricalValue])
-    assert(columns(0).asInstanceOf[CategoricalValue].sourceName == DayOfWeekNow)
+    assert(columns(0).asInstanceOf[CategoricalValue].sourceName.toInt == DayOfWeekNow)
     assert(columns(0).asInstanceOf[CategoricalValue].sourceValue == ModelMatrixEncoding.encode(DayOfWeekNow))
 
     assert(columns(1).columnId == 2)
     assert(columns(1).isInstanceOf[CategoricalValue])
-    assert(columns(1).asInstanceOf[CategoricalValue].sourceName == DayOfWeekYesterday)
+    assert(columns(1).asInstanceOf[CategoricalValue].sourceName.toInt == DayOfWeekYesterday)
     assert(columns(1).asInstanceOf[CategoricalValue].sourceValue == ModelMatrixEncoding.encode(DayOfWeekYesterday))
   }
 

@@ -10,8 +10,8 @@ class ModelMatrixFunctions {
     if (v == null) default else v
   }
 
-  def dayOfWeek(epochMilli: Long, zoneId: ZoneId): String = {
-    DayOfWeek.from(Instant.ofEpochMilli(epochMilli).atZone(zoneId)).toString
+  def dayOfWeek(epochMilli: Long, zoneId: ZoneId): Int = {
+    DayOfWeek.from(Instant.ofEpochMilli(epochMilli).atZone(zoneId)).getValue
   }
 
   def hourOfDay(epochMilli: Long, zoneId: ZoneId): Integer = {
