@@ -7,7 +7,7 @@ import org.apache.spark.sql.UDFRegistration
 
 trait ModelMatrixUDF {
 
-  private val dayOfWeek: (jl.Long, String) => String = {
+  private val dayOfWeek: (jl.Long, String) => jl.Integer = {
     case (ts, zoneId) if ts != null => ModelMatrixFunctions.dayOfWeek(ts, ZoneId.of(zoneId))
     case _ => null
   }
