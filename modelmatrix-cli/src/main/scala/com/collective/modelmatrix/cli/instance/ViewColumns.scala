@@ -3,7 +3,7 @@ package com.collective.modelmatrix.cli.instance
 import com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog
 import com.collective.modelmatrix.catalog._
 import com.collective.modelmatrix.cli._
-import com.collective.modelmatrix.{BinColumn, CategorialColumn}
+import com.collective.modelmatrix.{CategoricalColumn, BinColumn}
 import org.slf4j.LoggerFactory
 
 import scalaz._
@@ -31,7 +31,7 @@ case class ViewColumns(
         val features = blockOn(db.run(modelInstanceFeatures.features(modelInstanceId)))
           .filter(f => featureFilter(f.feature.feature) && groupFilter(f.feature.group))
 
-        val columns: Seq[(ModelInstanceFeature, Option[CategorialColumn \/ BinColumn])] = features flatMap {
+        val columns: Seq[(ModelInstanceFeature, Option[CategoricalColumn \/ BinColumn])] = features flatMap {
           case f: ModelInstanceIdentityFeature => Seq((f, None))
           case f: ModelInstanceTopFeature => f.columns.map(c => (f, Some(\/.left(c))))
           case f: ModelInstanceIndexFeature => f.columns.map(c => (f, Some(\/.left(c))))

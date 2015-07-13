@@ -1,8 +1,8 @@
 package com.collective.modelmatrix.transform
 
-import com.collective.modelmatrix.CategorialColumn.AllOther
+import com.collective.modelmatrix.CategoricalColumn.AllOther
 import com.collective.modelmatrix.transform.FeatureTransformationError.{FeatureColumnNotFound, UnsupportedTransformDataType}
-import com.collective.modelmatrix.{CategorialColumn, ModelFeature}
+import com.collective.modelmatrix.{CategoricalColumn, ModelFeature}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types._
 import org.slf4j.LoggerFactory
@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory
 import scalaz.{@@, \/}
 import scalaz.syntax.either._
 
-class TopTransformer(input: DataFrame @@ Transformer.Features) extends CategorialTransformer(input) {
+class TopTransformer(input: DataFrame @@ Transformer.Features) extends CategoricalTransformer(input) {
 
   private val log = LoggerFactory.getLogger(classOf[TopTransformer])
 
@@ -28,7 +28,7 @@ class TopTransformer(input: DataFrame @@ Transformer.Features) extends Categoria
       UnsupportedTransformDataType(f.feature, featureDataType(f.feature).get, t).left
   }
 
-  def transform(feature: TypedModelFeature): Seq[CategorialColumn] = {
+  def transform(feature: TypedModelFeature): Seq[CategoricalColumn] = {
     require(feature.feature.transform.isInstanceOf[Top], s"Illegal transform type: ${feature.feature.transform}")
 
     val ModelFeature(_, _, f, _, Top(cover, allOther)) = feature.feature
@@ -57,7 +57,7 @@ class TopTransformer(input: DataFrame @@ Transformer.Features) extends Categoria
     val threshold = (cover / 100) * topValues.map(_.count).sum
     val columnsBelowThreshold = topValues.map(_.count).scanLeft(0L)((cum, cnt) => cum + cnt).takeWhile(_ < threshold).size
 
-    // Transform categorial values
+    // Transform categorical values
     val valueColumns = topValues.take(columnsBelowThreshold).foldLeft(Scan()) {
       case (state@Scan(columnId, cumulativeCnt, columns), value) =>
         val column = valueColumn(feature.extractType)(columnId, cumulativeCnt, value)

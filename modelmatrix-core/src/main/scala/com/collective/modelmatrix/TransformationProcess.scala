@@ -32,8 +32,8 @@ trait TransformationProcess {
 
   private object AddFeature {
     case class AddIdentityFeature(extractType: DataType) extends AddFeature
-    case class AddTopFeature(extractType: DataType, columns: Seq[CategorialColumn]) extends AddFeature
-    case class AddIndexFeature(extractType: DataType, columns: Seq[CategorialColumn]) extends AddFeature
+    case class AddTopFeature(extractType: DataType, columns: Seq[CategoricalColumn]) extends AddFeature
+    case class AddIndexFeature(extractType: DataType, columns: Seq[CategoricalColumn]) extends AddFeature
     case class AddBinsFeature(extractType: DataType, columns: Seq[BinColumn]) extends AddFeature
   }
 

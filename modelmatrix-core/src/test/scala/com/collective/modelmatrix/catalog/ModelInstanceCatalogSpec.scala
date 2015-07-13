@@ -2,7 +2,7 @@ package com.collective.modelmatrix.catalog
 
 import java.time.Instant
 
-import com.collective.modelmatrix.{ModelMatrixEncoding, BinColumn, CategorialColumn, ModelFeature}
+import com.collective.modelmatrix.{ModelMatrixEncoding, BinColumn, CategoricalColumn, ModelFeature}
 import com.collective.modelmatrix.transform.{Bins, Index, Top, Identity}
 import org.apache.spark.sql.types.{DoubleType, StringType, IntegerType}
 import org.scalatest.{BeforeAndAfterAll, GivenWhenThen, FlatSpec}
@@ -67,15 +67,15 @@ trait ModelInstanceCatalogSpec extends FlatSpec with GivenWhenThen with BeforeAn
     )
 
     val topColumns = Seq(
-      CategorialColumn.CategorialValue(2, "banner", ModelMatrixEncoding.encode("banner"), 100, 100),
-      CategorialColumn.CategorialValue(3, "mobile", ModelMatrixEncoding.encode("mobile"), 200, 300),
-      CategorialColumn.AllOther(4, 100, 400)
+      CategoricalColumn.CategoricalValue(2, "banner", ModelMatrixEncoding.encode("banner"), 100, 100),
+      CategoricalColumn.CategoricalValue(3, "mobile", ModelMatrixEncoding.encode("mobile"), 200, 300),
+      CategoricalColumn.AllOther(4, 100, 400)
     )
 
     val indexColumns = Seq(
-      CategorialColumn.CategorialValue(5, "google", ModelMatrixEncoding.encode("google"), 100, 100),
-      CategorialColumn.CategorialValue(6, "yahoo", ModelMatrixEncoding.encode("yahoo"), 200, 300),
-      CategorialColumn.AllOther(7, 100, 400)
+      CategoricalColumn.CategoricalValue(5, "google", ModelMatrixEncoding.encode("google"), 100, 100),
+      CategoricalColumn.CategoricalValue(6, "yahoo", ModelMatrixEncoding.encode("yahoo"), 200, 300),
+      CategoricalColumn.AllOther(7, 100, 400)
     )
 
     val binsColumns = Seq(

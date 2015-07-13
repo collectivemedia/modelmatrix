@@ -45,21 +45,21 @@ class FeaturizationSpec extends FlatSpec with GivenWhenThen with TestSparkContex
   val adPriceInstance = ModelInstanceIdentityFeature(1, modelInstanceId, adPrice, DoubleType, 1)
 
   val adTypeInstance = ModelInstanceTopFeature(2, modelInstanceId, adType, IntegerType, Seq(
-    CategorialColumn.CategorialValue(2, "1", ModelMatrixEncoding.encode(1), 100, 100),
-    CategorialColumn.CategorialValue(3, "2", ModelMatrixEncoding.encode(2), 100, 200),
-    CategorialColumn.AllOther(4, 200, 400)
+    CategoricalColumn.CategoricalValue(2, "1", ModelMatrixEncoding.encode(1), 100, 100),
+    CategoricalColumn.CategoricalValue(3, "2", ModelMatrixEncoding.encode(2), 100, 200),
+    CategoricalColumn.AllOther(4, 200, 400)
   ))
 
   val adSiteInstance = ModelInstanceIndexFeature(3, modelInstanceId, adSite, StringType, Seq(
-    CategorialColumn.CategorialValue(5, "cnn.com", ModelMatrixEncoding.encode("cnn.com"), 100, 100),
-    CategorialColumn.CategorialValue(6, "bbc.com", ModelMatrixEncoding.encode("bbc.com"), 100, 200)
+    CategoricalColumn.CategoricalValue(5, "cnn.com", ModelMatrixEncoding.encode("cnn.com"), 100, 100),
+    CategoricalColumn.CategoricalValue(6, "bbc.com", ModelMatrixEncoding.encode("bbc.com"), 100, 200)
   ))
 
   val adStrategyInstance = ModelInstanceTopFeature(4, modelInstanceId, adStrategy, LongType, Seq(
-    CategorialColumn.CategorialValue(7, "1", ModelMatrixEncoding.encode(1L), 100, 100),
-    CategorialColumn.CategorialValue(8, "2", ModelMatrixEncoding.encode(2L), 100, 200),
-    CategorialColumn.CategorialValue(9, "3", ModelMatrixEncoding.encode(3L), 100, 200),
-    CategorialColumn.CategorialValue(10, "4", ModelMatrixEncoding.encode(4L), 100, 200)
+    CategoricalColumn.CategoricalValue(7, "1", ModelMatrixEncoding.encode(1L), 100, 100),
+    CategoricalColumn.CategoricalValue(8, "2", ModelMatrixEncoding.encode(2L), 100, 200),
+    CategoricalColumn.CategoricalValue(9, "3", ModelMatrixEncoding.encode(3L), 100, 200),
+    CategoricalColumn.CategoricalValue(10, "4", ModelMatrixEncoding.encode(4L), 100, 200)
   ))
 
   val totalColumns = 10
