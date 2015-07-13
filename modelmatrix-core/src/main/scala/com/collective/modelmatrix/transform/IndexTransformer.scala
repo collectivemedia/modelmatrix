@@ -1,7 +1,7 @@
 package com.collective.modelmatrix.transform
 
-import com.collective.modelmatrix.CategorialColumn.AllOther
-import com.collective.modelmatrix.{CategorialColumn, ModelFeature}
+import com.collective.modelmatrix.CategoricalColumn.AllOther
+import com.collective.modelmatrix.{CategoricalColumn, ModelFeature}
 import com.collective.modelmatrix.transform.FeatureTransformationError.{UnsupportedTransformDataType, FeatureColumnNotFound}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types._
@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory
 import scalaz.{@@, \/}
 import scalaz.syntax.either._
 
-class IndexTransformer(input: DataFrame @@ Transformer.Features) extends CategorialTransformer(input) {
+class IndexTransformer(input: DataFrame @@ Transformer.Features) extends CategoricalTransformer(input) {
 
   private val log = LoggerFactory.getLogger(classOf[IndexTransformer])
 
@@ -28,7 +28,7 @@ class IndexTransformer(input: DataFrame @@ Transformer.Features) extends Categor
       UnsupportedTransformDataType(f.feature, featureDataType(f.feature).get, t).left
   }
 
-  def transform(feature: TypedModelFeature): Seq[CategorialColumn] = {
+  def transform(feature: TypedModelFeature): Seq[CategoricalColumn] = {
     require(feature.feature.transform.isInstanceOf[Index], s"Illegal transform type: ${feature.feature.transform}")
 
     val ModelFeature(_, _, f, _, Index(support, allOther)) = feature.feature
@@ -59,7 +59,7 @@ class IndexTransformer(input: DataFrame @@ Transformer.Features) extends Categor
 
     log.debug(s"Collected '$f' support values: ${supportValues.size}")
 
-    // Transform categorial values
+    // Transform categorical values
     val valueColumns = topSupportValues.foldLeft(Scan()) {
       case (state@Scan(columnId, cumulativeCnt, columns), value) =>
         val column = valueColumn(feature.extractType)(columnId, cumulativeCnt, value)

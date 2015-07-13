@@ -1,7 +1,7 @@
 package com.collective.modelmatrix.catalog
 
-import com.collective.modelmatrix.CategorialColumn.{AllOther, CategorialValue}
-import com.collective.modelmatrix.{BinColumn, CategorialColumn, ModelFeature}
+import com.collective.modelmatrix.CategoricalColumn.{AllOther, CategoricalValue}
+import com.collective.modelmatrix.{CategoricalColumn, BinColumn, ModelFeature}
 import com.collective.modelmatrix.transform._
 import org.apache.spark.sql.types.DataType
 import org.slf4j.LoggerFactory
@@ -34,7 +34,7 @@ case class ModelInstanceTopFeature(
   modelInstanceId: Int,
   feature: ModelFeature,
   extractType: DataType,
-  columns: Seq[CategorialColumn]
+  columns: Seq[CategoricalColumn]
 ) extends ModelInstanceFeature {
   assert(feature.transform.isInstanceOf[Top],
     s"Wrong model feature transform function: $feature. Expected 'top'")
@@ -45,7 +45,7 @@ case class ModelInstanceIndexFeature(
   modelInstanceId: Int,
   feature: ModelFeature,
   extractType: DataType,
-  columns: Seq[CategorialColumn]
+  columns: Seq[CategoricalColumn]
 ) extends ModelInstanceFeature {
   assert(feature.transform.isInstanceOf[Index],
     s"Wrong model feature transform function: $feature. Expected 'index'")
@@ -105,7 +105,7 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
     modelInstanceId: Int,
     featureDefinitionId: Int,
     extractType: DataType,
-    columns: Seq[CategorialColumn]
+    columns: Seq[CategoricalColumn]
   ): DBIO[Int] = {
 
     for {
@@ -116,7 +116,7 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
       featureInstanceId <- (featureInstances returning featureInstances.map(_.id)) +=
         ((AutoIncId, modelInstanceId, featureDefinitionId, extractType))
       _ <- DBIO.sequence(columns.map {
-        case CategorialValue(columnId, sourceName, sourceValue, count, cumCount) =>
+        case CategoricalValue(columnId, sourceName, sourceValue, count, cumCount) =>
           topColumns +=(AutoIncId, featureInstanceId, columnId, Some(sourceName), Some(sourceValue), count, cumCount)
         case AllOther(columnId, count, cumCount) =>
           topColumns +=(AutoIncId, featureInstanceId, columnId, Option.empty[String], Option.empty[ByteVector], count, cumCount)
@@ -128,7 +128,7 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
     modelInstanceId: Int,
     featureDefinitionId: Int,
     extractType: DataType,
-    columns: Seq[CategorialColumn]
+    columns: Seq[CategoricalColumn]
   ): DBIO[Int] = {
 
     for {
@@ -139,7 +139,7 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
       featureInstanceId <- (featureInstances returning featureInstances.map(_.id)) +=
         ((AutoIncId, modelInstanceId, featureDefinitionId, extractType))
       _ <- DBIO.sequence(columns.map {
-        case CategorialValue(columnId, sourceName, sourceValue, count, cumCount) =>
+        case CategoricalValue(columnId, sourceName, sourceValue, count, cumCount) =>
           indexColumns +=(AutoIncId, featureInstanceId, columnId, Some(sourceName), Some(sourceValue), count, cumCount)
         case AllOther(columnId, count, cumCount) =>
           indexColumns +=(AutoIncId, featureInstanceId, columnId, Option.empty[String], Option.empty[ByteVector], count, cumCount)
@@ -206,11 +206,11 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
     q.result.map(_.map(toFeature))
   }
 
-  private type CategorialColumnRecord = (Int, Int, Int, Option[String], Option[ByteVector], Long, Long)
+  private type CategoricalColumnRecord = (Int, Int, Int, Option[String], Option[ByteVector], Long, Long)
 
-  private def toCategorialColumn: CategorialColumnRecord => CategorialColumn = {
+  private def toCategoricalColumn: CategoricalColumnRecord => CategoricalColumn = {
     case (_, _, columnId, Some(sourceName), Some(sourceValue), count, cumCount) =>
-      CategorialValue(columnId, sourceName, sourceValue, count, cumCount)
+      CategoricalValue(columnId, sourceName, sourceValue, count, cumCount)
 
     case (_, _, columnId, None, None, count, cumCount) =>
       AllOther(columnId, count, cumCount)
@@ -244,7 +244,7 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
       DBIO.sequence(features.map { case (featureInstanceId, active, group, feature, extract, cover, allOther, extractTime) =>
         val modelFeature = ModelFeature(active, group, feature, extract, Top(cover, allOther))
         val columns = topColumns.filter(_.featureInstanceId === featureInstanceId)
-          .result.map(_.map(toCategorialColumn).sortBy(_.columnId))
+          .result.map(_.map(toCategoricalColumn).sortBy(_.columnId))
         columns.map(ModelInstanceTopFeature(featureInstanceId, modelInstanceId, modelFeature, extractTime, _))
       })
     }
@@ -262,7 +262,7 @@ class ModelInstanceFeatures(val catalog: ModelMatrixCatalog)(implicit val ec: Ex
       DBIO.sequence(features.map { case (featureInstanceId, active, group, feature, extract, support, allOther, extractTime) =>
         val modelFeature = ModelFeature(active, group, feature, extract, Index(support, allOther))
         val columns = indexColumns.filter(_.featureInstanceId === featureInstanceId)
-          .result.map(_.map(toCategorialColumn).sortBy(_.columnId))
+          .result.map(_.map(toCategoricalColumn).sortBy(_.columnId))
         columns.map(ModelInstanceIndexFeature(featureInstanceId, modelInstanceId, modelFeature, extractTime, _))
       })
     }

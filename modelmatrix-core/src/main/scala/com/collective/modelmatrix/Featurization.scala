@@ -2,7 +2,7 @@ package com.collective.modelmatrix
 
 import java.nio.ByteBuffer
 
-import com.collective.modelmatrix.CategorialColumn.{AllOther, CategorialValue}
+import com.collective.modelmatrix.CategoricalColumn.{AllOther, CategoricalValue}
 import com.collective.modelmatrix.catalog._
 import com.collective.modelmatrix.transform.Transformer.{Features, LabeledFeatures}
 import org.apache.spark.mllib.linalg.{Vector, Vectors}
@@ -101,9 +101,9 @@ class Featurization(features: Seq[ModelInstanceFeature]) extends Serializable {
       case ModelInstanceIdentityFeature(_, _, f, tpe, columnId) =>
         identityColumn(row)(f, featuresColumnIdx(f), tpe, columnId).toSeq
       case ModelInstanceTopFeature(_, _, f, tpe, cols) =>
-        categorialColumn(row)(f, featuresColumnIdx(f), tpe, cols).toSeq
+        categoricalColumn(row)(f, featuresColumnIdx(f), tpe, cols).toSeq
       case ModelInstanceIndexFeature(_, _, f, tpe, cols) =>
-        categorialColumn(row)(f, featuresColumnIdx(f), tpe, cols).toSeq
+        categoricalColumn(row)(f, featuresColumnIdx(f), tpe, cols).toSeq
       case ModelInstanceBinsFeature(_, _, f, tpe, cols) =>
         binColumn(row)(f, featuresColumnIdx(f), tpe, cols).toSeq
     }
@@ -175,11 +175,11 @@ class Featurization(features: Seq[ModelInstanceFeature]) extends Serializable {
     Some((columnId, doubleValue))
   }
 
-  private def categorialColumn(row: Row)(
+  private def categoricalColumn(row: Row)(
     feature: ModelFeature,
     idx: Int,
     extractType: DataType,
-    columns: Seq[CategorialColumn]
+    columns: Seq[CategoricalColumn]
   ): Option[(Int, Double)] = {
 
     // If input value is null just skip it
@@ -192,14 +192,14 @@ class Featurization(features: Seq[ModelInstanceFeature]) extends Serializable {
       case LongType => ModelMatrixEncoding.encode(row.getLong(idx))
       case DoubleType => ModelMatrixEncoding.encode(row.getDouble(idx))
       case StringType => ModelMatrixEncoding.encode(row.getString(idx))
-      case tpe => sys.error(s"Unsupported categorial extract type: $tpe. Feature: ${feature.feature}. Columns: ${columns.size}")
+      case tpe => sys.error(s"Unsupported categorical extract type: $tpe. Feature: ${feature.feature}. Columns: ${columns.size}")
     }
 
-    // Take first matching categorial value or fallback to 'all other' if exists
-    val categorialColumn = columns.collect { case v: CategorialValue if v.sourceValue == byteVector => v.columnId }
+    // Take first matching categorical value or fallback to 'all other' if exists
+    val categoricalColumn = columns.collect { case v: CategoricalValue if v.sourceValue == byteVector => v.columnId }
     val allOther = columns.collect { case AllOther(columnId, _, _) => columnId }
 
-    (categorialColumn ++ allOther).headOption.map((_, 1.0D))
+    (categoricalColumn ++ allOther).headOption.map((_, 1.0D))
   }
 
   private def binColumn(row: Row)(

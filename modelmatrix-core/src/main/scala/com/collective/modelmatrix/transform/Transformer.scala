@@ -1,7 +1,7 @@
 package com.collective.modelmatrix.transform
 
-import com.collective.modelmatrix.CategorialColumn.CategorialValue
-import com.collective.modelmatrix.{ModelMatrixEncoding, Labeling, CategorialColumn, ModelFeature}
+import com.collective.modelmatrix.CategoricalColumn.CategoricalValue
+import com.collective.modelmatrix._
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types._
 
@@ -119,33 +119,33 @@ object Transformer {
 
 }
 
-abstract class CategorialTransformer(features: DataFrame @@ Transformer.Features) extends Transformer(features) {
+abstract class CategoricalTransformer(features: DataFrame @@ Transformer.Features) extends Transformer(features) {
 
-  def transform(feature: TypedModelFeature): Seq[CategorialColumn]
+  def transform(feature: TypedModelFeature): Seq[CategoricalColumn]
 
   protected case class Value(value: Any, count: Long)
 
-  protected case class Scan(columnId: Int = 0, cumulativeCnt: Long = 0, columns: Seq[CategorialColumn] = Seq.empty)
+  protected case class Scan(columnId: Int = 0, cumulativeCnt: Long = 0, columns: Seq[CategoricalColumn] = Seq.empty)
 
   protected def valueColumn(extractType: DataType)(
     previousColumnId: Int,
     previousCumCnt: Long,
     value: Value
-  ): CategorialValue = value match {
+  ): CategoricalValue = value match {
     case Value(s: Short, cnt) if extractType == ShortType =>
-      CategorialValue(previousColumnId + 1, s.toString, ModelMatrixEncoding.encode(s), cnt, previousCumCnt + cnt)
+      CategoricalValue(previousColumnId + 1, s.toString, ModelMatrixEncoding.encode(s), cnt, previousCumCnt + cnt)
 
     case Value(i: Int, cnt) if extractType == IntegerType =>
-      CategorialValue(previousColumnId + 1, i.toString, ModelMatrixEncoding.encode(i), cnt, previousCumCnt + cnt)
+      CategoricalValue(previousColumnId + 1, i.toString, ModelMatrixEncoding.encode(i), cnt, previousCumCnt + cnt)
 
     case Value(l: Long, cnt) if extractType == LongType =>
-      CategorialValue(previousColumnId + 1, l.toString, ModelMatrixEncoding.encode(l), cnt, previousCumCnt + cnt)
+      CategoricalValue(previousColumnId + 1, l.toString, ModelMatrixEncoding.encode(l), cnt, previousCumCnt + cnt)
 
     case Value(d: Double, cnt) if extractType == DoubleType =>
-      CategorialValue(previousColumnId + 1, d.toString, ModelMatrixEncoding.encode(d), cnt, previousCumCnt + cnt)
+      CategoricalValue(previousColumnId + 1, d.toString, ModelMatrixEncoding.encode(d), cnt, previousCumCnt + cnt)
 
     case Value(s: String, cnt) if extractType == StringType =>
-      CategorialValue(previousColumnId + 1, s.toString, ModelMatrixEncoding.encode(s), cnt, previousCumCnt + cnt)
+      CategoricalValue(previousColumnId + 1, s.toString, ModelMatrixEncoding.encode(s), cnt, previousCumCnt + cnt)
 
     case Value(v, cnt) =>
       sys.error(s"Unsupported value: $v. Class of: ${v.getClass}. Extract type: $extractType")

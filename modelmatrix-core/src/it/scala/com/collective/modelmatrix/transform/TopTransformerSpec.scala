@@ -1,6 +1,6 @@
 package com.collective.modelmatrix.transform
 
-import com.collective.modelmatrix.CategorialColumn.{AllOther, CategorialValue}
+import com.collective.modelmatrix.CategoricalColumn.{AllOther, CategoricalValue}
 import com.collective.modelmatrix.{ModelMatrixEncoding, ModelMatrix, ModelFeature, TestSparkContext}
 import org.apache.spark.sql.{DataFrame, Row, SQLContext}
 import org.apache.spark.sql.types._
@@ -52,39 +52,39 @@ class TopTransformerSpec extends FlatSpec with TestSparkContext {
     assert(failed == FeatureTransformationError.FeatureColumnNotFound("adv_site").left)
   }
 
-  it should "calculate correct categorial columns with all other" in {
+  it should "calculate correct categorical columns with all other" in {
     val typed = transformer.validate(adSite).toOption.get
     val columns = transformer.transform(typed)
 
     assert(columns.size == 5)
 
     assert(columns(0).columnId == 1)
-    assert(columns(0).isInstanceOf[CategorialValue])
-    assert(columns(0).asInstanceOf[CategorialValue].sourceName == "cnn.com")
-    assert(columns(0).asInstanceOf[CategorialValue].sourceValue == ModelMatrixEncoding.encode("cnn.com"))
-    assert(columns(0).asInstanceOf[CategorialValue].count == 5000)
-    assert(columns(0).asInstanceOf[CategorialValue].cumulativeCount == 5000)
+    assert(columns(0).isInstanceOf[CategoricalValue])
+    assert(columns(0).asInstanceOf[CategoricalValue].sourceName == "cnn.com")
+    assert(columns(0).asInstanceOf[CategoricalValue].sourceValue == ModelMatrixEncoding.encode("cnn.com"))
+    assert(columns(0).asInstanceOf[CategoricalValue].count == 5000)
+    assert(columns(0).asInstanceOf[CategoricalValue].cumulativeCount == 5000)
 
     assert(columns(1).columnId == 2)
-    assert(columns(1).isInstanceOf[CategorialValue])
-    assert(columns(1).asInstanceOf[CategorialValue].sourceName == "bbc.com")
-    assert(columns(1).asInstanceOf[CategorialValue].sourceValue == ModelMatrixEncoding.encode("bbc.com"))
-    assert(columns(1).asInstanceOf[CategorialValue].count == 4000)
-    assert(columns(1).asInstanceOf[CategorialValue].cumulativeCount == 9000)
+    assert(columns(1).isInstanceOf[CategoricalValue])
+    assert(columns(1).asInstanceOf[CategoricalValue].sourceName == "bbc.com")
+    assert(columns(1).asInstanceOf[CategoricalValue].sourceValue == ModelMatrixEncoding.encode("bbc.com"))
+    assert(columns(1).asInstanceOf[CategoricalValue].count == 4000)
+    assert(columns(1).asInstanceOf[CategoricalValue].cumulativeCount == 9000)
 
     assert(columns(2).columnId == 3)
-    assert(columns(2).isInstanceOf[CategorialValue])
-    assert(columns(2).asInstanceOf[CategorialValue].sourceName == "hbo.com")
-    assert(columns(2).asInstanceOf[CategorialValue].sourceValue == ModelMatrixEncoding.encode("hbo.com"))
-    assert(columns(2).asInstanceOf[CategorialValue].count == 400)
-    assert(columns(2).asInstanceOf[CategorialValue].cumulativeCount == 9400)
+    assert(columns(2).isInstanceOf[CategoricalValue])
+    assert(columns(2).asInstanceOf[CategoricalValue].sourceName == "hbo.com")
+    assert(columns(2).asInstanceOf[CategoricalValue].sourceValue == ModelMatrixEncoding.encode("hbo.com"))
+    assert(columns(2).asInstanceOf[CategoricalValue].count == 400)
+    assert(columns(2).asInstanceOf[CategoricalValue].cumulativeCount == 9400)
 
     assert(columns(3).columnId == 4)
-    assert(columns(3).isInstanceOf[CategorialValue])
-    assert(columns(3).asInstanceOf[CategorialValue].sourceName == "mashable.com")
-    assert(columns(3).asInstanceOf[CategorialValue].sourceValue == ModelMatrixEncoding.encode("mashable.com"))
-    assert(columns(3).asInstanceOf[CategorialValue].count == 200)
-    assert(columns(3).asInstanceOf[CategorialValue].cumulativeCount == 9600)
+    assert(columns(3).isInstanceOf[CategoricalValue])
+    assert(columns(3).asInstanceOf[CategoricalValue].sourceName == "mashable.com")
+    assert(columns(3).asInstanceOf[CategoricalValue].sourceValue == ModelMatrixEncoding.encode("mashable.com"))
+    assert(columns(3).asInstanceOf[CategoricalValue].count == 200)
+    assert(columns(3).asInstanceOf[CategoricalValue].cumulativeCount == 9600)
 
     assert(columns(4).columnId == 5)
     assert(columns(4).isInstanceOf[AllOther])

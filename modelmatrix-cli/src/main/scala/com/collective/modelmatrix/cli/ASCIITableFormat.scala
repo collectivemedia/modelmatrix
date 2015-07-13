@@ -1,7 +1,7 @@
 package com.collective.modelmatrix.cli
 
 import com.bethecoder.ascii_table.{ASCIITable, ASCIITableHeader}
-import com.collective.modelmatrix.CategorialColumn.{AllOther, CategorialValue}
+import com.collective.modelmatrix.CategoricalColumn.{AllOther, CategoricalValue}
 import com.collective.modelmatrix._
 import com.collective.modelmatrix.catalog._
 import com.collective.modelmatrix.transform.Transformer.FeatureExtractionError
@@ -166,8 +166,8 @@ object ASCIITableFormats {
       )
   }
 
-  private def formatCategorialColumn(feature: ModelFeature)(column: CategorialColumn): Array[String] = column match {
-    case value: CategorialValue =>
+  private def formatCategoricalColumn(feature: ModelFeature)(column: CategoricalColumn): Array[String] = column match {
+    case value: CategoricalValue =>
       Array(
         value.columnId.toString,
         feature.feature,
@@ -188,7 +188,7 @@ object ASCIITableFormats {
       )
   }
 
-  type InstanceFeature = (ModelInstanceFeature, Option[CategorialColumn \/ BinColumn])
+  type InstanceFeature = (ModelInstanceFeature, Option[CategoricalColumn \/ BinColumn])
 
   implicit val modelInstanceFeatureColumnsFormat: ASCIITableFormat[InstanceFeature] =
     ASCIITableFormat[InstanceFeature](
@@ -202,8 +202,8 @@ object ASCIITableFormats {
           formatExtractExpr(f.feature.extract),
           "", ""
         )
-      case (f@ModelInstanceTopFeature(_, _, _, _, _), Some(-\/(col))) => formatCategorialColumn(f.feature)(col)
-      case (f@ModelInstanceIndexFeature(_, _, _, _, _), Some(-\/(col))) => formatCategorialColumn(f.feature)(col)
+      case (f@ModelInstanceTopFeature(_, _, _, _, _), Some(-\/(col))) => formatCategoricalColumn(f.feature)(col)
+      case (f@ModelInstanceIndexFeature(_, _, _, _, _), Some(-\/(col))) => formatCategoricalColumn(f.feature)(col)
       case (f@ModelInstanceBinsFeature(_, _, _, _, _), Some(\/-(col))) => formatBinColumn(f.feature)(col)
       case (f, col) => sys.error(s"Unsupported feature: $f column: $col")
     }
