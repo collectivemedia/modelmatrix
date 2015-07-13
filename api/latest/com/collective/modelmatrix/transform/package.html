@@ -39,13 +39,36 @@
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"></div>
+          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <span class="toggle">Linear Supertypes</span>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+        </div></div>
         
 
       <div id="mbrsel">
         <div id="textfilter"><span class="pre"></span><span class="input"><input id="mbrsel-input" type="text" accesskey="/" /></span><span class="post"></span></div>
-        
-        
+        <div id="order">
+              <span class="filtertype">Ordering</span>
+              <ol>
+                
+                <li class="alpha in"><span>Alphabetic</span></li>
+                <li class="inherit out"><span>By inheritance</span></li>
+              </ol>
+            </div>
+        <div id="ancestors">
+                <span class="filtertype">Inherited<br />
+                </span>
+                <ol id="linearization">
+                  <li class="in" name="com.collective.modelmatrix.transform"><span>transform</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                </ol>
+              </div><div id="ancestors">
+            <span class="filtertype"></span>
+            <ol>
+              <li class="hideall out"><span>Hide All</span></li>
+              <li class="showall in"><span>Show all</span></li>
+            </ol>
+            <a href="http://docs.scala-lang.org/overviews/scaladoc/usage.html#members" target="_blank">Learn more about member selection</a>
+          </div>
         <div id="visbl">
             <span class="filtertype">Visibility</span>
             <ol><li class="public in"><span>Public</span></li><li class="all out"><span>All</span></li></ol>
@@ -97,16 +120,29 @@
       </span>
       </h4>
       
-    </li><li name="com.collective.modelmatrix.transform.CategorialTransformer" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="CategorialTransformerextendsTransformer"></a>
-      <a id="CategorialTransformer:CategorialTransformer"></a>
+    </li><li name="com.collective.modelmatrix.transform.CategoricalTransformer" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="CategoricalTransformerextendsTransformer"></a>
+      <a id="CategoricalTransformer:CategoricalTransformer"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="CategorialTransformer.html"><span class="name">CategorialTransformer</span></a><span class="result"> extends <a href="Transformer.html" class="extype" name="com.collective.modelmatrix.transform.Transformer">Transformer</a></span>
+        <a href="CategoricalTransformer.html"><span class="name">CategoricalTransformer</span></a><span class="result"> extends <a href="Transformer.html" class="extype" name="com.collective.modelmatrix.transform.Transformer">Transformer</a></span>
+      </span>
+      </h4>
+      
+    </li><li name="com.collective.modelmatrix.transform.DataFrameOps" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+      <a id="DataFrameOpsextendsAnyVal"></a>
+      <a id="DataFrameOps:DataFrameOps"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier">implicit final </span>
+        <span class="kind">class</span>
+      </span>
+      <span class="symbol">
+        <a href="package$$DataFrameOps.html"><span class="name">DataFrameOps</span></a><span class="result"> extends <span class="extype" name="scala.AnyVal">AnyVal</span></span>
       </span>
       </h4>
       
@@ -151,7 +187,7 @@
       <p class="comment cmt">For distinct values of the column, find the values
 with at least the minimum support in the data set.</p>
     </li><li name="com.collective.modelmatrix.transform.IndexTransformer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="IndexTransformerextendsCategorialTransformer"></a>
+      <a id="IndexTransformerextendsCategoricalTransformer"></a>
       <a id="IndexTransformer:IndexTransformer"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -159,7 +195,7 @@ with at least the minimum support in the data set.</p>
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="IndexTransformer.html"><span class="name">IndexTransformer</span></a><span class="result"> extends <a href="CategorialTransformer.html" class="extype" name="com.collective.modelmatrix.transform.CategorialTransformer">CategorialTransformer</a></span>
+        <a href="IndexTransformer.html"><span class="name">IndexTransformer</span></a><span class="result"> extends <a href="CategoricalTransformer.html" class="extype" name="com.collective.modelmatrix.transform.CategoricalTransformer">CategoricalTransformer</a></span>
       </span>
       </h4>
       
@@ -179,7 +215,7 @@ with at least the minimum support in the data set.</p>
 by a quantity that cumulatively cover a given percentage
 of this quantity.</p>
     </li><li name="com.collective.modelmatrix.transform.TopTransformer" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="TopTransformerextendsCategorialTransformer"></a>
+      <a id="TopTransformerextendsCategoricalTransformer"></a>
       <a id="TopTransformer:TopTransformer"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -187,7 +223,7 @@ of this quantity.</p>
         <span class="kind">class</span>
       </span>
       <span class="symbol">
-        <a href="TopTransformer.html"><span class="name">TopTransformer</span></a><span class="result"> extends <a href="CategorialTransformer.html" class="extype" name="com.collective.modelmatrix.transform.CategorialTransformer">CategorialTransformer</a></span>
+        <a href="TopTransformer.html"><span class="name">TopTransformer</span></a><span class="result"> extends <a href="CategoricalTransformer.html" class="extype" name="com.collective.modelmatrix.transform.CategoricalTransformer">CategoricalTransformer</a></span>
       </span>
       </h4>
       
@@ -312,7 +348,11 @@ of this quantity.</p>
         </div>
 
         <div id="inheritedMembers">
-        
+        <div class="parent" name="scala.AnyRef">
+              <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
+            </div><div class="parent" name="scala.Any">
+              <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>
+            </div>
         
         </div>
 

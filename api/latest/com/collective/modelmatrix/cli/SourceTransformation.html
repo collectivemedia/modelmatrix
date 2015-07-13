@@ -2,9 +2,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html>
         <head>
-          <title>CategorialTransformer - com.collective.modelmatrix.transform.CategorialTransformer</title>
-          <meta name="description" content="CategorialTransformer - com.collective.modelmatrix.transform.CategorialTransformer" />
-          <meta name="keywords" content="CategorialTransformer com.collective.modelmatrix.transform.CategorialTransformer" />
+          <title>SourceTransformation - com.collective.modelmatrix.cli.SourceTransformation</title>
+          <meta name="description" content="SourceTransformation - com.collective.modelmatrix.cli.SourceTransformation" />
+          <meta name="keywords" content="SourceTransformation com.collective.modelmatrix.cli.SourceTransformation" />
           <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
           
       <link href="../../../../lib/template.css" media="screen" type="text/css" rel="stylesheet" />
@@ -12,7 +12,7 @@
       <script type="text/javascript">
          if(top === self) {
             var url = '../../../../index.html';
-            var hash = 'com.collective.modelmatrix.transform.CategorialTransformer';
+            var hash = 'com.collective.modelmatrix.cli.SourceTransformation';
             var anchor = window.location.hash;
             var anchor_opt = '';
             if (anchor.length >= 1)
@@ -24,27 +24,27 @@
         </head>
         <body class="type">
       <div id="definition">
-        <img src="../../../../lib/class_big.png" />
-        <p id="owner"><a href="../../../package.html" class="extype" name="com">com</a>.<a href="../../package.html" class="extype" name="com.collective">collective</a>.<a href="../package.html" class="extype" name="com.collective.modelmatrix">modelmatrix</a>.<a href="package.html" class="extype" name="com.collective.modelmatrix.transform">transform</a></p>
-        <h1>CategorialTransformer</h1>
+        <img src="../../../../lib/trait_big.png" />
+        <p id="owner"><a href="../../../package.html" class="extype" name="com">com</a>.<a href="../../package.html" class="extype" name="com.collective">collective</a>.<a href="../package.html" class="extype" name="com.collective.modelmatrix">modelmatrix</a>.<a href="package.html" class="extype" name="com.collective.modelmatrix.cli">cli</a></p>
+        <h1>SourceTransformation</h1>
       </div>
 
       <h4 id="signature" class="signature">
       <span class="modifier_kind">
-        <span class="modifier">abstract </span>
-        <span class="kind">class</span>
+        <span class="modifier"></span>
+        <span class="kind">trait</span>
       </span>
       <span class="symbol">
-        <span class="name">CategorialTransformer</span><span class="result"> extends <a href="Transformer.html" class="extype" name="com.collective.modelmatrix.transform.Transformer">Transformer</a></span>
+        <span class="name">SourceTransformation</span><span class="result"> extends <span class="extype" name="scala.AnyRef">AnyRef</span></span>
       </span>
       </h4>
       
-          <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
+          <div id="comment" class="fullcommenttop"><dl class="attributes block"> <dt>Self Type</dt><dd><a href="" class="extype" name="com.collective.modelmatrix.cli.SourceTransformation">SourceTransformation</a> with <a href="Script.html" class="extype" name="com.collective.modelmatrix.cli.Script">Script</a></dd></dl><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><a href="Transformer.html" class="extype" name="com.collective.modelmatrix.transform.Transformer">Transformer</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div><div class="toggleContainer block">
           <span class="toggle">Known Subclasses</span>
-          <div class="subClasses hiddenContent"><a href="IndexTransformer.html" class="extype" name="com.collective.modelmatrix.transform.IndexTransformer">IndexTransformer</a>, <a href="TopTransformer.html" class="extype" name="com.collective.modelmatrix.transform.TopTransformer">TopTransformer</a></div>
+          <div class="subClasses hiddenContent"><a href="instance/AddInstance.html" class="extype" name="com.collective.modelmatrix.cli.instance.AddInstance">AddInstance</a>, <a href="featurize/SparseFeaturization.html" class="extype" name="com.collective.modelmatrix.cli.featurize.SparseFeaturization">SparseFeaturization</a>, <a href="instance/ValidateInputData.html" class="extype" name="com.collective.modelmatrix.cli.instance.ValidateInputData">ValidateInputData</a>, <a href="featurize/ValidateInputData.html" class="extype" name="com.collective.modelmatrix.cli.featurize.ValidateInputData">ValidateInputData</a></div>
         </div></div>
         
 
@@ -62,7 +62,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="com.collective.modelmatrix.transform.CategorialTransformer"><span>CategorialTransformer</span></li><li class="in" name="com.collective.modelmatrix.transform.Transformer"><span>Transformer</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="com.collective.modelmatrix.cli.SourceTransformation"><span>SourceTransformation</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -80,83 +80,38 @@
 
       <div id="template">
         <div id="allMembers">
-        <div id="constructors" class="members">
-              <h3>Instance Constructors</h3>
-              <ol><li name="com.collective.modelmatrix.transform.CategorialTransformer#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(features:scalaz.@@[org.apache.spark.sql.DataFrame,com.collective.modelmatrix.transform.Transformer.Features]):com.collective.modelmatrix.transform.CategorialTransformer"></a>
-      <a id="&lt;init&gt;:CategorialTransformer"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">new</span>
-      </span>
-      <span class="symbol">
-        <span class="name">CategorialTransformer</span><span class="params">(<span name="features">features: <a href="../../../../scalaz/package.html#@@[T,Tag]=scalaz.package.Tagged[T,Tag]" class="extmbr" name="scalaz.@@">@@</a>[<span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span>, <a href="Transformer$$Features.html" class="extype" name="com.collective.modelmatrix.transform.Transformer.Features">Features</a>]</span>)</span>
-      </span>
-      </h4>
-      
-    </li></ol>
-            </div>
+        
 
-        <div id="types" class="types members">
-              <h3>Type Members</h3>
-              <ol><li name="com.collective.modelmatrix.transform.CategorialTransformer.Scan" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="ScanextendsProductwithSerializable"></a>
-      <a id="Scan:Scan"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a href="CategorialTransformer$Scan.html"><span class="name">Scan</span></a><span class="params">(<span name="columnId">columnId: <span class="extype" name="scala.Int">Int</span> = <span class="symbol">0</span></span>, <span name="cumulativeCnt">cumulativeCnt: <span class="extype" name="scala.Long">Long</span> = <span class="symbol">0</span></span>, <span name="columns">columns: <span class="extype" name="scala.Seq">Seq</span>[<a href="../CategorialColumn.html" class="extype" name="com.collective.modelmatrix.CategorialColumn">CategorialColumn</a>] = <span class="symbol">collection.this.Seq.empty[Nothing]</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li><li name="com.collective.modelmatrix.transform.CategorialTransformer.Value" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="ValueextendsProductwithSerializable"></a>
-      <a id="Value:Value"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">case class</span>
-      </span>
-      <span class="symbol">
-        <a href="CategorialTransformer$Value.html"><span class="name">Value</span></a><span class="params">(<span name="value">value: <span class="extype" name="scala.Any">Any</span></span>, <span name="count">count: <span class="extype" name="scala.Long">Long</span></span>)</span><span class="result"> extends <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
-    </li></ol>
-            </div>
+        
 
         <div id="values" class="values members">
               <h3>Abstract Value Members</h3>
-              <ol><li name="com.collective.modelmatrix.transform.CategorialTransformer#transform" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
-      <a id="transform(feature:com.collective.modelmatrix.transform.TypedModelFeature):Seq[com.collective.modelmatrix.CategorialColumn]"></a>
-      <a id="transform(TypedModelFeature):Seq[CategorialColumn]"></a>
+              <ol><li name="com.collective.modelmatrix.cli.SourceTransformation#cacheSource" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="cacheSource:Boolean"></a>
+      <a id="cacheSource:Boolean"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">transform</span><span class="params">(<span name="feature">feature: <a href="TypedModelFeature.html" class="extype" name="com.collective.modelmatrix.transform.TypedModelFeature">TypedModelFeature</a></span>)</span><span class="result">: <span class="extype" name="scala.Seq">Seq</span>[<a href="../CategorialColumn.html" class="extype" name="com.collective.modelmatrix.CategorialColumn">CategorialColumn</a>]</span>
+        <span class="name">cacheSource</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4>
       
-    </li><li name="com.collective.modelmatrix.transform.Transformer#validate" visbl="pub" data-isabs="true" fullComment="yes" group="Ungrouped">
-      <a id="validate:PartialFunction[com.collective.modelmatrix.ModelFeature,scalaz.\/[com.collective.modelmatrix.transform.FeatureTransformationError,com.collective.modelmatrix.transform.TypedModelFeature]]"></a>
-      <a id="validate:PartialFunction[ModelFeature,\/[FeatureTransformationError,TypedModelFeature]]"></a>
+    </li><li name="com.collective.modelmatrix.cli.SourceTransformation#repartitionSource" visbl="pub" data-isabs="true" fullComment="no" group="Ungrouped">
+      <a id="repartitionSource:Option[Int]"></a>
+      <a id="repartitionSource:Option[Int]"></a>
       <h4 class="signature">
       <span class="modifier_kind">
         <span class="modifier">abstract </span>
         <span class="kind">def</span>
       </span>
       <span class="symbol">
-        <span class="name">validate</span><span class="result">: <span class="extype" name="scala.PartialFunction">PartialFunction</span>[<a href="../ModelFeature.html" class="extype" name="com.collective.modelmatrix.ModelFeature">ModelFeature</a>, <span class="extype" name="scalaz.\/">\/</span>[<a href="FeatureTransformationError.html" class="extype" name="com.collective.modelmatrix.transform.FeatureTransformationError">FeatureTransformationError</a>, <a href="TypedModelFeature.html" class="extype" name="com.collective.modelmatrix.transform.TypedModelFeature">TypedModelFeature</a>]]</span>
+        <span class="name">repartitionSource</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>]</span>
       </span>
       </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="Transformer.html" class="extype" name="com.collective.modelmatrix.transform.Transformer">Transformer</a></dd></dl></div>
+      
     </li></ol>
             </div>
 
@@ -285,19 +240,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="com.collective.modelmatrix.transform.Transformer#featureDataType" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="featureDataType(feature:String):Option[org.apache.spark.sql.types.DataType]"></a>
-      <a id="featureDataType(String):Option[DataType]"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">featureDataType</span><span class="params">(<span name="feature">feature: <span class="extype" name="scala.Predef.String">String</span></span>)</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="org.apache.spark.sql.types.DataType">DataType</span>]</span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="Transformer.html" class="extype" name="com.collective.modelmatrix.transform.Transformer">Transformer</a></dd></dl></div>
     </li><li name="scala.AnyRef#finalize" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="finalize():Unit"></a>
       <a id="finalize():Unit"></a>
@@ -408,6 +350,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="com.collective.modelmatrix.cli.SourceTransformation#toDataFrame" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toDataFrame(source:com.collective.modelmatrix.cli.Source)(implicitsqlContext:org.apache.spark.sql.SQLContext):org.apache.spark.sql.DataFrame"></a>
+      <a id="toDataFrame(Source)(SQLContext):DataFrame"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">toDataFrame</span><span class="params">(<span name="source">source: <a href="Source.html" class="extype" name="com.collective.modelmatrix.cli.Source">Source</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="sqlContext">sqlContext: <span class="extype" name="org.apache.spark.sql.SQLContext">SQLContext</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="scala.AnyRef#toString" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="toString():String"></a>
       <a id="toString():String"></a>
@@ -421,19 +376,6 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef → Any</dd></dl></div>
-    </li><li name="com.collective.modelmatrix.transform.CategorialTransformer#valueColumn" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
-      <a id="valueColumn(extractType:org.apache.spark.sql.types.DataType)(previousColumnId:Int,previousCumCnt:Long,value:CategorialTransformer.this.Value):com.collective.modelmatrix.CategorialColumn.CategorialValue"></a>
-      <a id="valueColumn(DataType)(Int,Long,Value):CategorialValue"></a>
-      <h4 class="signature">
-      <span class="modifier_kind">
-        <span class="modifier"></span>
-        <span class="kind">def</span>
-      </span>
-      <span class="symbol">
-        <span class="name">valueColumn</span><span class="params">(<span name="extractType">extractType: <span class="extype" name="org.apache.spark.sql.types.DataType">DataType</span></span>)</span><span class="params">(<span name="previousColumnId">previousColumnId: <span class="extype" name="scala.Int">Int</span></span>, <span name="previousCumCnt">previousCumCnt: <span class="extype" name="scala.Long">Long</span></span>, <span name="value">value: <a href="CategorialTransformer$Value.html" class="extype" name="com.collective.modelmatrix.transform.CategorialTransformer.Value">Value</a></span>)</span><span class="result">: <a href="../CategorialColumn$$CategorialValue.html" class="extype" name="com.collective.modelmatrix.CategorialColumn.CategorialValue">CategorialValue</a></span>
-      </span>
-      </h4>
-      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
@@ -500,9 +442,7 @@
         </div>
 
         <div id="inheritedMembers">
-        <div class="parent" name="com.collective.modelmatrix.transform.Transformer">
-              <h3>Inherited from <a href="Transformer.html" class="extype" name="com.collective.modelmatrix.transform.Transformer">Transformer</a></h3>
-            </div><div class="parent" name="scala.AnyRef">
+        <div class="parent" name="scala.AnyRef">
               <h3>Inherited from <span class="extype" name="scala.AnyRef">AnyRef</span></h3>
             </div><div class="parent" name="scala.Any">
               <h3>Inherited from <span class="extype" name="scala.Any">Any</span></h3>

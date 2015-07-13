@@ -54,7 +54,7 @@ This command will return model definition id, going forward I'm assuming that it
      
 ## #7 Create model instance by applying definition to input data
      
-It will calculate categorial and continuous features transformations based on shape of input data
+It will calculate categorical and continuous features transformations based on shape of input data
      
      bin/modelmatrix-cli instance create \
            --definition-id 1 \
@@ -66,7 +66,7 @@ This command will return model instance id, going forward I'm assuming that it i
 
 ## #8 View instance feature transformations
 
-You can view what categorial and continuous transformations were computed from input data.
+You can view what categorical and continuous transformations were computed from input data.
 
     bin/modelmatrix-cli instance view features --instance-id 123
     bin/modelmatrix-cli instance view columns --instance-id 123

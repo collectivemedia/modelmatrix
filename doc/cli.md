@@ -111,7 +111,8 @@ Check that input data compatible with model definition and can be used to build 
 | n, name        | -n "v123"                     | matrix model instance name                        |
 | c, comment     | -c "test on new data"         | matrix model instance comment                     |
 | concurrency    | --concurrency 10              | number of concurrent transformations (Spark jobs) |
-| cache          | --cache true                  | cache source table                                |
+| repartition    | --repartition 1000            | repartition input source                          |
+| cache          | --cache true                  | cache input source                                |
     
 ### Examples    
 

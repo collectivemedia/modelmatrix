@@ -21,7 +21,7 @@ Continuous features may need to be transformed to binary format using binning to
 In general, binning attempts to break a set of ordered values into evenly distributed groups, 
 such that each group contains approximately the same number of values from the sample. 
 
-### <a name="categorial-features">Categorial Features</a>
+### <a name="categorical-features">Categorial Features</a>
  
 Categorical features must be transformed to binary format by creating a binary variable
 for each categorical value. However, high-cardinality features, such as web pages where ads were delivered, 
@@ -44,6 +44,6 @@ for example, web sites that account for at least c percent of traffic.
 Model Matrix catalog - is a persistent metadata storage where you can keep all your model matrix definitions, keep history of them, use
 definition to build model matrix instance by applying it to input data, apply model matrix instance to input data for "featurization".
 
-For model matrix instances it stores all categorial and binning transformation settings for each feature.
+For model matrix instances it stores all categorical and binning transformation settings for each feature.
 
 

@@ -35,13 +35,13 @@
         <span class="kind">case class</span>
       </span>
       <span class="symbol">
-        <span class="name">ValidateInputData</span><span class="params">(<span name="modelInstanceId">modelInstanceId: <span class="extype" name="scala.Int">Int</span></span>, <span name="source">source: <a href="../Source.html" class="extype" name="com.collective.modelmatrix.cli.Source">Source</a></span>, <span name="cacheSource">cacheSource: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result"> extends <a href="../Script.html" class="extype" name="com.collective.modelmatrix.cli.Script">Script</a> with <a href="../../ModelMatrix$$PostgresModelMatrixCatalog.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog">PostgresModelMatrixCatalog</a> with <a href="../CliSparkContext.html" class="extype" name="com.collective.modelmatrix.cli.CliSparkContext">CliSparkContext</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
+        <span class="name">ValidateInputData</span><span class="params">(<span name="modelInstanceId">modelInstanceId: <span class="extype" name="scala.Int">Int</span></span>, <span name="source">source: <a href="../Source.html" class="extype" name="com.collective.modelmatrix.cli.Source">Source</a></span>, <span name="repartitionSource">repartitionSource: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>]</span>, <span name="cacheSource">cacheSource: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span><span class="result"> extends <a href="../Script.html" class="extype" name="com.collective.modelmatrix.cli.Script">Script</a> with <a href="../SourceTransformation.html" class="extype" name="com.collective.modelmatrix.cli.SourceTransformation">SourceTransformation</a> with <a href="../../ModelMatrix$$PostgresModelMatrixCatalog.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog">PostgresModelMatrixCatalog</a> with <a href="../CliSparkContext.html" class="extype" name="com.collective.modelmatrix.cli.CliSparkContext">CliSparkContext</a> with <span class="extype" name="scala.Product">Product</span> with <span class="extype" name="scala.Serializable">Serializable</span></span>
       </span>
       </h4>
       
           <div id="comment" class="fullcommenttop"><div class="toggleContainer block">
           <span class="toggle">Linear Supertypes</span>
-          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="../CliSparkContext.html" class="extype" name="com.collective.modelmatrix.cli.CliSparkContext">CliSparkContext</a>, <a href="../../ModelMatrix$$PostgresModelMatrixCatalog.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog">PostgresModelMatrixCatalog</a>, <a href="../../ModelMatrix$$ModelMatrixCatalogAccess.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess">ModelMatrixCatalogAccess</a>, <a href="../Script.html" class="extype" name="com.collective.modelmatrix.cli.Script">Script</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
+          <div class="superTypes hiddenContent"><span class="extype" name="scala.Serializable">Serializable</span>, <span class="extype" name="java.io.Serializable">Serializable</span>, <span class="extype" name="scala.Product">Product</span>, <span class="extype" name="scala.Equals">Equals</span>, <a href="../CliSparkContext.html" class="extype" name="com.collective.modelmatrix.cli.CliSparkContext">CliSparkContext</a>, <a href="../../ModelMatrix$$PostgresModelMatrixCatalog.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog">PostgresModelMatrixCatalog</a>, <a href="../../ModelMatrix$$ModelMatrixCatalogAccess.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess">ModelMatrixCatalogAccess</a>, <a href="../SourceTransformation.html" class="extype" name="com.collective.modelmatrix.cli.SourceTransformation">SourceTransformation</a>, <a href="../Script.html" class="extype" name="com.collective.modelmatrix.cli.Script">Script</a>, <span class="extype" name="scala.AnyRef">AnyRef</span>, <span class="extype" name="scala.Any">Any</span></div>
         </div></div>
         
 
@@ -59,7 +59,7 @@
                 <span class="filtertype">Inherited<br />
                 </span>
                 <ol id="linearization">
-                  <li class="in" name="com.collective.modelmatrix.cli.featurize.ValidateInputData"><span>ValidateInputData</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="com.collective.modelmatrix.cli.CliSparkContext"><span>CliSparkContext</span></li><li class="in" name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog"><span>PostgresModelMatrixCatalog</span></li><li class="in" name="com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess"><span>ModelMatrixCatalogAccess</span></li><li class="in" name="com.collective.modelmatrix.cli.Script"><span>Script</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
+                  <li class="in" name="com.collective.modelmatrix.cli.featurize.ValidateInputData"><span>ValidateInputData</span></li><li class="in" name="scala.Serializable"><span>Serializable</span></li><li class="in" name="java.io.Serializable"><span>Serializable</span></li><li class="in" name="scala.Product"><span>Product</span></li><li class="in" name="scala.Equals"><span>Equals</span></li><li class="in" name="com.collective.modelmatrix.cli.CliSparkContext"><span>CliSparkContext</span></li><li class="in" name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog"><span>PostgresModelMatrixCatalog</span></li><li class="in" name="com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess"><span>ModelMatrixCatalogAccess</span></li><li class="in" name="com.collective.modelmatrix.cli.SourceTransformation"><span>SourceTransformation</span></li><li class="in" name="com.collective.modelmatrix.cli.Script"><span>Script</span></li><li class="in" name="scala.AnyRef"><span>AnyRef</span></li><li class="in" name="scala.Any"><span>Any</span></li>
                 </ol>
               </div><div id="ancestors">
             <span class="filtertype"></span>
@@ -80,7 +80,7 @@
         <div id="constructors" class="members">
               <h3>Instance Constructors</h3>
               <ol><li name="com.collective.modelmatrix.cli.featurize.ValidateInputData#&lt;init&gt;" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
-      <a id="&lt;init&gt;(modelInstanceId:Int,source:com.collective.modelmatrix.cli.Source,cacheSource:Boolean):com.collective.modelmatrix.cli.featurize.ValidateInputData"></a>
+      <a id="&lt;init&gt;(modelInstanceId:Int,source:com.collective.modelmatrix.cli.Source,repartitionSource:Option[Int],cacheSource:Boolean):com.collective.modelmatrix.cli.featurize.ValidateInputData"></a>
       <a id="&lt;init&gt;:ValidateInputData"></a>
       <h4 class="signature">
       <span class="modifier_kind">
@@ -88,7 +88,7 @@
         <span class="kind">new</span>
       </span>
       <span class="symbol">
-        <span class="name">ValidateInputData</span><span class="params">(<span name="modelInstanceId">modelInstanceId: <span class="extype" name="scala.Int">Int</span></span>, <span name="source">source: <a href="../Source.html" class="extype" name="com.collective.modelmatrix.cli.Source">Source</a></span>, <span name="cacheSource">cacheSource: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span>
+        <span class="name">ValidateInputData</span><span class="params">(<span name="modelInstanceId">modelInstanceId: <span class="extype" name="scala.Int">Int</span></span>, <span name="source">source: <a href="../Source.html" class="extype" name="com.collective.modelmatrix.cli.Source">Source</a></span>, <span name="repartitionSource">repartitionSource: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>]</span>, <span name="cacheSource">cacheSource: <span class="extype" name="scala.Boolean">Boolean</span></span>)</span>
       </span>
       </h4>
       
@@ -205,7 +205,7 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="../../ModelMatrix$$ModelMatrixCatalogAccess.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess">ModelMatrixCatalogAccess</a></dd></dl></div>
-    </li><li name="com.collective.modelmatrix.cli.featurize.ValidateInputData#cacheSource" visbl="pub" data-isabs="false" fullComment="no" group="Ungrouped">
+    </li><li name="com.collective.modelmatrix.cli.featurize.ValidateInputData#cacheSource" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="cacheSource:Boolean"></a>
       <a id="cacheSource:Boolean"></a>
       <h4 class="signature">
@@ -217,7 +217,7 @@
         <span class="name">cacheSource</span><span class="result">: <span class="extype" name="scala.Boolean">Boolean</span></span>
       </span>
       </h4>
-      
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.collective.modelmatrix.cli.featurize.ValidateInputData">ValidateInputData</a> → <a href="../SourceTransformation.html" class="extype" name="com.collective.modelmatrix.cli.SourceTransformation">SourceTransformation</a></dd></dl></div>
     </li><li name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog#catalog" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="catalog:com.collective.modelmatrix.catalog.ModelMatrixCatalog"></a>
       <a id="catalog:ModelMatrixCatalog"></a>
@@ -451,6 +451,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="com.collective.modelmatrix.cli.featurize.ValidateInputData#repartitionSource" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="repartitionSource:Option[Int]"></a>
+      <a id="repartitionSource:Option[Int]"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">val</span>
+      </span>
+      <span class="symbol">
+        <span class="name">repartitionSource</span><span class="result">: <span class="extype" name="scala.Option">Option</span>[<span class="extype" name="scala.Int">Int</span>]</span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd><a href="" class="extype" name="com.collective.modelmatrix.cli.featurize.ValidateInputData">ValidateInputData</a> → <a href="../SourceTransformation.html" class="extype" name="com.collective.modelmatrix.cli.SourceTransformation">SourceTransformation</a></dd></dl></div>
     </li><li name="com.collective.modelmatrix.cli.featurize.ValidateInputData#run" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="run():Unit"></a>
       <a id="run():Unit"></a>
@@ -503,6 +516,19 @@
       </span>
       </h4>
       <div class="fullcomment"><dl class="attributes block"> <dt>Definition Classes</dt><dd>AnyRef</dd></dl></div>
+    </li><li name="com.collective.modelmatrix.cli.SourceTransformation#toDataFrame" visbl="prt" data-isabs="false" fullComment="yes" group="Ungrouped">
+      <a id="toDataFrame(source:com.collective.modelmatrix.cli.Source)(implicitsqlContext:org.apache.spark.sql.SQLContext):org.apache.spark.sql.DataFrame"></a>
+      <a id="toDataFrame(Source)(SQLContext):DataFrame"></a>
+      <h4 class="signature">
+      <span class="modifier_kind">
+        <span class="modifier"></span>
+        <span class="kind">def</span>
+      </span>
+      <span class="symbol">
+        <span class="name">toDataFrame</span><span class="params">(<span name="source">source: <a href="../Source.html" class="extype" name="com.collective.modelmatrix.cli.Source">Source</a></span>)</span><span class="params">(<span class="implicit">implicit </span><span name="sqlContext">sqlContext: <span class="extype" name="org.apache.spark.sql.SQLContext">SQLContext</span></span>)</span><span class="result">: <span class="extype" name="org.apache.spark.sql.DataFrame">DataFrame</span></span>
+      </span>
+      </h4>
+      <div class="fullcomment"><dl class="attributes block"> <dt>Attributes</dt><dd>protected </dd><dt>Definition Classes</dt><dd><a href="../SourceTransformation.html" class="extype" name="com.collective.modelmatrix.cli.SourceTransformation">SourceTransformation</a></dd></dl></div>
     </li><li name="scala.AnyRef#wait" visbl="pub" data-isabs="false" fullComment="yes" group="Ungrouped">
       <a id="wait():Unit"></a>
       <a id="wait():Unit"></a>
@@ -583,6 +609,8 @@
               <h3>Inherited from <a href="../../ModelMatrix$$PostgresModelMatrixCatalog.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog">PostgresModelMatrixCatalog</a></h3>
             </div><div class="parent" name="com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess">
               <h3>Inherited from <a href="../../ModelMatrix$$ModelMatrixCatalogAccess.html" class="extype" name="com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess">ModelMatrixCatalogAccess</a></h3>
+            </div><div class="parent" name="com.collective.modelmatrix.cli.SourceTransformation">
+              <h3>Inherited from <a href="../SourceTransformation.html" class="extype" name="com.collective.modelmatrix.cli.SourceTransformation">SourceTransformation</a></h3>
             </div><div class="parent" name="com.collective.modelmatrix.cli.Script">
               <h3>Inherited from <a href="../Script.html" class="extype" name="com.collective.modelmatrix.cli.Script">Script</a></h3>
             </div><div class="parent" name="scala.AnyRef">
