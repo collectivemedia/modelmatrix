@@ -7,6 +7,8 @@ Model Matrix: Machine Learning Feature Engineering
 * Website: https://collectivemedia.github.io/modelmatrix/
 * Source: https://github.com/collectivemedia/modelmatrix/
 
+Alternative to Spark machine learning pipeline feature extractors, focused on building sparse feature vectors.
+
 ## Where to get it
 
 Model Matrix workflow focused around [command line interface](http://collectivemedia.github.io/modelmatrix/doc/cli.html), 
