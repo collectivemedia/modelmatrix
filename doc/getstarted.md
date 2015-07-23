@@ -46,7 +46,7 @@ This command will return model definition id, going forward I'm assuming that it
                 
 ## #5 View new model definition
 
-    bin/modelmatrix-cli definition view --definition-id 1
+    bin/modelmatrix-cli definition view features --definition-id 1
     
 ## #6 Check that definition can be used to build model instance from Hive
     
