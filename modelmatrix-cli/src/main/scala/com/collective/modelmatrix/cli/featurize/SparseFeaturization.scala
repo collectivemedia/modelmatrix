@@ -1,6 +1,6 @@
 package com.collective.modelmatrix.cli.featurize
 
-import com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog
+import com.collective.modelmatrix.ModelMatrix.DbModelMatrixCatalog
 import com.collective.modelmatrix.cli.{Source, _}
 import com.collective.modelmatrix.transform.Transformer
 import com.collective.modelmatrix.{Featurization, Labeling, ModelMatrix}
@@ -18,7 +18,7 @@ case class SparseFeaturization(
   idColumn: String,
   repartitionSource: Option[Int],
   cacheSource: Boolean
-) extends Script with SourceTransformation with PostgresModelMatrixCatalog with CliSparkContext {
+) extends Script with SourceTransformation with DbModelMatrixCatalog with CliSparkContext {
 
   private val log = LoggerFactory.getLogger(classOf[ValidateInputData])
 

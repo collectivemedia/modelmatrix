@@ -48,6 +48,8 @@ object Dependency {
   val slick               = "com.typesafe.slick"        %% "slick"                       % V.Slick
   val pgDriver            = "org.postgresql"             % "postgresql"                  % V.PgDriver
   val hikariCP            = "com.zaxxer"                 % "HikariCP"                    % V.HikariCP
+  val h2                  = "com.h2database"             % "h2"                          % V.H2
+
 
   // Scalaz
 
@@ -67,7 +69,6 @@ object Dependency {
     val scalaMock         = "org.scalamock"             %% "scalamock-scalatest-support" % V.ScalaMock  % "it,test"
     val scalaTest         = "org.scalatest"             %% "scalatest"                   % V.ScalaTest  % "it,test"
     val scalaCheck        = "org.scalacheck"            %% "scalacheck"                  % V.ScalaCheck % "it,test"
-    val h2                = "com.h2database"             % "h2"                          % V.H2         % "it,test"
 
   }
 

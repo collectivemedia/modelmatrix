@@ -3,7 +3,7 @@ package com.collective.modelmatrix.cli.definition
 import java.nio.file.Path
 import java.time.Instant
 
-import com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog
+import com.collective.modelmatrix.ModelMatrix.DbModelMatrixCatalog
 import com.collective.modelmatrix.cli.{ModelConfigurationParser, Script}
 import com.typesafe.config.{ConfigFactory, ConfigResolveOptions}
 import org.slf4j.LoggerFactory
@@ -15,7 +15,7 @@ case class AddDefinition(
   configPath: String,
   name: Option[String],
   comment: Option[String]
-) extends Script with PostgresModelMatrixCatalog {
+) extends Script with DbModelMatrixCatalog {
 
   private val log = LoggerFactory.getLogger(classOf[AddDefinition])
 
