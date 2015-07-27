@@ -44,7 +44,7 @@ flywaySqlMigrationPrefix := "v"
 
 // Select the location dynamically base on the url
 // This is just used during itegration testing so in the end we could default it to PG
-flywayLocations := Seq("db/migrations/" + {
+flywayLocations := Seq("db/migration/" + {
  flywayUrl.value match {
    case pg if pg.startsWith("jdbc:postgresql:") => "pg"
    case h2 if h2.startsWith("jdbc:h2:") => "h2"
