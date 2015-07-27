@@ -1,6 +1,6 @@
 package com.collective.modelmatrix.cli.instance
 
-import com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog
+import com.collective.modelmatrix.ModelMatrix.DbModelMatrixCatalog
 import com.collective.modelmatrix._
 import com.collective.modelmatrix.cli.{SourceTransformation, CliSparkContext, Script, Source}
 import com.collective.modelmatrix.transform._
@@ -19,7 +19,7 @@ case class AddInstance(
   cacheSource: Boolean
 )
   extends Script with SourceTransformation
-  with PostgresModelMatrixCatalog
+  with DbModelMatrixCatalog
   with CliSparkContext
   with Transformers
   with TransformationProcess {

@@ -1,7 +1,7 @@
 package com.collective.modelmatrix.cli.instance
 
 import com.collective.modelmatrix.ModelMatrix
-import com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog
+import com.collective.modelmatrix.ModelMatrix.DbModelMatrixCatalog
 import com.collective.modelmatrix.cli.{Source, _}
 import com.collective.modelmatrix.transform._
 import org.slf4j.LoggerFactory
@@ -13,7 +13,7 @@ case class ValidateInputData(
   source: Source,
   repartitionSource: Option[Int],
   cacheSource: Boolean
-) extends Script with SourceTransformation with PostgresModelMatrixCatalog with CliSparkContext with Transformers {
+) extends Script with SourceTransformation with DbModelMatrixCatalog with CliSparkContext with Transformers {
 
   private val log = LoggerFactory.getLogger(classOf[ValidateInputData])
 

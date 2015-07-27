@@ -16,7 +16,7 @@ class ModelConfigurationParserSpec extends FlatSpec with GivenWhenThen {
   "Model Configuration parser" should "parse model matrix config" in {
 
     Given("well-defined model-matrix config")
-    val config = ConfigFactory.load("./matrix-model.conf")
+    val config = ConfigFactory.load("./matrix-model-cli.conf")
     val parser = new ModelConfigurationParser(config)
 
     Then("should parse all features")

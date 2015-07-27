@@ -1,6 +1,6 @@
 package com.collective.modelmatrix.cli.featurize
 
-import com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog
+import com.collective.modelmatrix.ModelMatrix.DbModelMatrixCatalog
 import com.collective.modelmatrix.cli.{SourceTransformation, CliSparkContext, Script, Source}
 import com.collective.modelmatrix.transform.Transformer
 import com.collective.modelmatrix.{Featurization, ModelMatrix}
@@ -13,7 +13,7 @@ case class ValidateInputData(
   source: Source,
   repartitionSource: Option[Int],
   cacheSource: Boolean
-) extends Script with SourceTransformation with PostgresModelMatrixCatalog with CliSparkContext {
+) extends Script with SourceTransformation with DbModelMatrixCatalog with CliSparkContext {
 
   private val log = LoggerFactory.getLogger(classOf[ValidateInputData])
 
