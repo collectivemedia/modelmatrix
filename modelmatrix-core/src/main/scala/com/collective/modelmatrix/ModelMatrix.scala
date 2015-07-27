@@ -4,17 +4,17 @@ import java.util.concurrent.Executors
 
 import com.collective.modelmatrix.ModelMatrix.DbModelMatrixCatalog
 import com.collective.modelmatrix.catalog.{ModelDefinitionFeature, ModelInstanceFeature, _}
+import com.collective.modelmatrix.db.DefaultDBConfigWrapper
 import com.collective.modelmatrix.transform.Transformer.FeatureExtractionError
 import com.collective.modelmatrix.transform._
 import com.google.common.util.concurrent.ThreadFactoryBuilder
-import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.sql.{DataFrame, SQLContext}
 import org.slf4j.LoggerFactory
-import slick.driver.{H2Driver, JdbcProfile, PostgresDriver}
+import slick.driver.JdbcProfile
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -72,44 +72,13 @@ object ModelMatrix extends ModelMatrixUDF {
         build()
   }
 
-  class DatabaseConfig(n: String, dc: String, sd: JdbcProfile) {
-    val name = n;
-    val driverClass = dc;
-    val slickDriver = sd;
-  }
-
-  object DatabaseConfigWrapper {
-    val PG = new DatabaseConfig("pg", "org.postgresql.Driver", PostgresDriver)
-    val H2 = new DatabaseConfig("h2", "org.h2.Driver", H2Driver)
-    lazy val currentDB: DatabaseConfig = getCurrentDB
-
-    val dbConfigPath: String = "modelmatrix.catalog.db"
-    lazy val dbConfig: Config = ConfigFactory.load()
-
-    private def getCurrentDB = {
-      dbConfig.getConfig(dbConfigPath).getString("driver") match {
-        case PG.driverClass => PG
-        case H2.driverClass => H2
-        case _ => throw new RuntimeException("The following db driver '%s' is not supported"
-          .format(dbConfig.getConfig(dbConfigPath).getString("driver")))
-      }
-    }
-
-    def getSlickDriver: JdbcProfile = {
-      currentDB.slickDriver
-    }
-
-    def getMigrationPath: String = {
-      "db/migration/%s".format(currentDB.name)
-    }
-  }
 
   trait DbModelMatrixCatalog extends ModelMatrixCatalogAccess {
 
-    protected val driver = DatabaseConfigWrapper.getSlickDriver
+    protected val driver = DefaultDBConfigWrapper.getSlickDriver
     import driver.api._
 
-    protected lazy val db = Database.forConfig(DatabaseConfigWrapper.dbConfigPath, DatabaseConfigWrapper.dbConfig)
+    protected lazy val db = Database.forConfig("", DefaultDBConfigWrapper.dbConfig)
     protected lazy val catalog = new ModelMatrixCatalog(driver)
 
     protected lazy val modelDefinitions = new ModelDefinitions(catalog)
@@ -118,9 +87,6 @@ object ModelMatrix extends ModelMatrixUDF {
     protected lazy val modelInstances = new ModelInstances(catalog)
     protected lazy val modelInstanceFeatures = new ModelInstanceFeatures(catalog)
   }
-
-
-
 
 }
 

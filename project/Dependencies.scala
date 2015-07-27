@@ -31,6 +31,7 @@ object Dependencies {
     , pgDriver
     , hikariCP
     , h2
+    , flyway
     )
 
   val modelmatrixCli =
@@ -40,7 +41,6 @@ object Dependencies {
       scopt
     , guava
     , scalazStream
-    , flyway
     )
 
   val modelmatrixUdf =

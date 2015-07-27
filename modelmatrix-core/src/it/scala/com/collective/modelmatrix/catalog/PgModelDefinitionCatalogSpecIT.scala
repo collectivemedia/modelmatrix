@@ -1,0 +1,3 @@
+package com.collective.modelmatrix.catalog
+
+class PgModelDefinitionCatalogSpecIT extends ModelDefinitionCatalogSpec with PgDatabaseIT with InstallSchemaBefore

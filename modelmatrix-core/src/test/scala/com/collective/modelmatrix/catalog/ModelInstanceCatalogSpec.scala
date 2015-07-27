@@ -2,13 +2,14 @@ package com.collective.modelmatrix.catalog
 
 import java.time.Instant
 
-import com.collective.modelmatrix.{ModelMatrixEncoding, BinColumn, CategoricalColumn, ModelFeature}
-import com.collective.modelmatrix.transform.{Bins, Index, Top, Identity}
-import org.apache.spark.sql.types.{DoubleType, StringType, IntegerType}
-import org.scalatest.{BeforeAndAfterAll, GivenWhenThen, FlatSpec}
+import com.collective.modelmatrix.transform.{Bins, Identity, Index, Top}
+import com.collective.modelmatrix.{BinColumn, CategoricalColumn, ModelFeature, ModelMatrixEncoding}
+import org.apache.spark.sql.types.{DoubleType, IntegerType, StringType}
+import org.scalatest.{BeforeAndAfterAll, FlatSpec, GivenWhenThen}
 
 
-class H2ModelInstanceCatalogSpec extends ModelInstanceCatalogSpec with H2Database
+class H2ModelInstanceCatalogSpec extends ModelInstanceCatalogSpec with H2Database with InstallSchemaBefore
+
 
 trait ModelInstanceCatalogSpec extends FlatSpec with GivenWhenThen with BeforeAndAfterAll with CatalogDatabase {
 
