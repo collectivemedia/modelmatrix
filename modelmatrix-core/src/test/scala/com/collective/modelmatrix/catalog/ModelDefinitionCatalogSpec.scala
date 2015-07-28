@@ -6,7 +6,7 @@ import com.collective.modelmatrix.ModelFeature
 import com.collective.modelmatrix.transform.{Bins, Identity, Index, Top}
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, GivenWhenThen}
 
-class H2ModelDefinitionCatalogSpec extends ModelDefinitionCatalogSpec with H2Database with InstallSchemaBefore
+class ModelDefinitionCatalogSpecTest extends ModelDefinitionCatalogSpec with TestDatabase with InstallSchemaBefore
 
 trait ModelDefinitionCatalogSpec extends FlatSpec with GivenWhenThen with BeforeAndAfterAll with CatalogDatabase {
 

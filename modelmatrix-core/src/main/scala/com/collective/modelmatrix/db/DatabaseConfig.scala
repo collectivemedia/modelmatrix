@@ -16,15 +16,15 @@ class DatabaseConfig(n: String, dc: String, sd: JdbcProfile) {
 
 // database configuration wrapper class that read the configuration files and
 // determines the proper slick driver to use
-case class DatabaseConfigWrapper(configPath: String = "modelmatrix.catalog.db", configFilePath: String = "") {
+case class DatabaseConfigWrapper(configFilePath: String = "") {
   val PG = new DatabaseConfig("pg", "org.postgresql.Driver", PostgresDriver)
   val H2 = new DatabaseConfig("h2", "org.h2.Driver", H2Driver)
   lazy val currentDB: DatabaseConfig = getCurrentDB
 
-  val dbConfigPath: String = configPath
+  val dbConfigPath: String = "modelmatrix.catalog.db"
   lazy val dbConfig: Config =
     if (configFilePath.isEmpty) ConfigFactory.load().getConfig(dbConfigPath)
-    else ConfigFactory.load(configFilePath).getConfig(dbConfigPath)
+    else ConfigFactory.systemProperties().withFallback(ConfigFactory.load(configFilePath)).getConfig(dbConfigPath)
 
   // do not need to expose this as user have access to the current db config using attribute currentDB
   private def getCurrentDB = {

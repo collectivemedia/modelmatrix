@@ -8,7 +8,7 @@ import org.apache.spark.sql.types.{DoubleType, IntegerType, StringType}
 import org.scalatest.{BeforeAndAfterAll, FlatSpec, GivenWhenThen}
 
 
-class H2ModelInstanceCatalogSpec extends ModelInstanceCatalogSpec with H2Database with InstallSchemaBefore
+class ModelInstanceCatalogSpecTest extends ModelInstanceCatalogSpec with TestDatabase with InstallSchemaBefore
 
 
 trait ModelInstanceCatalogSpec extends FlatSpec with GivenWhenThen with BeforeAndAfterAll with CatalogDatabase {

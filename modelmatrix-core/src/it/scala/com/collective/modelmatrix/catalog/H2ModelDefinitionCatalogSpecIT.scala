@@ -1,5 +1,0 @@
-package com.collective.modelmatrix.catalog
-
-class H2ModelDefinitionCatalogSpecIT extends ModelDefinitionCatalogSpec with H2Database with InstallSchemaBefore
-
-

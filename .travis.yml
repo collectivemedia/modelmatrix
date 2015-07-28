@@ -17,7 +17,7 @@ jdk:
   - oraclejdk8
 
 script:
-  - sbt ++$TRAVIS_SCALA_VERSION -J-Xmx2512m clean test it:test
+  - sbt ++$TRAVIS_SCALA_VERSION -J-Xmx2512m -Dmodelmatrix.catalog.db.url="jdbc:postgresql://localhost/modelmatrix?user=modelmatrix&password=modelmatrix" -Dmodelmatrix.catalog.db.driver="org.postgresql.Driver" clean test it:test
 
   # Tricks to avoid unnecessary cache updates
   - find $HOME/.sbt -name "*.lock" | xargs rm
