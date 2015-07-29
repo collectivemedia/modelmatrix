@@ -51,22 +51,6 @@ Schema migrations managed by [Flyway](http://flywaydb.org),
 If you want to add test that excepect modelmatrix matrix schema and tables to be present please implement trait `com.collective.modelmatrix.catalog.InstallSchemaBefore`
 
 
-<!--schema DDL and migrations located in: `modelmatrix-cli/src/main/resources/db/migration`-->
-
-<!--Install schema for development:-->
-
-<!--    sbt> project modelmatrix-cli  -->
-<!--    sbt> flywayMigrate -->
-    
-<!--If you need to install schema into different database, you have to provide flyway properties at sbt startup-->
-
-<!--    sbt -Dflyway.url=myUrl \-->
-<!--        -Dflyway.user=myUser \-->
-<!--        -Dflyway.password=mySecretPwd \-->
-<!--        -Dflyway.schemas=schema1,schema2,schema3 \-->
-<!--        -Dflyway.placeholders.keyABC=valueXYZ \-->
-<!--        -Dflyway.placeholders.otherplaceholder=value123-->
-
 ## Testing
 
 Unit and Integration test are automatically creating/updating schema and using by default H2

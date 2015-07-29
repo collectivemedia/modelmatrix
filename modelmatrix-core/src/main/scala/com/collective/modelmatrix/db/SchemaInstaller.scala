@@ -8,7 +8,7 @@ import org.flywaydb.core.Flyway
 trait SchemaInstaller {
   val dbConfigWrapper: DatabaseConfigWrapper
 
-  def installOrMigrate: Boolean = {
+  def installOrMigrate(): Boolean = {
     val config = dbConfigWrapper.dbConfig
     val url = config.getString("url")
 

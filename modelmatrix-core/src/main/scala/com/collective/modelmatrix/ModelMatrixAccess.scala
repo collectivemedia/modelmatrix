@@ -2,7 +2,7 @@ package com.collective.modelmatrix
 
 import java.util.concurrent.Executors
 
-import com.collective.modelmatrix.ModelMatrix.DbModelMatrixCatalog
+import com.collective.modelmatrix.ModelMatrixAccess.ModelMatrixCatalogAccess
 import com.collective.modelmatrix.catalog.{ModelDefinitionFeature, ModelInstanceFeature, _}
 import com.collective.modelmatrix.db.DefaultDBConfigWrapper
 import com.collective.modelmatrix.transform.Transformer.FeatureExtractionError
@@ -30,7 +30,7 @@ class ModelMatrixFeaturizationException(errors: Seq[FeaturizationError])
 class ModelMatrixFeatureTransformationException(errors: Seq[(ModelDefinitionFeature, FeatureTransformationError)])
   extends RuntimeException(s"Failed to run transformation. Bad features [${errors.map(_._1.feature).mkString(", ")}]")
 
-object ModelMatrix extends ModelMatrixUDF {
+object ModelMatrixAccess extends ModelMatrixUDF {
 
   def sqlContext(sc: SparkContext): SQLContext = {
     val sqlContext = new SQLContext(sc)
@@ -44,17 +44,19 @@ object ModelMatrix extends ModelMatrixUDF {
     sqlContext
   }
 
-  trait ModelMatrixCatalogAccess {
-    protected val driver: JdbcProfile
 
+  trait ModelMatrixCatalogAccess {
+    protected val driver = DefaultDBConfigWrapper.getSlickDriver
     import driver.api._
 
-    protected val db: Database
+    protected lazy val db = Database.forConfig("", DefaultDBConfigWrapper.dbConfig)
+    protected lazy val catalog = new ModelMatrixCatalog(driver)
 
-    protected def modelDefinitions: ModelDefinitions
-    protected def modelDefinitionFeatures: ModelDefinitionFeatures
-    protected def modelInstances: ModelInstances
-    protected def modelInstanceFeatures: ModelInstanceFeatures
+    protected lazy val modelDefinitions = new ModelDefinitions(catalog)
+    protected lazy val modelDefinitionFeatures = new ModelDefinitionFeatures(catalog)
+
+    protected lazy val modelInstances = new ModelInstances(catalog)
+    protected lazy val modelInstanceFeatures = new ModelInstanceFeatures(catalog)
 
     protected def blockOn[T](f: Future[T], duration: FiniteDuration = 10.seconds) = {
       Await.result(f, duration)
@@ -71,23 +73,6 @@ object ModelMatrix extends ModelMatrixUDF {
         setNameFormat(s"$prefix-%d").
         build()
   }
-
-
-  trait DbModelMatrixCatalog extends ModelMatrixCatalogAccess {
-
-    protected val driver = DefaultDBConfigWrapper.getSlickDriver
-    import driver.api._
-
-    protected lazy val db = Database.forConfig("", DefaultDBConfigWrapper.dbConfig)
-    protected lazy val catalog = new ModelMatrixCatalog(driver)
-
-    protected lazy val modelDefinitions = new ModelDefinitions(catalog)
-    protected lazy val modelDefinitionFeatures = new ModelDefinitionFeatures(catalog)
-
-    protected lazy val modelInstances = new ModelInstances(catalog)
-    protected lazy val modelInstanceFeatures = new ModelInstanceFeatures(catalog)
-  }
-
 }
 
 /**
@@ -96,10 +81,10 @@ object ModelMatrix extends ModelMatrixUDF {
  *
  * @param sqlContext Spark SQL Context
  */
-class ModelMatrix(sqlContext: SQLContext) extends DbModelMatrixCatalog with Transformers with TransformationProcess {
-  private val log = LoggerFactory.getLogger(classOf[ModelMatrix])
+class ModelMatrixAccess(sqlContext: SQLContext) extends ModelMatrixCatalogAccess with Transformers with TransformationProcess {
+  private val log = LoggerFactory.getLogger(classOf[ModelMatrixAccess])
 
-  def this(sc: SparkContext) = this(ModelMatrix.hiveContext(sc))
+  def this(sc: SparkContext) = this(ModelMatrixAccess.hiveContext(sc))
 
   private implicit val _sqlContext = sqlContext
 

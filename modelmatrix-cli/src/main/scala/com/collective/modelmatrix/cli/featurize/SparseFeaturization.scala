@@ -1,9 +1,9 @@
 package com.collective.modelmatrix.cli.featurize
 
-import com.collective.modelmatrix.ModelMatrix.DbModelMatrixCatalog
+import com.collective.modelmatrix.ModelMatrixAccess.ModelMatrixCatalogAccess
 import com.collective.modelmatrix.cli.{Source, _}
 import com.collective.modelmatrix.transform.Transformer
-import com.collective.modelmatrix.{Featurization, Labeling, ModelMatrix}
+import com.collective.modelmatrix.{Featurization, Labeling, ModelMatrixAccess}
 import org.apache.spark.mllib.linalg.{DenseVector, SparseVector}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
@@ -18,7 +18,7 @@ case class SparseFeaturization(
   idColumn: String,
   repartitionSource: Option[Int],
   cacheSource: Boolean
-) extends Script with SourceTransformation with DbModelMatrixCatalog with CliSparkContext {
+) extends Script with SourceTransformation with ModelMatrixCatalogAccess with CliSparkContext {
 
   private val log = LoggerFactory.getLogger(classOf[ValidateInputData])
 
@@ -38,7 +38,7 @@ case class SparseFeaturization(
       s"Featurized sink: $sink. " +
       s"Id column: $idColumn")
 
-    implicit val sqlContext = ModelMatrix.hiveContext(sc)
+    implicit val sqlContext = ModelMatrixAccess.hiveContext(sc)
 
     val features = blockOn(db.run(modelInstanceFeatures.features(modelInstanceId)))
     require(features.nonEmpty, s"No features are defined for model instance: $modelInstanceId. " +

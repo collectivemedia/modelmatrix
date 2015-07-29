@@ -1,7 +1,7 @@
 package com.collective.modelmatrix.transform
 
 import com.collective.modelmatrix.CategoricalColumn.{AllOther, CategoricalValue}
-import com.collective.modelmatrix.{ModelMatrixEncoding, ModelMatrix, ModelFeature, TestSparkContext}
+import com.collective.modelmatrix.{ModelMatrixEncoding, ModelMatrixAccess, ModelFeature, TestSparkContext}
 import org.apache.spark.sql.{DataFrame, Row, SQLContext}
 import org.apache.spark.sql.types._
 import org.scalatest.FlatSpec
@@ -11,7 +11,7 @@ import scalaz.syntax.either._
 
 class TopTransformerSpec extends FlatSpec with TestSparkContext {
 
-  val sqlContext = ModelMatrix.sqlContext(sc)
+  val sqlContext = ModelMatrixAccess.sqlContext(sc)
 
   val schema = StructType(Seq(
     StructField("adv_site", StringType)

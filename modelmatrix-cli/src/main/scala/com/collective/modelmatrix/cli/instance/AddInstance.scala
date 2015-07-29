@@ -1,6 +1,6 @@
 package com.collective.modelmatrix.cli.instance
 
-import com.collective.modelmatrix.ModelMatrix.DbModelMatrixCatalog
+import com.collective.modelmatrix.ModelMatrixAccess.ModelMatrixCatalogAccess
 import com.collective.modelmatrix._
 import com.collective.modelmatrix.cli.{SourceTransformation, CliSparkContext, Script, Source}
 import com.collective.modelmatrix.transform._
@@ -19,14 +19,14 @@ case class AddInstance(
   cacheSource: Boolean
 )
   extends Script with SourceTransformation
-  with DbModelMatrixCatalog
+  with ModelMatrixCatalogAccess
   with CliSparkContext
   with Transformers
   with TransformationProcess {
 
   private val log = LoggerFactory.getLogger(classOf[AddInstance])
 
-  private implicit lazy val sqlContext = ModelMatrix.hiveContext(sc)
+  private implicit lazy val sqlContext = ModelMatrixAccess.hiveContext(sc)
 
   import com.collective.modelmatrix.cli.ASCIITableFormat._
   import com.collective.modelmatrix.cli.ASCIITableFormats._

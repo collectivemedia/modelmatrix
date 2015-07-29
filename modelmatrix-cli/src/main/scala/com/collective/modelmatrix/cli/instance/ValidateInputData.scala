@@ -1,7 +1,7 @@
 package com.collective.modelmatrix.cli.instance
 
-import com.collective.modelmatrix.ModelMatrix
-import com.collective.modelmatrix.ModelMatrix.DbModelMatrixCatalog
+import com.collective.modelmatrix.ModelMatrixAccess
+import com.collective.modelmatrix.ModelMatrixAccess.ModelMatrixCatalogAccess
 import com.collective.modelmatrix.cli.{Source, _}
 import com.collective.modelmatrix.transform._
 import org.slf4j.LoggerFactory
@@ -13,11 +13,11 @@ case class ValidateInputData(
   source: Source,
   repartitionSource: Option[Int],
   cacheSource: Boolean
-) extends Script with SourceTransformation with DbModelMatrixCatalog with CliSparkContext with Transformers {
+) extends Script with SourceTransformation with ModelMatrixCatalogAccess with CliSparkContext with Transformers {
 
   private val log = LoggerFactory.getLogger(classOf[ValidateInputData])
 
-  private implicit lazy val sqlContext = ModelMatrix.hiveContext(sc)
+  private implicit lazy val sqlContext = ModelMatrixAccess.hiveContext(sc)
 
   import com.collective.modelmatrix.cli.ASCIITableFormat._
   import com.collective.modelmatrix.cli.ASCIITableFormats._

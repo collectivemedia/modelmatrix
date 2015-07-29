@@ -1,6 +1,6 @@
 package com.collective.modelmatrix.transform
 
-import com.collective.modelmatrix.{ModelFeature, ModelMatrix, TestSparkContext}
+import com.collective.modelmatrix.{ModelFeature, ModelMatrixAccess, TestSparkContext}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
 import org.scalatest.FlatSpec
@@ -9,7 +9,7 @@ import scalaz.{\/-, -\/}
 
 class TransformerSpec extends FlatSpec with TestSparkContext {
 
-  val sqlContext = ModelMatrix.sqlContext(sc)
+  val sqlContext = ModelMatrixAccess.sqlContext(sc)
 
   val schema = StructType(Seq(
     StructField("adv_site", StringType),

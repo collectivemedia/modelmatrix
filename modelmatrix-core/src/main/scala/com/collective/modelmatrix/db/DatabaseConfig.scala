@@ -3,31 +3,27 @@ package com.collective.modelmatrix.db
 import com.typesafe.config.{Config, ConfigFactory}
 import slick.driver.{H2Driver, JdbcProfile, PostgresDriver}
 
-/**
- * Created by jpocalan on 7/27/15.
- */
-// TODO: replace by some sort of enum
-// Differentiate between the different types of databse supported
-class DatabaseConfig(n: String, dc: String, sd: JdbcProfile) {
-  val name = n;
-  val driverClass = dc;
-  val slickDriver = sd;
-}
 
 // database configuration wrapper class that read the configuration files and
 // determines the proper slick driver to use
-case class DatabaseConfigWrapper(configFilePath: String = "") {
-  val PG = new DatabaseConfig("pg", "org.postgresql.Driver", PostgresDriver)
-  val H2 = new DatabaseConfig("h2", "org.h2.Driver", H2Driver)
-  lazy val currentDB: DatabaseConfig = getCurrentDB
+class DatabaseConfigWrapper(configFilePath: String = "") {
+  // Differentiate between the different types of database supported
+  private [DatabaseConfigWrapper] case class DatabaseConfig(val name: String,
+                                                            val driverClass: String,
+                                                            val slickDriver: JdbcProfile)
 
-  val dbConfigPath: String = "modelmatrix.catalog.db"
+  private[this] val PG = DatabaseConfig("pg", "org.postgresql.Driver", PostgresDriver)
+  private[this] val H2 = DatabaseConfig("h2", "org.h2.Driver", H2Driver)
+
+  private[this] val dbConfigPath: String = "modelmatrix.catalog.db"
+
+  lazy val currentDB: DatabaseConfig = getCurrentDB
   lazy val dbConfig: Config =
     if (configFilePath.isEmpty) ConfigFactory.load().getConfig(dbConfigPath)
     else ConfigFactory.systemProperties().withFallback(ConfigFactory.load(configFilePath)).getConfig(dbConfigPath)
 
   // do not need to expose this as user have access to the current db config using attribute currentDB
-  private def getCurrentDB = {
+  private[this] def getCurrentDB: DatabaseConfig = {
     dbConfig.getString("driver") match {
       case PG.driverClass => PG
       case H2.driverClass => H2
