@@ -11,12 +11,10 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 import scalaz.Tag
 
 trait CatalogDatabase {
-  
-  val driver: JdbcProfile
+  def driver: JdbcProfile
 
-  import driver.api._
-
-  val db: Database
+  import com.collective.modelmatrix.db.GenericSlickDriver.api.Database
+  def db: Database
 
   lazy val catalog = new ModelMatrixCatalog(driver)
 

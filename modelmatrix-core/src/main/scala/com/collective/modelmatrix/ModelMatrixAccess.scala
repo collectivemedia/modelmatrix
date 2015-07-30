@@ -4,7 +4,7 @@ import java.util.concurrent.Executors
 
 import com.collective.modelmatrix.ModelMatrixAccess.ModelMatrixCatalogAccess
 import com.collective.modelmatrix.catalog.{ModelDefinitionFeature, ModelInstanceFeature, _}
-import com.collective.modelmatrix.db.DefaultDBConfigWrapper
+import com.collective.modelmatrix.db.DefaultDatabaseConfig
 import com.collective.modelmatrix.transform.Transformer.FeatureExtractionError
 import com.collective.modelmatrix.transform._
 import com.google.common.util.concurrent.ThreadFactoryBuilder
@@ -14,7 +14,6 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.sql.{DataFrame, SQLContext}
 import org.slf4j.LoggerFactory
-import slick.driver.JdbcProfile
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -46,10 +45,9 @@ object ModelMatrixAccess extends ModelMatrixUDF {
 
 
   trait ModelMatrixCatalogAccess {
-    protected val driver = DefaultDBConfigWrapper.getSlickDriver
-    import driver.api._
+    protected val driver = DefaultDatabaseConfig.slickDriver
 
-    protected lazy val db = Database.forConfig("", DefaultDBConfigWrapper.dbConfig)
+    protected lazy val db = DefaultDatabaseConfig.database()
     protected lazy val catalog = new ModelMatrixCatalog(driver)
 
     protected lazy val modelDefinitions = new ModelDefinitions(catalog)

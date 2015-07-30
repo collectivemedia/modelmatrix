@@ -1,52 +1,61 @@
 package com.collective.modelmatrix.db
 
+import com.collective.modelmatrix.db.DatabaseConfig.{DatabaseType, H2, PG}
 import com.typesafe.config.{Config, ConfigFactory}
-import slick.driver.{H2Driver, JdbcProfile, PostgresDriver}
+import slick.driver.{JdbcDriver, H2Driver, JdbcProfile, PostgresDriver}
 
+object GenericSlickDriver extends JdbcDriver
+
+object DatabaseConfig {
+
+  val driverPath = "driver"
+  val urlPath = "url"
+
+  case class DatabaseType(name: String,
+                          driverClass: String,
+                          slickDriver: JdbcProfile,
+                          urlPrefix: String)
+
+  object PG extends DatabaseType("pg", "org.postgresql.Driver", PostgresDriver, "jdbc:postgresql:")
+
+  object H2 extends DatabaseType("h2", "org.h2.Driver", H2Driver, "jdbc:h2:")
+
+}
 
 // database configuration wrapper class that read the configuration files and
 // determines the proper slick driver to use
-class DatabaseConfigWrapper(configFilePath: String = "") {
-  // Differentiate between the different types of database supported
-  private [DatabaseConfigWrapper] case class DatabaseConfig(val name: String,
-                                                            val driverClass: String,
-                                                            val slickDriver: JdbcProfile)
-
-  private[this] val PG = DatabaseConfig("pg", "org.postgresql.Driver", PostgresDriver)
-  private[this] val H2 = DatabaseConfig("h2", "org.h2.Driver", H2Driver)
-
+class DatabaseConfig(configFilePath: String = "") {
   private[this] val dbConfigPath: String = "modelmatrix.catalog.db"
 
-  lazy val currentDB: DatabaseConfig = getCurrentDB
-  lazy val dbConfig: Config =
+  private lazy val dbConfig: Config =
     if (configFilePath.isEmpty) ConfigFactory.load().getConfig(dbConfigPath)
     else ConfigFactory.systemProperties().withFallback(ConfigFactory.load(configFilePath)).getConfig(dbConfigPath)
 
-  // do not need to expose this as user have access to the current db config using attribute currentDB
-  private[this] def getCurrentDB: DatabaseConfig = {
-    dbConfig.getString("driver") match {
-      case PG.driverClass => PG
-      case H2.driverClass => H2
-      case _ => throw new RuntimeException("The following db driver '%s' is not supported"
-        .format(dbConfig.getString("driver")))
+  // get the DatabaseType based on the driver name
+  private lazy val dbType: DatabaseType =
+    (dbConfig.getString(DatabaseConfig.driverPath), dbConfig.getString(DatabaseConfig.urlPath)) match {
+      case pg if PG.driverClass == pg._1 && pg._2.startsWith(PG.urlPrefix) => PG
+      case h2 if H2.driverClass == h2._1 && h2._2.startsWith(H2.urlPrefix) => H2
+      case unknown => sys.error(s"The following db driver '${unknown._1}' with url '${unknown._2}' is not supported")
     }
+
+  lazy val dbUrl = dbConfig.getString(DatabaseConfig.urlPath)
+
+  def slickDriver: JdbcProfile = {
+    dbType.slickDriver
   }
 
-  def getSlickDriver: JdbcProfile = {
-    currentDB.slickDriver
-  }
-
-  def getDatabase: currentDB.slickDriver.api.Database = {
-    import currentDB.slickDriver.api._
+  def database(): GenericSlickDriver.api.Database = {
+    import GenericSlickDriver.api.Database
     Database.forConfig("", dbConfig)
   }
 
-  def getMigrationPath: String = {
-    "db/migration/%s".format(currentDB.name)
+  def migrationPath: String = {
+    "db/migration/%s".format(dbType.name)
   }
 }
 
 // default database configuration wrapper that will be used in production
-object DefaultDBConfigWrapper extends DatabaseConfigWrapper
+object DefaultDatabaseConfig extends DatabaseConfig
 
 

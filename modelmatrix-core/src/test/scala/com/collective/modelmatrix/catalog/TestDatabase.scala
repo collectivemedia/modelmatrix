@@ -1,25 +1,23 @@
 package com.collective.modelmatrix.catalog
 
-import com.collective.modelmatrix.db.DatabaseConfigWrapper
+import com.collective.modelmatrix.db.DatabaseConfig
 import org.scalatest.{BeforeAndAfterAll, FlatSpec}
 
 trait ITDatabase extends CatalogDatabase {
   self: FlatSpec with BeforeAndAfterAll =>
-
-  val dbConfigWrapper: DatabaseConfigWrapper = ITConfigWrapper
-  val driver = dbConfigWrapper.getSlickDriver
-  override val db = dbConfigWrapper.getDatabase
+  val dbConfig: DatabaseConfig = ITDatabaseConfig
+  override val db = dbConfig.database()
+  override val driver = dbConfig.slickDriver
 }
 
 trait TestDatabase extends CatalogDatabase {
   self: FlatSpec with BeforeAndAfterAll =>
-
-  val dbConfigWrapper: DatabaseConfigWrapper = TestConfigWrapper
-  val driver = dbConfigWrapper.getSlickDriver
-  override val db = dbConfigWrapper.getDatabase
+  val dbConfig: DatabaseConfig = TestDatabaseConfig
+  override val db = dbConfig.database()
+  override val driver = dbConfig.slickDriver
 }
 
-object ITConfigWrapper extends DatabaseConfigWrapper("./database_it.conf")
-object TestConfigWrapper extends DatabaseConfigWrapper("./database_test.conf")
+object ITDatabaseConfig extends DatabaseConfig("reference.it.conf")
+object TestDatabaseConfig extends DatabaseConfig("reference.test.conf")
 
 

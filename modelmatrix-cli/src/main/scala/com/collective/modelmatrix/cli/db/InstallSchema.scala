@@ -1,7 +1,7 @@
 package com.collective.modelmatrix.cli.db
 
 import com.collective.modelmatrix.cli.Script
-import com.collective.modelmatrix.db.{DefaultDBConfigWrapper, DatabaseConfigWrapper, SchemaInstaller}
+import com.collective.modelmatrix.db.{DefaultDatabaseConfig, DatabaseConfig, SchemaInstaller}
 import org.slf4j.LoggerFactory
 
 case class InstallSchema() extends Script with SchemaInstaller{
@@ -10,8 +10,8 @@ case class InstallSchema() extends Script with SchemaInstaller{
 
   override def run(): Unit = {
     log.info(s"Install Model Matrix catalog schema")
-    this.installOrMigrate
+    this.installOrMigrate()
   }
 
-  override val dbConfigWrapper: DatabaseConfigWrapper = DefaultDBConfigWrapper
+  override val dbConfig: DatabaseConfig = DefaultDatabaseConfig
 }
