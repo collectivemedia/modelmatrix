@@ -27,12 +27,12 @@ object DatabaseConfig {
 class DatabaseConfig(configFilePath: String = "") {
   private[this] val dbConfigPath: String = "modelmatrix.catalog.db"
 
-  private lazy val dbConfig: Config =
+  private[this] lazy val dbConfig: Config =
     if (configFilePath.isEmpty) ConfigFactory.load().getConfig(dbConfigPath)
     else ConfigFactory.systemProperties().withFallback(ConfigFactory.load(configFilePath)).getConfig(dbConfigPath)
 
   // get the DatabaseType based on the driver name
-  private lazy val dbType: DatabaseType =
+  private[this] lazy val dbType: DatabaseType =
     (dbConfig.getString(DatabaseConfig.driverPath), dbConfig.getString(DatabaseConfig.urlPath)) match {
       case pg if PG.driverClass == pg._1 && pg._2.startsWith(PG.urlPrefix) => PG
       case h2 if H2.driverClass == h2._1 && h2._2.startsWith(H2.urlPrefix) => H2
