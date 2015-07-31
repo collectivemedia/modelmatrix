@@ -11,7 +11,7 @@ trait SchemaInstaller {
     flyway.setBaselineVersionAsString("000")
     flyway.setTable("mmc_schema_version")
     flyway.setDataSource(dbConfig.dbUrl, null, null)
-    flyway.setSqlMigrationPrefix("v")
+    flyway.setSqlMigrationPrefix("mmc")
     flyway.setLocations(dbConfig.migrationPath)
     val appliedMigrations = flyway.migrate()
 

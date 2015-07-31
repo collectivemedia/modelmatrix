@@ -1,9 +1,9 @@
 package com.collective.modelmatrix.cli.featurize
 
-import com.collective.modelmatrix.ModelMatrixAccess.ModelMatrixCatalogAccess
+import com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess
 import com.collective.modelmatrix.cli.{SourceTransformation, CliSparkContext, Script, Source}
 import com.collective.modelmatrix.transform.Transformer
-import com.collective.modelmatrix.{Featurization, ModelMatrixAccess}
+import com.collective.modelmatrix.{Featurization, ModelMatrix}
 import org.slf4j.LoggerFactory
 
 import scalaz._
@@ -24,7 +24,7 @@ case class ValidateInputData(
     log.info(s"Validate input data against Model Matrix instance: $modelInstanceId. " +
       s"Data source: $source")
 
-    implicit val sqlContext = ModelMatrixAccess.hiveContext(sc)
+    implicit val sqlContext = ModelMatrix.hiveContext(sc)
 
     val features = blockOn(db.run(modelInstanceFeatures.features(modelInstanceId)))
     require(features.nonEmpty, s"No features are defined for model instance: $modelInstanceId. " +

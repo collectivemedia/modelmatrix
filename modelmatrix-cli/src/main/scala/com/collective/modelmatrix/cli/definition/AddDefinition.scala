@@ -3,7 +3,7 @@ package com.collective.modelmatrix.cli.definition
 import java.nio.file.Path
 import java.time.Instant
 
-import com.collective.modelmatrix.ModelMatrixAccess.ModelMatrixCatalogAccess
+import com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess
 import com.collective.modelmatrix.cli.{ModelConfigurationParser, Script}
 import com.typesafe.config.{ConfigFactory, ConfigResolveOptions}
 import org.slf4j.LoggerFactory

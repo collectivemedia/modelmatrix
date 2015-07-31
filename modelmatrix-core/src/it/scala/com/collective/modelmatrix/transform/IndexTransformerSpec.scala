@@ -1,19 +1,18 @@
 package com.collective.modelmatrix.transform
 
 import com.collective.modelmatrix.CategoricalColumn.{AllOther, CategoricalValue}
-import com.collective.modelmatrix.{ModelMatrixEncoding, ModelMatrixAccess, ModelFeature, TestSparkContext}
-import org.apache.spark.sql.{Row, SQLContext}
+import com.collective.modelmatrix.{ModelFeature, ModelMatrix, ModelMatrixEncoding, TestSparkContext}
+import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{StringType, StructField, StructType}
 import org.scalatest.FlatSpec
-import scodec.bits.ByteVector
 
 import scala.util.Random
-import scalaz.{\/-, -\/}
 import scalaz.syntax.either._
+import scalaz.{-\/, \/-}
 
 class IndexTransformerSpec extends FlatSpec with TestSparkContext {
 
-  val sqlContext = ModelMatrixAccess.sqlContext(sc)
+  val sqlContext = ModelMatrix.sqlContext(sc)
 
   val schema = StructType(Seq(
     StructField("adv_site", StringType)

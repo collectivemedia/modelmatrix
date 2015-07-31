@@ -1,9 +1,9 @@
 package com.collective.modelmatrix.cli.featurize
 
-import com.collective.modelmatrix.ModelMatrixAccess.ModelMatrixCatalogAccess
+import com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess
 import com.collective.modelmatrix.cli.{Source, _}
 import com.collective.modelmatrix.transform.Transformer
-import com.collective.modelmatrix.{Featurization, Labeling, ModelMatrixAccess}
+import com.collective.modelmatrix.{Featurization, Labeling, ModelMatrix}
 import org.apache.spark.mllib.linalg.{DenseVector, SparseVector}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
@@ -38,7 +38,7 @@ case class SparseFeaturization(
       s"Featurized sink: $sink. " +
       s"Id column: $idColumn")
 
-    implicit val sqlContext = ModelMatrixAccess.hiveContext(sc)
+    implicit val sqlContext = ModelMatrix.hiveContext(sc)
 
     val features = blockOn(db.run(modelInstanceFeatures.features(modelInstanceId)))
     require(features.nonEmpty, s"No features are defined for model instance: $modelInstanceId. " +

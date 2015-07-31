@@ -1,6 +1,6 @@
 package com.collective.modelmatrix.cli.instance
 
-import com.collective.modelmatrix.ModelMatrixAccess.ModelMatrixCatalogAccess
+import com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess
 import com.collective.modelmatrix.catalog._
 import com.collective.modelmatrix.cli._
 import com.collective.modelmatrix.{CategoricalColumn, BinColumn}

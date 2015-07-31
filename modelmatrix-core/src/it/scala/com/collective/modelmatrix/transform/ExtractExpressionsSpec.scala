@@ -5,19 +5,18 @@ import java.time.{DayOfWeek, Instant, ZoneOffset}
 import java.util.UUID
 
 import com.collective.modelmatrix.CategoricalColumn.CategoricalValue
-import com.collective.modelmatrix.{ModelMatrixEncoding, ModelFeature, ModelMatrixAccess, TestSparkContext}
+import com.collective.modelmatrix.{ModelFeature, ModelMatrix, ModelMatrixEncoding, TestSparkContext}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.scalatest.FlatSpec
-import scodec.bits.ByteVector
 
 import scala.util.Random
-import scalaz.{\/-, -\/}
 import scalaz.syntax.either._
+import scalaz.{-\/, \/-}
 
 class ExtractExpressionsSpec extends FlatSpec with TestSparkContext {
 
-  val sqlContext = ModelMatrixAccess.sqlContext(sc)
+  val sqlContext = ModelMatrix.sqlContext(sc)
 
   val rnd = new Random()
 

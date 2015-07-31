@@ -1,6 +1,6 @@
 package com.collective.modelmatrix.transform
 
-import com.collective.modelmatrix.{ModelFeature, ModelMatrixAccess, TestSparkContext}
+import com.collective.modelmatrix.{ModelFeature, ModelMatrix, TestSparkContext}
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.scalatest.FlatSpec
@@ -11,7 +11,7 @@ import scalaz.{-\/, \/-}
 
 class BinsTransformerSpec extends FlatSpec with TestSparkContext {
 
-  val sqlContext = ModelMatrixAccess.sqlContext(sc)
+  val sqlContext = ModelMatrix.sqlContext(sc)
 
   val schema = StructType(Seq(
     StructField("adv_site", StringType),

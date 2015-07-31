@@ -2,7 +2,7 @@ package com.collective.modelmatrix
 
 import java.util.concurrent.Executors
 
-import com.collective.modelmatrix.ModelMatrixAccess.ModelMatrixCatalogAccess
+import com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess
 import com.collective.modelmatrix.catalog.{ModelDefinitionFeature, ModelInstanceFeature, _}
 import com.collective.modelmatrix.db.DefaultDatabaseConfig
 import com.collective.modelmatrix.transform.Transformer.FeatureExtractionError
@@ -29,7 +29,7 @@ class ModelMatrixFeaturizationException(errors: Seq[FeaturizationError])
 class ModelMatrixFeatureTransformationException(errors: Seq[(ModelDefinitionFeature, FeatureTransformationError)])
   extends RuntimeException(s"Failed to run transformation. Bad features [${errors.map(_._1.feature).mkString(", ")}]")
 
-object ModelMatrixAccess extends ModelMatrixUDF {
+object ModelMatrix extends ModelMatrixUDF {
 
   def sqlContext(sc: SparkContext): SQLContext = {
     val sqlContext = new SQLContext(sc)
@@ -79,10 +79,10 @@ object ModelMatrixAccess extends ModelMatrixUDF {
  *
  * @param sqlContext Spark SQL Context
  */
-class ModelMatrixAccess(sqlContext: SQLContext) extends ModelMatrixCatalogAccess with Transformers with TransformationProcess {
-  private val log = LoggerFactory.getLogger(classOf[ModelMatrixAccess])
+class ModelMatrix(sqlContext: SQLContext) extends ModelMatrixCatalogAccess with Transformers with TransformationProcess {
+  private val log = LoggerFactory.getLogger(classOf[ModelMatrix])
 
-  def this(sc: SparkContext) = this(ModelMatrixAccess.hiveContext(sc))
+  def this(sc: SparkContext) = this(ModelMatrix.hiveContext(sc))
 
   private implicit val _sqlContext = sqlContext
 

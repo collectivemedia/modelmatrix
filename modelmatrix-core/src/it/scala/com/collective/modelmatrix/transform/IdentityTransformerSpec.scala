@@ -1,16 +1,16 @@
 package com.collective.modelmatrix.transform
 
-import com.collective.modelmatrix.{ModelMatrixAccess, ModelFeature, TestSparkContext}
+import com.collective.modelmatrix.{ModelFeature, ModelMatrix, TestSparkContext}
+import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
-import org.apache.spark.sql.{Row, SQLContext}
 import org.scalatest.FlatSpec
 
-import scalaz.{\/-, -\/}
 import scalaz.syntax.either._
+import scalaz.{-\/, \/-}
 
 class IdentityTransformerSpec extends FlatSpec with TestSparkContext {
 
-  val sqlContext = ModelMatrixAccess.sqlContext(sc)
+  val sqlContext = ModelMatrix.sqlContext(sc)
 
   val schema = StructType(Seq(
     StructField("adv_site", StringType),

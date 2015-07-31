@@ -2,7 +2,7 @@ package com.collective.modelmatrix
 
 import java.time.Instant
 
-import com.collective.modelmatrix.ModelMatrixAccess.ModelMatrixCatalogAccess
+import com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess
 import com.collective.modelmatrix.catalog.ModelDefinitionFeature
 import com.collective.modelmatrix.transform._
 import org.apache.spark.sql.types.DataType
