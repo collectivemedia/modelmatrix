@@ -78,7 +78,6 @@ lazy val modelmatrixCore =
 lazy val modelmatrixCli =
   ModelMatrixProject("modelmatrix-cli")
     .dependsOn(modelmatrixCore)
-    .settings(flywaySettings: _*)
 
 lazy val modelmatrixUdf =
   ModelMatrixProject("modelmatrix-udf")

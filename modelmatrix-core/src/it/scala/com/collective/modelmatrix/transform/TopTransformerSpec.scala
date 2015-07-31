@@ -1,13 +1,14 @@
 package com.collective.modelmatrix.transform
 
 import com.collective.modelmatrix.CategoricalColumn.{AllOther, CategoricalValue}
-import com.collective.modelmatrix.{ModelMatrixEncoding, ModelMatrix, ModelFeature, TestSparkContext}
-import org.apache.spark.sql.{DataFrame, Row, SQLContext}
+import com.collective.modelmatrix.{ModelFeature, ModelMatrix, ModelMatrixEncoding, TestSparkContext}
+import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.scalatest.FlatSpec
+
 import scala.util.Random
-import scalaz.{\/-, -\/}
 import scalaz.syntax.either._
+import scalaz.{-\/, \/-}
 
 class TopTransformerSpec extends FlatSpec with TestSparkContext {
 
