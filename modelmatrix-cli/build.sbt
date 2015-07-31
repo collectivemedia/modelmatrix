@@ -29,25 +29,3 @@ mappings in Universal := {
 
 // the bash scripts classpath only needs the fat jar
 scriptClasspath := Seq( (assemblyJarName in assembly).value )
-
-// Configure MMC Schema migrations
-//
-//flywayUrl := "jdbc:postgresql://localhost/modelmatrix"
-//
-//flywayUser := "modelmatrix"
-//
-//flywayPassword := "modelmatrix"
-//
-//flywayTable := "mmc_schema_version"
-//
-//flywaySqlMigrationPrefix := "v"
-//
-//// Select the location dynamically base on the url
-//// This is just used during itegration testing so in the end we could default it to PG
-//flywayLocations := Seq("db/migration/" + {
-// flywayUrl.value match {
-//   case pg if pg.startsWith("jdbc:postgresql:") => "pg"
-//   case h2 if h2.startsWith("jdbc:h2:") => "h2"
-//   case _ => sys.error(s"Unsupported database migration url: ${flywayUrl.value}")
-// }
-//})
