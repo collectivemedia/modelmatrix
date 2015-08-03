@@ -1,6 +1,6 @@
 package com.collective.modelmatrix.cli.instance
 
-import com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog
+import com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess
 import com.collective.modelmatrix.catalog._
 import com.collective.modelmatrix.cli._
 import com.collective.modelmatrix.{CategoricalColumn, BinColumn}
@@ -11,7 +11,7 @@ import scalaz._
 
 case class ViewColumns(
   modelInstanceId: Int, group: Option[String], feature: Option[String]
-) extends Script with PostgresModelMatrixCatalog {
+) extends Script with ModelMatrixCatalogAccess {
 
   private val log = LoggerFactory.getLogger(classOf[ViewColumns])
 

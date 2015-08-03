@@ -3,10 +3,10 @@ package com.collective.modelmatrix.catalog
 import java.time.Instant
 
 import com.collective.modelmatrix.ModelFeature
-import com.collective.modelmatrix.transform.{Bins, Index, Top, Identity}
-import org.scalatest.{GivenWhenThen, BeforeAndAfterAll, FlatSpec}
+import com.collective.modelmatrix.transform.{Bins, Identity, Index, Top}
+import org.scalatest.{BeforeAndAfterAll, FlatSpec, GivenWhenThen}
 
-class H2ModelDefinitionCatalogSpec extends ModelDefinitionCatalogSpec with H2Database
+class ModelDefinitionCatalogSpecTest extends ModelDefinitionCatalogSpec with TestDatabase with InstallSchemaBefore
 
 trait ModelDefinitionCatalogSpec extends FlatSpec with GivenWhenThen with BeforeAndAfterAll with CatalogDatabase {
 

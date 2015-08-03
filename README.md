@@ -30,37 +30,42 @@ libraryDependencies +=  "com.collective.modelmatrix" %% "modelmatrix-client" % "
 
 Local PostgreSQL database required for integration tests
 
-#### Default PostrgeSQL database config
+#### Database config
+
+Modelmatrix can either use H2 or Postgres as databases.
+
+modelmatrix-cli is configured to use Postgres database by default. The database configuration is located in `modelmatrix-cli/src/main/resources/reference.conf` 
 
     url      = "jdbc:postgresql://localhost/modelmatrix"  
     user     = "modelmatrix"  
     password = "modelmatrix"  
 
+modelmatrix-core unit and integration tests are configured to use H2 (in memory):
+  - Integration test databse configuration is located: `modelmatrix-core/src/it/resources/database_it.conf`
+  - Unit test database configuration is located: `modelmatrix-core/src/test/resources/database_test.conf`
+  
+**N.B.: DATABASE_TO_UPPER=FALSE setting is required for H2 because of compatibility issues between Flyway and Slick**
+
 #### Install schema
 
 Schema migrations managed by [Flyway](http://flywaydb.org), 
-schema DDL and migrations located in: `modelmatrix-cli/src/main/resources/db/migration`
 
-Install schema for development:
+If you want to add test that excepect modelmatrix matrix schema and tables to be present please implement trait `com.collective.modelmatrix.catalog.InstallSchemaBefore`
 
-    sbt> project modelmatrix-cli  
-    sbt> flywayMigrate 
-    
-If you need to install schema into different database, you have to provide flyway properties at sbt startup
-
-    sbt -Dflyway.url=myUrl \
-        -Dflyway.user=myUser \
-        -Dflyway.password=mySecretPwd \
-        -Dflyway.schemas=schema1,schema2,schema3 \
-        -Dflyway.placeholders.keyABC=valueXYZ \
-        -Dflyway.placeholders.otherplaceholder=value123
 
 ## Testing
 
-All tests that require Spark or Postgres are running as a part of integration tests
+Unit and Integration test are automatically creating/updating schema and using by default H2
 
     sbt test
     sbt it:test
+    
+If you want to test against Postgres you can overwrite the database file-based configuration by running sbt with the following runtime system properties:
+
+    sbt -Dmodelmatrix.catalog.db.url="jdbc:postgresql://localhost/modelmatrix?user=modelmatrix&password=modelmatrix" -Dmodelmatrix.catalog.db.driver="org.postgresql.Driver" test
+    sbt -Dmodelmatrix.catalog.db.url="jdbc:postgresql://localhost/modelmatrix?user=modelmatrix&password=modelmatrix" -Dmodelmatrix.catalog.db.driver="org.postgresql.Driver" it:test
+    
+**N.B. This will require you to have Postgres running locally with schema `modelmatrix` created and owned by user `modelmatrix`**
     
 ## Assembling CLI application
 

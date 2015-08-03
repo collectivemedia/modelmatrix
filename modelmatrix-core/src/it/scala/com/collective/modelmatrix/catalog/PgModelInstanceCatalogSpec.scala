@@ -1,3 +1,0 @@
-package com.collective.modelmatrix.catalog
-
-class PgModelInstanceCatalogSpec extends ModelInstanceCatalogSpec with PgDatabase

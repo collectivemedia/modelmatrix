@@ -2,19 +2,18 @@ package com.collective.modelmatrix
 
 import java.util.concurrent.Executors
 
-import com.collective.modelmatrix.ModelMatrix.PostgresModelMatrixCatalog
+import com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess
 import com.collective.modelmatrix.catalog.{ModelDefinitionFeature, ModelInstanceFeature, _}
+import com.collective.modelmatrix.db.DefaultDatabaseConfig
 import com.collective.modelmatrix.transform.Transformer.FeatureExtractionError
 import com.collective.modelmatrix.transform._
 import com.google.common.util.concurrent.ThreadFactoryBuilder
-import com.typesafe.config.{Config, ConfigFactory}
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.hive.HiveContext
 import org.apache.spark.sql.{DataFrame, SQLContext}
 import org.slf4j.LoggerFactory
-import slick.driver.{JdbcProfile, PostgresDriver}
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -44,17 +43,18 @@ object ModelMatrix extends ModelMatrixUDF {
     sqlContext
   }
 
+
   trait ModelMatrixCatalogAccess {
-    protected val driver: JdbcProfile
+    protected val driver = DefaultDatabaseConfig.slickDriver
 
-    import driver.api._
+    protected lazy val db = DefaultDatabaseConfig.database()
+    protected lazy val catalog = new ModelMatrixCatalog(driver)
 
-    protected val db: Database
+    protected lazy val modelDefinitions = new ModelDefinitions(catalog)
+    protected lazy val modelDefinitionFeatures = new ModelDefinitionFeatures(catalog)
 
-    protected def modelDefinitions: ModelDefinitions
-    protected def modelDefinitionFeatures: ModelDefinitionFeatures
-    protected def modelInstances: ModelInstances
-    protected def modelInstanceFeatures: ModelInstanceFeatures
+    protected lazy val modelInstances = new ModelInstances(catalog)
+    protected lazy val modelInstanceFeatures = new ModelInstanceFeatures(catalog)
 
     protected def blockOn[T](f: Future[T], duration: FiniteDuration = 10.seconds) = {
       Await.result(f, duration)
@@ -71,25 +71,6 @@ object ModelMatrix extends ModelMatrixUDF {
         setNameFormat(s"$prefix-%d").
         build()
   }
-
-  trait PostgresModelMatrixCatalog extends ModelMatrixCatalogAccess {
-
-    protected val driver = slick.driver.PostgresDriver
-    import driver.api._
-
-    private val dbName: String = "modelmatrix.catalog.db"
-    private val dbConfig: Config = ConfigFactory.load()
-
-    protected lazy val db = Database.forConfig(dbName, dbConfig)
-    protected lazy val catalog = new ModelMatrixCatalog(PostgresDriver)
-
-    protected lazy val modelDefinitions = new ModelDefinitions(catalog)
-    protected lazy val modelDefinitionFeatures = new ModelDefinitionFeatures(catalog)
-
-    protected lazy val modelInstances = new ModelInstances(catalog)
-    protected lazy val modelInstanceFeatures = new ModelInstanceFeatures(catalog)
-  }
-
 }
 
 /**
@@ -98,7 +79,7 @@ object ModelMatrix extends ModelMatrixUDF {
  *
  * @param sqlContext Spark SQL Context
  */
-class ModelMatrix(sqlContext: SQLContext) extends PostgresModelMatrixCatalog with Transformers with TransformationProcess {
+class ModelMatrix(sqlContext: SQLContext) extends ModelMatrixCatalogAccess with Transformers with TransformationProcess {
   private val log = LoggerFactory.getLogger(classOf[ModelMatrix])
 
   def this(sc: SparkContext) = this(ModelMatrix.hiveContext(sc))

@@ -15,8 +15,13 @@ object TestSettings {
     // Run Scalastyle as a part of tests
     checkScalastyle := ScalastylePlugin.scalastyle.in(Compile).toTask("").value,
     test in Test <<= (test in Test) dependsOn checkScalastyle,
+
     // Disable logging in all tests
     javaOptions in Test += "-Dlog4j.configuration=log4j-turned-off.properties",
+
+    // Read extra properties passed as argument to sbt
+    javaOptions in Test ++= sys.props.map(pair => "-D"+pair._1+"="+pair._2).toSeq,
+
     // Generate JUnit test reports
     testOptions in Test <+= (target in Test) map {
       t => Tests.Argument(TestFrameworks.ScalaTest, "-u", (t / "test-reports").toString)
@@ -30,6 +35,10 @@ object TestSettings {
     test in IntegrationTest <<= (test in IntegrationTest) dependsOn checkScalastyle,
     // Disable logging in all tests
     javaOptions in IntegrationTest += "-Dlog4j.configuration=log4j-turned-off.properties",
+
+    // Read extra properties passed as argument to sbt
+    javaOptions in Test ++= sys.props.map(pair => "-D"+pair._1+"="+pair._2).toSeq,
+
     // Generate JUnit test reports
     testOptions in IntegrationTest <+= (target in IntegrationTest) map {
       t => Tests.Argument(TestFrameworks.ScalaTest, "-u", (t / "test-reports").toString)

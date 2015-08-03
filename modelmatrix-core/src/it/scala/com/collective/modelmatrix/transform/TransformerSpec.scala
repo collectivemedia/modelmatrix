@@ -5,8 +5,6 @@ import org.apache.spark.sql.Row
 import org.apache.spark.sql.types.{IntegerType, StringType, StructField, StructType}
 import org.scalatest.FlatSpec
 
-import scalaz.{\/-, -\/}
-
 class TransformerSpec extends FlatSpec with TestSparkContext {
 
   val sqlContext = ModelMatrix.sqlContext(sc)

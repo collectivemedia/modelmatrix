@@ -13,7 +13,7 @@ object Dependencies {
       Test.scalaTest
     , Test.scalaMock
     , Test.scalaCheck
-    , Test.h2
+    , h2
   )
 
   // Project dependencies
@@ -30,6 +30,8 @@ object Dependencies {
     , slick
     , pgDriver
     , hikariCP
+    , h2
+    , flyway
     )
 
   val modelmatrixCli =
@@ -39,7 +41,6 @@ object Dependencies {
       scopt
     , guava
     , scalazStream
-    , flyway
     )
 
   val modelmatrixUdf =
