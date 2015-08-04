@@ -1,5 +1,7 @@
 package com.collective.modelmatrix
 
+import java.nio.file.{Paths, Path}
+import java.time.Instant
 import java.util.concurrent.Executors
 
 import com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess
@@ -8,6 +10,7 @@ import com.collective.modelmatrix.db.DefaultDatabaseConfig
 import com.collective.modelmatrix.transform.Transformer.FeatureExtractionError
 import com.collective.modelmatrix.transform._
 import com.google.common.util.concurrent.ThreadFactoryBuilder
+import com.typesafe.config.{ConfigResolveOptions, ConfigFactory}
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.linalg.Vector
 import org.apache.spark.rdd.RDD
@@ -149,6 +152,67 @@ class ModelMatrix(sqlContext: SQLContext) extends ModelMatrixCatalogAccess with 
       case \/-(extracted) => featurization.featurize(extracted, labeling)
     }
   }
+
+
+  /**
+   * Create the model matrix definition based on configuration file
+   *
+   * @param modelDefinitionFilePath
+   * @param name
+   * @param comment
+   * @return
+   */
+  def createModelMatrixDefinition(
+    modelDefinitionFilePath: String = "./model-matrix.conf",
+    name: Option[String],
+    comment: Option[String]
+    ): Int = {
+
+    val modelDefinitionFile: Path = Paths.get(modelDefinitionFilePath)
+
+    val parser = new ModelConfigurationParser(
+      ConfigFactory.parseFile(modelDefinitionFile.toFile).resolve(ConfigResolveOptions.defaults()),
+      modelDefinitionFilePath
+    )
+
+    val features = parser.features()
+
+    val errors = features collect { case (f, Failure(e)) => (f, e) }
+    val success = features collect { case (_, Success(feature)) => feature }
+
+    // If there are errors in the model feature definition file throw an exception
+    if (errors.nonEmpty) {
+      sys.error(s"Incorrect configured model features: ${errors.size}")
+    }
+
+    if (success.nonEmpty && errors.isEmpty) {
+      val modelDefinitionId: Int = blockOn(db.run(modelDefinitions.findByChecksum(parser.checksum))) match {
+        case Some(modelDefinition) => modelDefinition.id
+        case None => {
+          Console.out.println(s"Creating new model definition")
+          val addModelDefinition = modelDefinitions.add(
+            name = name,
+            source = parser.content,
+            createdBy = System.getProperty("user.name"),
+            createdAt = Instant.now(),
+            comment = comment
+          )
+
+          val insert = for {
+            id <- addModelDefinition
+            featureId <- modelDefinitionFeatures.addFeatures(id, success: _*)
+          } yield (id, featureId)
+
+          import driver.api._
+          blockOn(db.run(insert.transactionally))._1
+        }
+      }
+      Console.out.println(s"Matrix Model definition id: $modelDefinitionId")
+      return modelDefinitionId
+    }
+    sys.error(s"Configuration doesn't contain any feature definition")
+  }
+
 
   /**
    * Create Model Matrix instance

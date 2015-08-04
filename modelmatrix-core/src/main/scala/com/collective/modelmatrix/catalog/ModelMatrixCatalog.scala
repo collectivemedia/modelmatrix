@@ -60,16 +60,17 @@ trait ModelMatrixDefinition { self: ModelMatrixCatalog =>
 
   // Model Definition
   private[catalog] class mmc_definition(tag: Tag)
-    extends Table[(Int, Option[String], String, String, Instant, Option[String])](tag, "mmc_definition") {
+    extends Table[(Int, Option[String], String, String, String, Instant, Option[String])](tag, "mmc_definition") {
 
     def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
     def name = column[Option[String]]("name")
+    def checksum = column[String]("checksum")
     def source = column[String]("source")
     def createdBy = column[String]("created_by")
     def createdAt = column[Instant]("created_at")
     def comment = column[Option[String]]("comment")
 
-    def * = (id, name, source, createdBy, createdAt, comment)
+    def * = (id, name, checksum, source, createdBy, createdAt, comment)
   }
 
   // Model Feature Definition
@@ -138,7 +139,7 @@ trait ModelMatrixDefinition { self: ModelMatrixCatalog =>
 
 
   // Type gymnastics
-  private[catalog] type modelDefinitionsT = slick.lifted.Query[mmc_definition,(Int, Option[String], String, String, java.time.Instant, Option[String]),Seq]
+  private[catalog] type modelDefinitionsT = slick.lifted.Query[mmc_definition,(Int, Option[String], String, String, String, java.time.Instant, Option[String]),Seq]
 
   // scalastyle:on
 }

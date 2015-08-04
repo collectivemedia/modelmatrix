@@ -1,5 +1,6 @@
 package com.collective.modelmatrix.catalog
 
+import java.security.MessageDigest
 import java.time.Instant
 
 import org.slf4j.LoggerFactory
@@ -10,6 +11,7 @@ import scalaz.{Tag, @@}
 case class ModelDefinition(
   id: Int,
   name: Option[String],
+  checksum: String,
   source: String,
   createdBy: String,
   createdAt: Instant,
@@ -25,6 +27,11 @@ class ModelDefinitions(val catalog: ModelMatrixCatalog)(implicit val ec: Executi
 
   private implicit val executionContext = Tag.unwrap(ec)
 
+  // TODO: place this outside so that we have one implementation
+  private def md5(s: String): String = {
+    MessageDigest.getInstance("MD5").digest(s.getBytes).map("%02X".format(_)).mkString
+  }
+
   private def q(definitions: catalog.modelDefinitionsT): DBIO[Seq[ModelDefinition]] = {
     val grouped = (for {
       m <- definitions
@@ -32,7 +39,7 @@ class ModelDefinitions(val catalog: ModelMatrixCatalog)(implicit val ec: Executi
     } yield (m, f)).groupBy(t => t._1.*)
 
     val counted = grouped.map { case (model, features) =>
-      (model._1, model._2, model._3, model._4, model._5, model._6, features.length)
+      (model._1, model._2, model._3, model._4, model._5, model._6, model._7, features.length)
     }
 
     counted.result.map(_.map(ModelDefinition.tupled)).map(_.sortBy(_.id))
@@ -45,6 +52,13 @@ class ModelDefinitions(val catalog: ModelMatrixCatalog)(implicit val ec: Executi
 
   def findById(id: Int): DBIO[Option[ModelDefinition]] = {
     q(modelDefinitions.filter(_.id === id)).map(_.headOption)
+  }
+
+  /**
+   * Find a specific ModelDefinition using the source hash
+   */
+  def findByChecksum(checksum: String): DBIO[Option[ModelDefinition]] = {
+    q(modelDefinitions.filter(_.checksum === checksum)).map(_.headOption)
   }
 
   def list(name: Option[String] = None): DBIO[Seq[ModelDefinition]] = {
@@ -66,7 +80,7 @@ class ModelDefinitions(val catalog: ModelMatrixCatalog)(implicit val ec: Executi
       s"Comment: ${comment.getOrElse("")}")
 
     (modelDefinitions returning modelDefinitions.map(_.id)) +=
-      ((AutoIncId, name, source, createdBy, createdAt, comment))
+      ((AutoIncId, name, md5(source), source, createdBy, createdAt, comment))
   }
 
 }
