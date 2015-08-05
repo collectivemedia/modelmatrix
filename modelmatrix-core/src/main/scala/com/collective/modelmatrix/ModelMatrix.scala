@@ -163,7 +163,7 @@ class ModelMatrix(sqlContext: SQLContext) extends ModelMatrixCatalogAccess with 
    * @return
    */
   def createModelMatrixDefinition(
-    modelDefinitionFilePath: String = "./model-matrix.conf",
+    modelDefinitionFilePath: String,
     name: Option[String],
     comment: Option[String]
     ): Int = {
@@ -171,8 +171,7 @@ class ModelMatrix(sqlContext: SQLContext) extends ModelMatrixCatalogAccess with 
     val modelDefinitionFile: Path = Paths.get(modelDefinitionFilePath)
 
     val parser = new ModelConfigurationParser(
-      ConfigFactory.parseFile(modelDefinitionFile.toFile).resolve(ConfigResolveOptions.defaults()),
-      modelDefinitionFilePath
+      ConfigFactory.parseFile(modelDefinitionFile.toFile).resolve(ConfigResolveOptions.defaults())
     )
 
     val features = parser.features()
