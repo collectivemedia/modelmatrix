@@ -157,9 +157,9 @@ class ModelMatrix(sqlContext: SQLContext) extends ModelMatrixCatalogAccess with 
   /**
    * Create the model matrix definition based on configuration file
    *
-   * @param modelDefinitionFilePath
-   * @param name
-   * @param comment
+   * @param modelDefinitionFilePath location of the model definition configuration file
+   * @param name                    name of the model definition
+   * @param comment                 additional comment for the model definition
    * @return
    */
   def createModelMatrixDefinition(
@@ -186,27 +186,22 @@ class ModelMatrix(sqlContext: SQLContext) extends ModelMatrixCatalogAccess with 
     }
 
     if (success.nonEmpty && errors.isEmpty) {
-      val modelDefinitionId: Int = blockOn(db.run(modelDefinitions.findByChecksum(parser.checksum))) match {
-        case Some(modelDefinition) => modelDefinition.id
-        case None => {
-          Console.out.println(s"Creating new model definition")
-          val addModelDefinition = modelDefinitions.add(
-            name = name,
-            source = parser.content,
-            createdBy = System.getProperty("user.name"),
-            createdAt = Instant.now(),
-            comment = comment
-          )
+      val addModelDefinition = modelDefinitions.add(
+        name = name,
+        source = parser.content,
+        createdBy = System.getProperty("user.name"),
+        createdAt = Instant.now(),
+        comment = comment
+      )
 
-          val insert = for {
-            id <- addModelDefinition
-            featureId <- modelDefinitionFeatures.addFeatures(id, success: _*)
-          } yield (id, featureId)
+      val insert = for {
+        id <- addModelDefinition
+        featureId <- modelDefinitionFeatures.addFeatures(id, success: _*)
+      } yield (id, featureId)
 
-          import driver.api._
-          blockOn(db.run(insert.transactionally))._1
-        }
-      }
+      import driver.api._
+      val (modelDefinitionId, _) = blockOn(db.run(insert.transactionally))
+
       Console.out.println(s"Matrix Model definition id: $modelDefinitionId")
       return modelDefinitionId
     }

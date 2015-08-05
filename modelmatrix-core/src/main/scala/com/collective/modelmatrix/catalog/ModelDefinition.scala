@@ -73,14 +73,23 @@ class ModelDefinitions(val catalog: ModelMatrixCatalog)(implicit val ec: Executi
     createdBy: String,
     createdAt: Instant,
     comment: Option[String]
-  ): DBIO[Int] = {
+    ): DBIO[Int] = {
 
     log.trace(s"Add model definition. " +
       s"Created by: $createdBy @ $createdAt. " +
       s"Comment: ${comment.getOrElse("")}")
 
-    (modelDefinitions returning modelDefinitions.map(_.id)) +=
-      ((AutoIncId, name, md5(source), source, createdBy, createdAt, comment))
+    val checksum = md5(source)
+
+    modelDefinitions.filter(_.checksum === checksum).result.headOption.flatMap  {
+      case Some(modelDefinition) =>
+        log.info(s"ModelDefinition already exists. Id is ${modelDefinition._1}")
+        DBIO.successful(modelDefinition._1)
+      case None =>
+        log.info(s"ModelDefinition doesn't exists. Creating it...")
+        (modelDefinitions returning modelDefinitions.map(_.id)) +=
+          ((AutoIncId, name, md5(source), source, createdBy, createdAt, comment))
+    }.transactionally
   }
 
 }
