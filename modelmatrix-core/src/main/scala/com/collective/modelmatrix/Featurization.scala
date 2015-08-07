@@ -182,24 +182,32 @@ class Featurization(features: Seq[ModelInstanceFeature]) extends Serializable {
     columns: Seq[CategoricalColumn]
   ): Option[(Int, Double)] = {
 
-    // If input value is null just skip it
-    if (row.isNullAt(idx)) return None
+    if (row.isNullAt(idx)) {
+      // If value is null push it to all-other if it exists
+      val allOther = columns.collect { case AllOther(columnId, _, _) => columnId }
+      allOther.headOption.map((_, 1.0D))
 
-    // Get byte representation of extracted feature
-    val byteVector = extractType match {
-      case ShortType => ModelMatrixEncoding.encode(row.getShort(idx))
-      case IntegerType => ModelMatrixEncoding.encode(row.getInt(idx))
-      case LongType => ModelMatrixEncoding.encode(row.getLong(idx))
-      case DoubleType => ModelMatrixEncoding.encode(row.getDouble(idx))
-      case StringType => ModelMatrixEncoding.encode(row.getString(idx))
-      case tpe => sys.error(s"Unsupported categorical extract type: $tpe. Feature: ${feature.feature}. Columns: ${columns.size}")
+    } else {
+      // If not null try to match with any category
+
+      // Get byte representation of extracted feature
+      val byteVector = extractType match {
+        case ShortType => ModelMatrixEncoding.encode(row.getShort(idx))
+        case IntegerType => ModelMatrixEncoding.encode(row.getInt(idx))
+        case LongType => ModelMatrixEncoding.encode(row.getLong(idx))
+        case DoubleType => ModelMatrixEncoding.encode(row.getDouble(idx))
+        case StringType => ModelMatrixEncoding.encode(row.getString(idx))
+        case tpe =>
+          sys.error(s"Unsupported categorical extract type: $tpe. " +
+            s"Feature: ${feature.feature}. Columns: ${columns.size}")
+      }
+
+      // Take first matching categorical value or fallback to 'all other' if exists
+      val categoricalColumn = columns.collect { case v: CategoricalValue if v.sourceValue == byteVector => v.columnId }
+      val allOther = columns.collect { case AllOther(columnId, _, _) => columnId }
+
+      (categoricalColumn ++ allOther).headOption.map((_, 1.0D))
     }
-
-    // Take first matching categorical value or fallback to 'all other' if exists
-    val categoricalColumn = columns.collect { case v: CategoricalValue if v.sourceValue == byteVector => v.columnId }
-    val allOther = columns.collect { case AllOther(columnId, _, _) => columnId }
-
-    (categoricalColumn ++ allOther).headOption.map((_, 1.0D))
   }
 
   private def binColumn(row: Row)(
