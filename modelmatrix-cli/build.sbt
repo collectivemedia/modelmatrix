@@ -13,7 +13,7 @@ assemblyJarName := "model-matrix-cli.jar"
 
 name in Universal := "Model Matrix CLI"
 
-packageName in Universal := "model-matrix-cli"
+packageName in Universal := "modelmatrix-cli"
 
 // removes all jar mappings in universal and appends the fat jar
 mappings in Universal := {
