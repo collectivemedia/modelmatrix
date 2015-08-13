@@ -12,6 +12,8 @@ trait ModelDefinitionCatalogSpec extends FlatSpec with GivenWhenThen with Before
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
+  lazy val testClassName: String = this.getClass.getSimpleName
+
   val now = Instant.now()
   val isActive = true
   val addAllOther = true
@@ -29,8 +31,8 @@ trait ModelDefinitionCatalogSpec extends FlatSpec with GivenWhenThen with Before
 
     And("model definition")
     val addModelDefinition = modelDefinitions.add(
-      name = Some(s"name=${now.toEpochMilli}"),
-      source = "source",
+      name = Some(s"definitionName=$testClassName${now.toEpochMilli}"),
+      source = s"definitionSource=$testClassName",
       createdBy = "ModelDefinitionFeaturesSpec",
       createdAt = now,
       comment = Some("testing")
@@ -45,6 +47,17 @@ trait ModelDefinitionCatalogSpec extends FlatSpec with GivenWhenThen with Before
 
     val (modelDefinitionId, featuresId) = await(db.run(insert))
     assert(featuresId.size == 4)
+
+    And("saving same model definition should return previous definition id")
+    val addSameModelDefinition = modelDefinitions.add(
+      name = Some(s"definitionName=$testClassName${Instant.now().toEpochMilli}"),
+      source = s"definitionSource=$testClassName",
+      createdBy = "ModelDefinitionFeaturesSpec",
+      createdAt = Instant.now(),
+      comment = Some("testing")
+    )
+    val newModelDefId = await(db.run(addSameModelDefinition))
+    assert(newModelDefId == modelDefinitionId)
 
     And("read saved model")
 
@@ -61,7 +74,7 @@ trait ModelDefinitionCatalogSpec extends FlatSpec with GivenWhenThen with Before
     assert(foundById == modelO)
 
     And("find model definition by name")
-    val foundByName = await(db.run(modelDefinitions.list(name = Some(s"name=${now.toEpochMilli}")))).headOption
+    val foundByName = await(db.run(modelDefinitions.list(name = Some(s"definitionName=$testClassName${now.toEpochMilli}")))).headOption
     assert(foundByName == modelO)
 
     And("read all model features by model definition id")

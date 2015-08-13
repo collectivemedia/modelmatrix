@@ -15,6 +15,8 @@ trait ModelInstanceCatalogSpec extends FlatSpec with GivenWhenThen with BeforeAn
 
   import scala.concurrent.ExecutionContext.Implicits.global
 
+  lazy val testClassName: String = this.getClass.getSimpleName
+
   val now = Instant.now()
   val isActive = true
   val addAllOther = true
@@ -37,8 +39,8 @@ trait ModelInstanceCatalogSpec extends FlatSpec with GivenWhenThen with BeforeAn
   def newModelDefinition = {
 
     val createModelDefinition = modelDefinitions.add(
-      name = Some(s"definition=${now.toEpochMilli}"),
-      source = "source",
+      name = Some(s"definitionName=$testClassName.${now.toEpochMilli}"),
+      source = s"definitionSource=$testClassName",
       createdBy = "ModelInstanceCatalogSpec",
       createdAt = now,
       comment = None
@@ -152,7 +154,7 @@ trait ModelInstanceCatalogSpec extends FlatSpec with GivenWhenThen with BeforeAn
 
     val createModelInstance = modelInstances.add(
       modelDefinitionId,
-      name = Some(s"instance=${now.toEpochMilli}"),
+      name = Some(s"instanceName=${now.toEpochMilli}"),
       createdBy = "ModelInstanceCatalogSpec",
       createdAt = now,
       comment = None

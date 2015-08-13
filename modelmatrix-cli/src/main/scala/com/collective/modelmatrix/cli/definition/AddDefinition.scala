@@ -3,8 +3,9 @@ package com.collective.modelmatrix.cli.definition
 import java.nio.file.Path
 import java.time.Instant
 
+import com.collective.modelmatrix.ModelConfigurationParser
 import com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess
-import com.collective.modelmatrix.cli.{ModelConfigurationParser, Script}
+import com.collective.modelmatrix.cli.Script
 import com.typesafe.config.{ConfigFactory, ConfigResolveOptions}
 import org.slf4j.LoggerFactory
 
@@ -48,7 +49,7 @@ case class AddDefinition(
     if (success.nonEmpty && errors.isEmpty) {
       val addModelDefinition = modelDefinitions.add(
         name = name,
-        source = definitionSource(),
+        source = parser.content,
         createdBy = System.getProperty("user.name"),
         createdAt = Instant.now(),
         comment = comment
@@ -65,10 +66,6 @@ case class AddDefinition(
       Console.out.println(s"Successfully created new model definition")
       Console.out.println(s"Matrix Model definition id: $modelDefinitionId")
     }
-  }
-
-  private def definitionSource(): String = {
-    scala.io.Source.fromFile(config.toFile).getLines().mkString(System.lineSeparator())
   }
 
 }
