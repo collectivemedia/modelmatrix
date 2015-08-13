@@ -2,7 +2,8 @@ package com.collective.modelmatrix.cli.definition
 
 import java.nio.file.Path
 
-import com.collective.modelmatrix.cli.{ModelConfigurationParser, Script}
+import com.collective.modelmatrix.ModelConfigurationParser
+import com.collective.modelmatrix.cli.Script
 import com.typesafe.config.{ConfigFactory, ConfigResolveOptions}
 import org.slf4j.LoggerFactory
 
