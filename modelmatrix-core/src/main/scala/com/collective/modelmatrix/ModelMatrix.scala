@@ -23,6 +23,9 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 import scalaz.{-\/, \/-, _}
 
 
+class ModelMatrixDefinitionException(errors: Seq[(String, NonEmptyList[String])])
+  extends RuntimeException(s"Failed to create model matrix definition: [${errors.mkString(", ")}]")
+
 class ModelMatrixFeatureExtractionException(errors: Seq[FeatureExtractionError])
   extends RuntimeException(s"Failed extract model features: [${errors.map(e => e.feature.feature).mkString(", ")}]")
 
@@ -155,7 +158,8 @@ class ModelMatrix(sqlContext: SQLContext) extends ModelMatrixCatalogAccess with 
 
 
   /**
-   * Create the model matrix definition based on configuration file
+   * Create the model matrix definition based on configuration file.
+   * If model definition already exists for passed checksum return existing id
    *
    * @param modelDefinitionFilePath location of the model definition configuration file
    * @param name                    name of the model definition
@@ -181,30 +185,38 @@ class ModelMatrix(sqlContext: SQLContext) extends ModelMatrixCatalogAccess with 
 
     // If there are errors in the model feature definition file throw an exception
     if (errors.nonEmpty) {
-      sys.error(s"Incorrect configured model features: ${errors.size}")
+      log.error(s"Incorrect configured model features: ${errors.size}")
+      throw new ModelMatrixDefinitionException(errors)
     }
 
     if (success.nonEmpty && errors.isEmpty) {
-      val addModelDefinition = modelDefinitions.add(
-        name = name,
-        source = parser.content,
-        createdBy = System.getProperty("user.name"),
-        createdAt = Instant.now(),
-        comment = comment
-      )
 
-      val insert = for {
-        id <- addModelDefinition
-        featureId <- modelDefinitionFeatures.addFeatures(id, success: _*)
-      } yield (id, featureId)
+      blockOn(db.run(modelDefinitions.findByContent(parser.content))) match {
+        case Some(definition) =>
+          log.debug(s"Model matrix definition already exists. Id: ${definition.id}")
+          definition.id
 
-      import driver.api._
-      val (modelDefinitionId, _) = blockOn(db.run(insert.transactionally))
+        case None =>
+          val insert = for {
+            id <- modelDefinitions.add(
+              name = name,
+              source = parser.content,
+              createdBy = System.getProperty("user.name"),
+              createdAt = Instant.now(),
+              comment = comment
+            )
+            featureId <- modelDefinitionFeatures.addFeatures(id, success: _*)
+          } yield (id, featureId)
 
-      Console.out.println(s"Matrix Model definition id: $modelDefinitionId")
-      return modelDefinitionId
+          import driver.api._
+          val (modelDefinitionId, _) = blockOn(db.run(insert.transactionally))
+
+          log.info(s"Created Model Matrix definition. Id: $modelDefinitionId")
+          modelDefinitionId
+      }
+    } else {
+      sys.error(s"Configuration doesn't contain any feature definition")
     }
-    sys.error(s"Configuration doesn't contain any feature definition")
   }
 
 

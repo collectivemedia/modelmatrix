@@ -1,6 +1,7 @@
 package com.collective.modelmatrix.catalog
 
 import java.time.Instant
+import java.util.UUID
 
 import com.collective.modelmatrix.transform.{Bins, Identity, Index, Top}
 import com.collective.modelmatrix.{BinColumn, CategoricalColumn, ModelFeature, ModelMatrixEncoding}
@@ -40,7 +41,7 @@ trait ModelInstanceCatalogSpec extends FlatSpec with GivenWhenThen with BeforeAn
 
     val createModelDefinition = modelDefinitions.add(
       name = Some(s"definitionName=$testClassName.${now.toEpochMilli}"),
-      source = s"definitionSource=$testClassName",
+      source = s"definitionSource=$testClassName:${UUID.randomUUID()}",
       createdBy = "ModelInstanceCatalogSpec",
       createdAt = now,
       comment = None
