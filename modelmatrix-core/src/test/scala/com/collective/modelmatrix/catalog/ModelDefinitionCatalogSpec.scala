@@ -48,16 +48,10 @@ trait ModelDefinitionCatalogSpec extends FlatSpec with GivenWhenThen with Before
     val (modelDefinitionId, featuresId) = await(db.run(insert))
     assert(featuresId.size == 4)
 
-    And("saving same model definition should return previous definition id")
-    val addSameModelDefinition = modelDefinitions.add(
-      name = Some(s"definitionName=$testClassName${Instant.now().toEpochMilli}"),
-      source = s"definitionSource=$testClassName",
-      createdBy = "ModelDefinitionFeaturesSpec",
-      createdAt = Instant.now(),
-      comment = Some("testing")
-    )
-    val newModelDefId = await(db.run(addSameModelDefinition))
-    assert(newModelDefId == modelDefinitionId)
+    Then("it should be resolvable by content")
+
+    val byContent = await(db.run(modelDefinitions.findByContent(s"definitionSource=$testClassName"))).get.id
+    assert(byContent == modelDefinitionId)
 
     And("read saved model")
 

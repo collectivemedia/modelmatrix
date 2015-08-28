@@ -54,10 +54,12 @@ class ModelDefinitions(val catalog: ModelMatrixCatalog)(implicit val ec: Executi
     q(modelDefinitions.filter(_.id === id)).map(_.headOption)
   }
 
-  /**
-   * Find a specific ModelDefinition using the source hash
-   */
-  def findByChecksum(checksum: String): DBIO[Option[ModelDefinition]] = {
+  def findByContent(content: String): DBIO[Option[ModelDefinition]] = {
+    val checksum = md5(content)
+    findByChecksum(checksum)
+  }
+
+  private def findByChecksum(checksum: String): DBIO[Option[ModelDefinition]] = {
     q(modelDefinitions.filter(_.checksum === checksum)).map(_.headOption)
   }
 
@@ -79,17 +81,8 @@ class ModelDefinitions(val catalog: ModelMatrixCatalog)(implicit val ec: Executi
       s"Created by: $createdBy @ $createdAt. " +
       s"Comment: ${comment.getOrElse("")}")
 
-    val checksum = md5(source)
-
-    modelDefinitions.filter(_.checksum === checksum).result.headOption.flatMap  {
-      case Some(modelDefinition) =>
-        log.info(s"ModelDefinition already exists. Id is ${modelDefinition._1}")
-        DBIO.successful(modelDefinition._1)
-      case None =>
-        log.info(s"ModelDefinition doesn't exists. Creating it...")
-        (modelDefinitions returning modelDefinitions.map(_.id)) +=
-          ((AutoIncId, name, md5(source), source, createdBy, createdAt, comment))
-    }.transactionally
+    (modelDefinitions returning modelDefinitions.map(_.id)) +=
+      ((AutoIncId, name, md5(source), source, createdBy, createdAt, comment))
   }
 
 }
