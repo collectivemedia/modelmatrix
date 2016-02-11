@@ -40,7 +40,7 @@ class IndexTransformer(input: DataFrame @@ Transformer.Features) extends Categor
 
     val df = scalaz.Tag.unwrap(input)
 
-    import org.apache.spark.sql.functions._
+    import org.apache.spark.sql.functions.col
 
     // Group and count by extract value
     val grouped: DataFrame = df.filter(df(f).isNotNull).groupBy(f).count()

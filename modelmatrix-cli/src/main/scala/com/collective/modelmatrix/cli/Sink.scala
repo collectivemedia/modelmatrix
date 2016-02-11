@@ -38,7 +38,7 @@ case class HiveSink(
 ) extends Sink {
 
   def saveDataFrame(df: DataFrame)(implicit sqlContext: SQLContext): Unit = {
-    df.saveAsTable(tableName, SaveMode.Overwrite)
+    df.write.mode(SaveMode.Overwrite).saveAsTable(tableName)
   }
 
   override def toString: String =
@@ -50,7 +50,7 @@ case class ParquetSink(
 ) extends Sink {
 
   def saveDataFrame(df: DataFrame)(implicit sqlContext: SQLContext): Unit = {
-    df.saveAsParquetFile(path)
+    df.write.parquet(path)
   }
 
   override def toString: String =
