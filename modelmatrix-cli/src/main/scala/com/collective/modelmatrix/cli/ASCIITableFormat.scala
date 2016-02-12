@@ -49,10 +49,8 @@ object ASCIITableFormat {
 
 object ASCIITableFormats {
 
-  private val sqlParser = new SqlParser()
-
   private def formatExtractExpr(s: String): String = {
-    sqlParser.parseExpression(s).toString()
+    SqlParser.parseExpression(s).toString()
   }
 
   implicit class StringFormattingOps(val s: String) extends AnyVal {

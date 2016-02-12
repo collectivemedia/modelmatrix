@@ -19,9 +19,6 @@ case class ModelFeature(
 
 object ModelFeature {
 
-  // Validate extract expressions using SqlParser that used in DataFrame.selectExpr
-  private val sqlParser = new SqlParser()
-
   def parse(feature: String, config: Config, path: String): ValidationNel[String, ModelFeature] = {
     parse(feature, config.getConfig(path))
   }
@@ -33,7 +30,7 @@ object ModelFeature {
     def expression(p: String) = {
       import scalaz.Validation.FlatMap._
       string(p).flatMap { input =>
-        Try(sqlParser.parseExpression(input)) match {
+        Try(SqlParser.parseExpression(input)) match {
           case Success(parsed) => input.successNel
           case Failure(err)    => s"Failed to parse extract expression: $err".failureNel
         }
