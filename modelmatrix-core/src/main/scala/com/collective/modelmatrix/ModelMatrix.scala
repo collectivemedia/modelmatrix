@@ -236,7 +236,7 @@ class ModelMatrix(sqlContext: SQLContext) extends ModelMatrixCatalogAccess with 
     name: Option[String],
     comment: Option[String],
     concurrencyLevel: Int
-  ): Int = {
+    ): Int = {
 
     log.info(s"Create new Model Matrix instance for definition: $modelDefinitionId. " +
       s"Name: $name. Comment: $comment. Concurrency: $concurrencyLevel")
@@ -279,4 +279,16 @@ class ModelMatrix(sqlContext: SQLContext) extends ModelMatrixCatalogAccess with 
     }
   }
 
+  /**
+   * Check if a model matrix definition id is present in the model matrix DB.
+   *
+   * @param mmDefinitionId model matrix definition id for which you want to verify the existence
+   * @return true if the model matrix definition id is valid else false
+   */
+  def isValidModelMatrixDefinition(mmDefinitionId: Int): Boolean = {
+    blockOn(db.run(modelDefinitions.findById(mmDefinitionId))) match {
+      case Some(_) => true
+      case None => false
+    }
+  }
 }
