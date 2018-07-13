@@ -6,12 +6,10 @@ import com.collective.modelmatrix.CategoricalColumn.{AllOther, CategoricalValue}
 import com.collective.modelmatrix.catalog._
 import com.collective.modelmatrix.transform.Transformer.{Features, LabeledFeatures}
 import org.apache.spark.mllib.linalg.{Vector, Vectors}
-import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types._
-import org.apache.spark.sql.{Column, DataFrame, Row}
+import org.apache.spark.sql.{Column, DataFrame, Dataset, Row}
 import org.slf4j.LoggerFactory
-
 import scalaz._
 import scalaz.syntax.either._
 
@@ -117,7 +115,7 @@ class Featurization(features: Seq[ModelInstanceFeature]) extends Serializable {
     validation.collect { case \/-(column) => column }
   }
 
-  def featurize[L](input: DataFrame @@ Features): RDD[Vector] = {
+  def featurize[L](input: DataFrame @@ Features): Dataset[Vector] = {
     log.info(s"Extract features from input DataFrame. Total number of columns: $totalNumberOfColumns")
 
     val df = scalaz.Tag.unwrap(input)
@@ -131,7 +129,7 @@ class Featurization(features: Seq[ModelInstanceFeature]) extends Serializable {
     }
   }
 
-  def featurize[L](input: DataFrame @@ LabeledFeatures[L], labeling: Labeling[L]): RDD[(L, Vector)] = {
+  def featurize[L](input: DataFrame @@ LabeledFeatures[L], labeling: Labeling[L]): Dataset[(L, Vector)] = {
     log.info(s"Extract features from input DataFrame. Total number of columns: $totalNumberOfColumns")
 
     val df = scalaz.Tag.unwrap(input)

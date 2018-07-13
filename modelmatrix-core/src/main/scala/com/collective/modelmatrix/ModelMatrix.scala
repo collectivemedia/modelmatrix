@@ -1,6 +1,6 @@
 package com.collective.modelmatrix
 
-import java.nio.file.{Paths, Path}
+import java.nio.file.{Path, Paths}
 import java.time.Instant
 import java.util.concurrent.Executors
 
@@ -9,13 +9,12 @@ import com.collective.modelmatrix.catalog.{ModelDefinitionFeature, ModelInstance
 import com.collective.modelmatrix.db.DefaultDatabaseConfig
 import com.collective.modelmatrix.transform.Transformer.FeatureExtractionError
 import com.collective.modelmatrix.transform._
-import com.google.common.util.concurrent.ThreadFactoryBuilder
-import com.typesafe.config.{ConfigResolveOptions, ConfigFactory}
+import org.spark_project.guava.util.concurrent.ThreadFactoryBuilder
+import com.typesafe.config.{ConfigFactory, ConfigResolveOptions}
 import org.apache.spark.SparkContext
 import org.apache.spark.mllib.linalg.Vector
-import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.hive.HiveContext
-import org.apache.spark.sql.{DataFrame, SQLContext}
+import org.apache.spark.sql.{DataFrame, Dataset, SQLContext}
 import org.slf4j.LoggerFactory
 
 import scala.concurrent.duration._
@@ -110,7 +109,7 @@ class ModelMatrix(sqlContext: SQLContext) extends ModelMatrixCatalogAccess with 
    * @param labeling row labeling
    * @return RDD of featurized vectors
    */
-  def featurize[L](modelInstanceId: Int, df: DataFrame, labeling: Labeling[L]): RDD[(L, Vector)] = {
+  def featurize[L](modelInstanceId: Int, df: DataFrame, labeling: Labeling[L]): Dataset[(L, Vector)] = {
 
     log.info(s"Featurization data frame using Model Matrix instance: $modelInstanceId")
 
@@ -129,7 +128,7 @@ class ModelMatrix(sqlContext: SQLContext) extends ModelMatrixCatalogAccess with 
    * @param labeling row labeling
    * @return RDD of featurized vectors
    */
-  def featurize[L](features: Seq[ModelInstanceFeature], df: DataFrame, labeling: Labeling[L]): RDD[(L, Vector)] = {
+  def featurize[L](features: Seq[ModelInstanceFeature], df: DataFrame, labeling: Labeling[L]): Dataset[(L, Vector)] = {
 
     require(features.nonEmpty, s"Can't do featurization without features")
 

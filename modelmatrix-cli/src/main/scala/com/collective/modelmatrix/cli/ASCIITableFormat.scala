@@ -6,9 +6,9 @@ import com.collective.modelmatrix._
 import com.collective.modelmatrix.catalog._
 import com.collective.modelmatrix.transform.Transformer.FeatureExtractionError
 import com.collective.modelmatrix.transform._
-import org.apache.spark.sql.catalyst.SqlParser
-
-import scalaz.{NonEmptyList, \/-, -\/, \/}
+import org.apache.spark.sql.catalyst.parser.CatalystSqlParser
+import org.apache.spark.sql.internal.SQLConf
+import scalaz.{-\/, NonEmptyList, \/, \/-}
 
 
 abstract class ASCIITableFormat[T](val header: Array[ASCIITableHeader]) {
@@ -49,7 +49,8 @@ object ASCIITableFormat {
 
 object ASCIITableFormats {
 
-  private val sqlParser = new SqlParser()
+  private val conf = new SQLConf()
+  private val sqlParser = new CatalystSqlParser()
 
   private def formatExtractExpr(s: String): String = {
     sqlParser.parseExpression(s).toString()

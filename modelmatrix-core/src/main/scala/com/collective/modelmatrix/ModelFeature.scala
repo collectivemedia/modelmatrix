@@ -2,7 +2,8 @@ package com.collective.modelmatrix
 
 import com.collective.modelmatrix.transform.Transform
 import com.typesafe.config.Config
-import org.apache.spark.sql.catalyst.SqlParser
+import org.apache.spark.sql.catalyst.parser.CatalystSqlParser
+import org.apache.spark.sql.internal.SQLConf
 
 import scala.util.{Failure, Success, Try}
 import scalaz.ValidationNel
@@ -20,7 +21,8 @@ case class ModelFeature(
 object ModelFeature {
 
   // Validate extract expressions using SqlParser that used in DataFrame.selectExpr
-  private val sqlParser = new SqlParser()
+  private val conf = new SQLConf()
+  private val sqlParser = new CatalystSqlParser(conf)
 
   def parse(feature: String, config: Config, path: String): ValidationNel[String, ModelFeature] = {
     parse(feature, config.getConfig(path))
@@ -65,7 +67,7 @@ object ModelFeature {
       feature.successNel     |@|
       expression("extract")  |@|
       transform("transform")
-    )(ModelFeature.apply)
+    )(ModelFeature.apply _)
   }
 
 }
