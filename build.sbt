@@ -2,7 +2,7 @@ name in ThisBuild := "Model Matrix"
 
 organization in ThisBuild := "com.collective.modelmatrix"
 
-scalaVersion in ThisBuild := "2.10.5"
+scalaVersion in ThisBuild := "2.11.12"
 
 scalacOptions in ThisBuild ++= Seq(
   "-deprecation",
