@@ -24,7 +24,7 @@ object Dependency {
 
     // Scalaz
     val Scalaz             = "7.2.25"
-    val ScalazStream       = "0.7a"
+    val ScalazStream       = "0.8.5"
 
     // Test libraries
     val H2                 = "1.4.187"
