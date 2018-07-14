@@ -12,8 +12,6 @@ import scalaz.{-\/, \/-}
 
 class IndexTransformerSpec extends FlatSpec with TestSparkContext {
 
-  val sqlContext = ModelMatrix.sqlContext(sc)
-
   val schema = StructType(Seq(
     StructField("adv_site", StringType)
   ))

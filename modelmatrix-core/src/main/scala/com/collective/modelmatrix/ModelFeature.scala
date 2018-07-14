@@ -6,7 +6,7 @@ import org.apache.spark.sql.catalyst.parser.CatalystSqlParser
 import org.apache.spark.sql.internal.SQLConf
 
 import scala.util.{Failure, Success, Try}
-import scalaz.ValidationNel
+import scalaz.{NonEmptyList, Validation, ValidationNel}
 import scalaz.syntax.apply._
 import scalaz.syntax.validation._
 
@@ -32,7 +32,7 @@ object ModelFeature {
 
     def string(p: String) = parameter(p)(_.getString)
 
-    def expression(p: String) = {
+    def expression(p: String) : Validation[NonEmptyList[String], String] = {  // #todo return type
       import scalaz.Validation.FlatMap._
       string(p).flatMap { input =>
         Try(sqlParser.parseExpression(input)) match {

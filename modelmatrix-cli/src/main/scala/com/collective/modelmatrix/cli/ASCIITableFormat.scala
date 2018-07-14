@@ -50,7 +50,7 @@ object ASCIITableFormat {
 object ASCIITableFormats {
 
   private val conf = new SQLConf()
-  private val sqlParser = new CatalystSqlParser()
+  private val sqlParser = new CatalystSqlParser(conf)
 
   private def formatExtractExpr(s: String): String = {
     sqlParser.parseExpression(s).toString()
@@ -70,7 +70,7 @@ object ASCIITableFormats {
   implicit val featureDefinitionErrorFormat: ASCIITableFormat[(String, NonEmptyList[String])] =
     ASCIITableFormat[(String, NonEmptyList[String])]("Feature", "Errors".dataLeftAligned) { obj =>
       val (feature, errors) = obj
-      Array(feature, errors.list.mkString(System.lineSeparator()))
+      Array(feature, errors.list.toList.mkString(System.lineSeparator()))
     }
 
   implicit val modelFeatureFormat: ASCIITableFormat[ModelFeature] =

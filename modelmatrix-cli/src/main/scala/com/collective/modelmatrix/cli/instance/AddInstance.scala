@@ -26,8 +26,6 @@ case class AddInstance(
 
   private val log = LoggerFactory.getLogger(classOf[AddInstance])
 
-  private implicit lazy val sqlContext = ModelMatrix.hiveContext(sc)
-
   import com.collective.modelmatrix.cli.ASCIITableFormat._
   import com.collective.modelmatrix.cli.ASCIITableFormats._
 

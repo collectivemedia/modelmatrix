@@ -42,7 +42,7 @@ trait ModelMatrixUDF {
     case _ => null
   }
 
-  protected def registerUDF(udf: UDFRegistration): Unit = {
+  def registerUDF(udf: UDFRegistration): Unit = {
     udf.register("strToEpochMilli", strToEpochMilli)
     udf.register("concat", concat)
     udf.register("day_of_week", dayOfWeek)

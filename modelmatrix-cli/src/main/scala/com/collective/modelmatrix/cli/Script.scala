@@ -1,6 +1,6 @@
 package com.collective.modelmatrix.cli
 
-import org.apache.spark.sql.{SQLContext, DataFrame}
+import org.apache.spark.sql.{DataFrame, SparkSession}
 import scopt.OptionParser
 
 
@@ -30,7 +30,7 @@ trait SourceTransformation { self: Script =>
   private val cache: TransformSource = df => if (cacheSource) df.cache() else df
   private val repartition: TransformSource = df => repartitionSource.map(df.repartition).getOrElse(df)
 
-  protected def toDataFrame(source: Source)(implicit sqlContext: SQLContext): DataFrame = {
+  protected def toDataFrame(source: Source)(implicit session: SparkSession): DataFrame = {
     (repartition andThen cache)(source.asDataFrame)
   }
 }

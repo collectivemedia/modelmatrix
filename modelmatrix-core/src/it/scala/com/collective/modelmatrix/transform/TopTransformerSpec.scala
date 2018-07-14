@@ -12,8 +12,6 @@ import scalaz.{-\/, \/-}
 
 class TopTransformerSpec extends FlatSpec with TestSparkContext {
 
-  val sqlContext = ModelMatrix.sqlContext(sc)
-
   val schema = StructType(Seq(
     StructField("adv_site", StringType)
   ))
@@ -37,7 +35,7 @@ class TopTransformerSpec extends FlatSpec with TestSparkContext {
 
   val adSite = ModelFeature(isActive, "Ad", "ad_site", "adv_site", Top(95.0, withAllOther))
 
-  val df = sqlContext.createDataFrame(sc.parallelize(input), schema)
+  val df = session.createDataFrame(session.sparkContext.parallelize(input), schema)
   val transformer = new TopTransformer(Transformer.extractFeatures(df, Seq(adSite)) match {
     case -\/(err) => sys.error(s"Can't extract features: $err")
     case \/-(suc) => suc

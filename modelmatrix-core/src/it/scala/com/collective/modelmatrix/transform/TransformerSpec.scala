@@ -7,8 +7,6 @@ import org.scalatest.FlatSpec
 
 class TransformerSpec extends FlatSpec with TestSparkContext {
 
-  val sqlContext = ModelMatrix.sqlContext(sc)
-
   val schema = StructType(Seq(
     StructField("adv_site", StringType),
     StructField("adv_id", IntegerType)

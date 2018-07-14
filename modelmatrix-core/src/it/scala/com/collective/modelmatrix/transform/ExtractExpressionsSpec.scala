@@ -16,8 +16,6 @@ import scalaz.{-\/, \/-}
 
 class ExtractExpressionsSpec extends FlatSpec with TestSparkContext {
 
-  val sqlContext = ModelMatrix.sqlContext(sc)
-
   val rnd = new Random()
 
   val now = Instant.now().atZone(ZoneOffset.UTC)
@@ -77,7 +75,7 @@ class ExtractExpressionsSpec extends FlatSpec with TestSparkContext {
   val greatestPrice = ModelFeature(isActive, "expr", "log_price", "greatest(adv_price, 0.1)", Bins(5, 0, 0))
 
   val df = Transformer.extractFeatures(
-    sqlContext.createDataFrame(sc.parallelize(input), schema),
+    session.createDataFrame(session.sparkContext.parallelize(input), schema),
     Seq(adId, adSite, adPrice, adIdSitePair, os, dayOfWeek, hourOfDay, notNullSite, notNullPrice, logPrice, greatestPrice)
   ) match {
     case -\/(err) => sys.error(s"Can't extract features: $err")

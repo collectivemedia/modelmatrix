@@ -1,14 +1,19 @@
 package com.collective.modelmatrix.cli
 
-import org.apache.spark.{SparkContext, SparkConf}
+import com.collective.modelmatrix.ModelMatrix
+import org.apache.spark.sql.SparkSession
 
 trait CliSparkContext {
 
-  lazy val sc = {
-    val conf = new SparkConf()
-      .setAppName("Model Matrix")
+  lazy implicit val session: SparkSession = {
 
-    new SparkContext(conf)
-  }
+    val session = SparkSession.builder.
+      master("local")
+      .appName("modelmatrx")
+      .enableHiveSupport()
+      .getOrCreate()
 
+      ModelMatrix.registerUDF(session.udf)
+      session
+   }
 }
