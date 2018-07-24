@@ -7,7 +7,6 @@ import org.apache.spark.mllib.linalg.SparseVector
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.scalatest.{FlatSpec, GivenWhenThen}
-
 import scalaz.{-\/, \/, \/-}
 
 class FeaturizationSpec extends FlatSpec with GivenWhenThen with TestSparkContext {
@@ -89,6 +88,7 @@ class FeaturizationSpec extends FlatSpec with GivenWhenThen with TestSparkContex
 
   it should "featurize input data frame" in {
 
+    import session.implicits._
     val featurized = featureExtraction.featurize(transformed, auctionIdLabeling).collect().toSeq.map(p => p._1 -> p._2).toMap
     assert(featurized.size == 4)
 
@@ -129,6 +129,8 @@ class FeaturizationSpec extends FlatSpec with GivenWhenThen with TestSparkContex
     }
 
     Then("it should be successfully featurized")
+    import session.implicits._
+
     val featurized = featureExtraction.featurize(transformed, auctionIdLabeling).collect().toSeq.map(p => p._1 -> p._2).toMap
     assert(featurized.size == 5)
 

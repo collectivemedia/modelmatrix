@@ -53,7 +53,7 @@ case class SparseFeaturization(
       .map(_.dataType)
       .getOrElse(sys.error(s"Can't find id column: $idColumn"))
 
-    implicit val labelEncoder1 : Encoder[Any] = ExpressionEncoder[Any] // #todo
+    implicit val labelEncoder : Encoder[Any] = ExpressionEncoder[Any] // #todo
     implicit val rowEncoder : Encoder[Row] = RowEncoder(sparseSchema(idDataType))
 
     Transformer.extractFeatures(df, features.map(_.feature), idLabeling) match {
