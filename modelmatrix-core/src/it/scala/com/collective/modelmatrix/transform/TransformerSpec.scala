@@ -28,7 +28,7 @@ class TransformerSpec extends FlatSpec with TestSparkContext {
   // Not enough parameters for 'concat'
   val wrongParametersCount = ModelFeature(isActive, "advertisement", "f2", "concat(adv_site)", Top(95.0, allOther = false))
 
-  val df = sqlContext.createDataFrame(sc.parallelize(input), schema)
+  val df = session.createDataFrame(session.sparkContext.parallelize(input), schema)
 
   "Transformer" should "report failed feature extraction" in {
     val features = Transformer.extractFeatures(df, Seq(badFunctionType, wrongParametersCount))
