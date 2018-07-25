@@ -1,11 +1,11 @@
 package com.collective.modelmatrix.cli
 
-import org.apache.spark.sql.{DataFrame, SQLContext}
+import org.apache.spark.sql.{DataFrame, SparkSession}
 
 import scala.util.{Failure, Success, Try}
 
 sealed trait Source {
-  def asDataFrame(implicit sqlContext: SQLContext): DataFrame
+  def asDataFrame(implicit session: SparkSession): DataFrame
 }
 
 object Source {
@@ -26,7 +26,7 @@ object Source {
 }
 
 object NoSource extends Source {
-  def asDataFrame(implicit sqlContext: SQLContext): DataFrame = {
+  def asDataFrame(implicit session: SparkSession): DataFrame = {
     sys.error(s"Source is not defined")
   }
 
@@ -37,8 +37,8 @@ case class HiveSource(
   tableName: String
 ) extends Source {
 
-  def asDataFrame(implicit sqlContext: SQLContext): DataFrame = {
-    sqlContext.sql(s"SELECT * FROM $tableName")
+  def asDataFrame(implicit session: SparkSession): DataFrame = {
+    session.sql(s"SELECT * FROM $tableName")
   }
 
   override def toString: String = {
@@ -51,8 +51,8 @@ case class ParquetSource(
   path: String
 ) extends Source {
 
-  def asDataFrame(implicit sqlContext: SQLContext): DataFrame = {
-    sqlContext.parquetFile(path)
+  def asDataFrame(implicit session: SparkSession): DataFrame = {
+    session.read.parquet(path)  // #todo
   }
 
   override def toString: String = {

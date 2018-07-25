@@ -3,12 +3,12 @@ package com.collective.modelmatrix.cli.featurize
 import com.collective.modelmatrix.ModelMatrix.ModelMatrixCatalogAccess
 import com.collective.modelmatrix.cli.{Source, _}
 import com.collective.modelmatrix.transform.Transformer
-import com.collective.modelmatrix.{Featurization, Labeling, ModelMatrix}
+import com.collective.modelmatrix.{Featurization, Labeling}
 import org.apache.spark.mllib.linalg.{DenseVector, SparseVector}
-import org.apache.spark.sql.Row
+import org.apache.spark.sql.catalyst.encoders.{ExpressionEncoder, RowEncoder}
 import org.apache.spark.sql.types._
+import org.apache.spark.sql.{Dataset, Encoder, Encoders, Row}
 import org.slf4j.LoggerFactory
-
 import scalaz._
 
 case class SparseFeaturization(
@@ -38,8 +38,6 @@ case class SparseFeaturization(
       s"Featurized sink: $sink. " +
       s"Id column: $idColumn")
 
-    implicit val sqlContext = ModelMatrix.hiveContext(sc)
-
     val features = blockOn(db.run(modelInstanceFeatures.features(modelInstanceId)))
     require(features.nonEmpty, s"No features are defined for model instance: $modelInstanceId. " +
       s"Ensure that this model instance exists")
@@ -55,6 +53,9 @@ case class SparseFeaturization(
       .map(_.dataType)
       .getOrElse(sys.error(s"Can't find id column: $idColumn"))
 
+    implicit val labelEncoder : Encoder[Any] = ExpressionEncoder[Any] // #todo
+    implicit val rowEncoder : Encoder[Row] = RowEncoder(sparseSchema(idDataType))
+
     Transformer.extractFeatures(df, features.map(_.feature), idLabeling) match {
       // Feature extraction failed
       case -\/(extractionErrors) =>
@@ -69,10 +70,10 @@ case class SparseFeaturization(
 
       // Looks good, let's do featurization
       case \/-(extracted) =>
-        val featurized = featurization.featurize(extracted, idLabeling)
+        val featurized : Dataset[(Any, org.apache.spark.mllib.linalg.Vector)] = featurization.featurize(extracted, idLabeling)
 
         // Switch from 0-based Vector index to 1-based ColumnId
-        val rows = featurized.flatMap {
+        val rows: Dataset[Row] = featurized.flatMap {
           case (id, sparse: SparseVector) =>
             (sparse.values zip sparse.indices).map { case (value, idx) => Row(id, idx + 1, value) }
           case (id, dense: DenseVector) =>
@@ -80,7 +81,8 @@ case class SparseFeaturization(
         }
 
         // Apply schema and save
-        sink.saveDataFrame(sqlContext.createDataFrame(rows, sparseSchema(idDataType)))
+        //sink.saveDataFrame(session.createDataFrame(session.sparkContext.parallelize(rows), sparseSchema(idDataType)))
+        sink.saveDataFrame(rows) // #todo
 
         Console.out.println(s"Featurized data set was successfully saved to: $sink")
     }

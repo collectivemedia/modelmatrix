@@ -24,8 +24,6 @@ case class ValidateInputData(
     log.info(s"Validate input data against Model Matrix instance: $modelInstanceId. " +
       s"Data source: $source")
 
-    implicit val sqlContext = ModelMatrix.hiveContext(sc)
-
     val features = blockOn(db.run(modelInstanceFeatures.features(modelInstanceId)))
     require(features.nonEmpty, s"No features are defined for model instance: $modelInstanceId. " +
       s"Ensure that this model instance exists")

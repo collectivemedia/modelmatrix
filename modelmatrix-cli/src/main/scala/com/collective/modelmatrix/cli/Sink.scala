@@ -1,11 +1,11 @@
 package com.collective.modelmatrix.cli
 
-import org.apache.spark.sql.{SaveMode, DataFrame, SQLContext}
+import org.apache.spark.sql.{SaveMode, DataFrame}
 
 import scala.util.{Failure, Success, Try}
 
 sealed trait Sink {
-  def saveDataFrame(df: DataFrame)(implicit sqlContext: SQLContext): Unit
+  def saveDataFrame(df: DataFrame): Unit
 }
 
 object Sink {
@@ -26,7 +26,7 @@ object Sink {
 }
 
 object NoSink extends Sink {
-  def saveDataFrame(df: DataFrame)(implicit sqlContext: SQLContext): Unit = {
+  def saveDataFrame(df: DataFrame): Unit = {
     sys.error(s"Sink is not defined")
   }
 
@@ -37,8 +37,8 @@ case class HiveSink(
   tableName: String
 ) extends Sink {
 
-  def saveDataFrame(df: DataFrame)(implicit sqlContext: SQLContext): Unit = {
-    df.saveAsTable(tableName, SaveMode.Overwrite)
+  def saveDataFrame(df: DataFrame): Unit = {
+    df.write.format("hive").mode(SaveMode.Overwrite).saveAsTable(tableName)
   }
 
   override def toString: String =
@@ -49,8 +49,8 @@ case class ParquetSink(
   path: String
 ) extends Sink {
 
-  def saveDataFrame(df: DataFrame)(implicit sqlContext: SQLContext): Unit = {
-    df.saveAsParquetFile(path)
+  def saveDataFrame(df: DataFrame): Unit = {
+    df.write.format("parquet").mode(SaveMode.Overwrite).save(path)
   }
 
   override def toString: String =

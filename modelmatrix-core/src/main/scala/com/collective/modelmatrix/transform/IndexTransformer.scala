@@ -12,7 +12,7 @@ import scalaz.syntax.either._
 
 class IndexTransformer(input: DataFrame @@ Transformer.Features) extends CategoricalTransformer(input) {
 
-  private val log = LoggerFactory.getLogger(classOf[IndexTransformer])
+  private val logger = LoggerFactory.getLogger(classOf[IndexTransformer])
 
   private val supportedDataTypes = Seq(ShortType, IntegerType, LongType, DoubleType, StringType)
 
@@ -33,7 +33,7 @@ class IndexTransformer(input: DataFrame @@ Transformer.Features) extends Categor
 
     val ModelFeature(_, _, f, _, Index(support, allOther)) = feature.feature
 
-    log.info(s"Calculate index transformation for feature: ${feature.feature.feature}. " +
+    logger.info(s"Calculate index transformation for feature: ${feature.feature.feature}. " +
       s"Support: $support. " +
       s"All other: $allOther. " +
       s"Extract type: ${feature.extractType}")
@@ -57,7 +57,7 @@ class IndexTransformer(input: DataFrame @@ Transformer.Features) extends Categor
     }
     val topSupportValues = supportValues.sortBy(_.count)(implicitly[Ordering[Long]].reverse)
 
-    log.debug(s"Collected '$f' support values: ${supportValues.size}")
+    logger.debug(s"Collected '$f' support values: ${supportValues.size}")
 
     // Transform categorical values
     val valueColumns = topSupportValues.foldLeft(Scan()) {

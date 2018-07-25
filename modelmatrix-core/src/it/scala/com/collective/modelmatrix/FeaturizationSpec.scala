@@ -7,12 +7,9 @@ import org.apache.spark.mllib.linalg.SparseVector
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 import org.scalatest.{FlatSpec, GivenWhenThen}
-
 import scalaz.{-\/, \/, \/-}
 
 class FeaturizationSpec extends FlatSpec with GivenWhenThen with TestSparkContext {
-
-  val sqlContext = ModelMatrix.sqlContext(sc)
 
   val schema = StructType(Seq(
     StructField("auction_id", LongType),
@@ -66,7 +63,7 @@ class FeaturizationSpec extends FlatSpec with GivenWhenThen with TestSparkContex
 
   val auctionIdLabeling = Labeling("auction_id", identity[Long])
 
-  val df = sqlContext.createDataFrame(sc.parallelize(input), schema)
+  val df = session.createDataFrame(session.sparkContext.parallelize(input), schema)
   val transformed = Transformer.extractFeatures(df, Seq(adPrice, adType, adSite, adStrategy), auctionIdLabeling) match {
     case -\/(err) => sys.error(s"Can't extract features: $err")
     case \/-(suc) => suc
@@ -91,6 +88,7 @@ class FeaturizationSpec extends FlatSpec with GivenWhenThen with TestSparkContex
 
   it should "featurize input data frame" in {
 
+    import session.implicits._
     val featurized = featureExtraction.featurize(transformed, auctionIdLabeling).collect().toSeq.map(p => p._1 -> p._2).toMap
     assert(featurized.size == 4)
 
@@ -124,13 +122,15 @@ class FeaturizationSpec extends FlatSpec with GivenWhenThen with TestSparkContex
 
     Given("row with null ad price and ad site")
     val withNullPriceAndSite = input :+ Row(5l, null /* ad price */, 2 /* ad type */, null /* ad site */, null /* ad strategy */)
-    val df = sqlContext.createDataFrame(sc.parallelize(withNullPriceAndSite), schema)
+    val df = session.createDataFrame(session.sparkContext.parallelize(withNullPriceAndSite), schema)
     val transformed = Transformer.extractFeatures(df, Seq(adPrice, adType, adSite, adStrategy), auctionIdLabeling) match {
       case -\/(err) => sys.error(s"Can't extract features: $err")
       case \/-(suc) => suc
     }
 
     Then("it should be successfully featurized")
+    import session.implicits._
+
     val featurized = featureExtraction.featurize(transformed, auctionIdLabeling).collect().toSeq.map(p => p._1 -> p._2).toMap
     assert(featurized.size == 5)
 

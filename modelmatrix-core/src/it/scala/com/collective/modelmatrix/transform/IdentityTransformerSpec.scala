@@ -10,8 +10,6 @@ import scalaz.{-\/, \/-}
 
 class IdentityTransformerSpec extends FlatSpec with TestSparkContext {
 
-  val sqlContext = ModelMatrix.sqlContext(sc)
-
   val schema = StructType(Seq(
     StructField("adv_site", StringType),
     StructField("adv_id", IntegerType)
@@ -30,7 +28,7 @@ class IdentityTransformerSpec extends FlatSpec with TestSparkContext {
   val adSite = ModelFeature(isActive, "Ad", "ad_site", "adv_site", Identity)
   val adId = ModelFeature(isActive, "Ad", "ad_id", "adv_id", Identity)
 
-  val df = sqlContext.createDataFrame(sc.parallelize(input), schema)
+  val df = session.createDataFrame(session.sparkContext.parallelize(input), schema)
   val transformer = new IdentityTransformer(Transformer.extractFeatures(df, Seq(adSite, adId)) match {
     case -\/(err) => sys.error(s"Can't extract features: $err")
     case \/-(suc) => suc

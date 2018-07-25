@@ -11,8 +11,6 @@ import scalaz.{-\/, \/-}
 
 class BinsTransformerSpec extends FlatSpec with TestSparkContext {
 
-  val sqlContext = ModelMatrix.sqlContext(sc)
-
   val schema = StructType(Seq(
     StructField("adv_site", StringType),
     StructField("pct_click", DoubleType)
@@ -39,7 +37,7 @@ class BinsTransformerSpec extends FlatSpec with TestSparkContext {
   val adSite = ModelFeature(isActive, "Ad", "ad_site", "adv_site", Bins(3, 0, 0))
   val sitePerformance = ModelFeature(isActive, "Site", "site_performance", "pct_click", Bins(3, 0, 0))
 
-  val df = sqlContext.createDataFrame(sc.parallelize(input), schema)
+  val df = session.createDataFrame(session.sparkContext.parallelize(input), schema)
   val transformer = new BinsTransformer(Transformer.extractFeatures(df, Seq(adSite, sitePerformance)) match {
     case -\/(err) => sys.error(s"Can't extract features: $err")
     case \/-(suc) => suc

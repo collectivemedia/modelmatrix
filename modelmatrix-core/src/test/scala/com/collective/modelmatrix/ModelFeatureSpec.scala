@@ -2,8 +2,6 @@ package com.collective.modelmatrix
 
 import com.collective.modelmatrix.transform.{Bins, Identity, Index, Top}
 import com.typesafe.config.ConfigFactory
-import org.apache.spark.sql.DataFrame
-import org.apache.spark.sql.catalyst.SqlParser
 import org.scalatest.FlatSpec
 
 import scalaz.syntax.validation._

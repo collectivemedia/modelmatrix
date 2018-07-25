@@ -1,13 +1,12 @@
 package com.collective.modelmatrix.transform
 
 import com.collective.modelmatrix.ModelFeature
-import org.apache.spark.sql.{SQLContext, DataFrame}
-
+import org.apache.spark.sql.{DataFrame, SQLContext, SparkSession}
 import scalaz._
 
 trait Transformers {
 
-  protected class Transformers(input: DataFrame @@ Transformer.Features)(implicit sqlContext: SQLContext) {
+  protected class Transformers(input: DataFrame @@ Transformer.Features)(implicit session: SparkSession) {
 
     val identity = new IdentityTransformer(input)
     val top = new TopTransformer(input)

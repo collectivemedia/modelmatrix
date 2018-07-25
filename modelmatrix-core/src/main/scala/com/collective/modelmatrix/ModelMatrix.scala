@@ -1,6 +1,6 @@
 package com.collective.modelmatrix
 
-import java.nio.file.{Paths, Path}
+import java.nio.file.{Path, Paths}
 import java.time.Instant
 import java.util.concurrent.Executors
 
@@ -9,15 +9,13 @@ import com.collective.modelmatrix.catalog.{ModelDefinitionFeature, ModelInstance
 import com.collective.modelmatrix.db.DefaultDatabaseConfig
 import com.collective.modelmatrix.transform.Transformer.FeatureExtractionError
 import com.collective.modelmatrix.transform._
-import com.google.common.util.concurrent.ThreadFactoryBuilder
-import com.typesafe.config.{ConfigResolveOptions, ConfigFactory}
-import org.apache.spark.SparkContext
+import org.spark_project.guava.util.concurrent.ThreadFactoryBuilder
+import com.typesafe.config.{ConfigFactory, ConfigResolveOptions}
 import org.apache.spark.mllib.linalg.Vector
-import org.apache.spark.rdd.RDD
-import org.apache.spark.sql.hive.HiveContext
-import org.apache.spark.sql.{DataFrame, SQLContext}
+import org.apache.spark.sql._
 import org.slf4j.LoggerFactory
 
+import scala.reflect.runtime.universe.{TypeTag}
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scalaz.{-\/, \/-, _}
@@ -37,17 +35,17 @@ class ModelMatrixFeatureTransformationException(errors: Seq[(ModelDefinitionFeat
 
 object ModelMatrix extends ModelMatrixUDF {
 
-  def sqlContext(sc: SparkContext): SQLContext = {
-    val sqlContext = new SQLContext(sc)
-    registerUDF(sqlContext.udf)
-    sqlContext
-  }
+//  def sqlContext(session: SparkSession): SQLContext = {
+//    // val sqlContext = new SQLContext(sc)
+//    registerUDF(session.udf)
+//    session.sqlContext
+//  }
 
-  def hiveContext(sc: SparkContext): HiveContext = {
-    val sqlContext = new HiveContext(sc)
-    registerUDF(sqlContext.udf)
-    sqlContext
-  }
+//  def hiveContext(session: SparkSession): HiveContext = {
+//    //val sqlContext = new HiveContext(sc)
+//    registerUDF(session.udf)  // #todo
+//    session.sqlContext
+//  }
 
 
   trait ModelMatrixCatalogAccess {
@@ -83,14 +81,11 @@ object ModelMatrix extends ModelMatrixUDF {
  * Model Matrix class that hides database interaction and provides
  * higher level API
  *
- * @param sqlContext Spark SQL Context
  */
-class ModelMatrix(sqlContext: SQLContext) extends ModelMatrixCatalogAccess with Transformers with TransformationProcess {
+class ModelMatrix(session: SparkSession) extends ModelMatrixCatalogAccess with Transformers with TransformationProcess {
   private val log = LoggerFactory.getLogger(classOf[ModelMatrix])
 
-  def this(sc: SparkContext) = this(ModelMatrix.hiveContext(sc))
-
-  private implicit val _sqlContext = sqlContext
+  // def this(sc: SparkContext) = this(ModelMatrix.hiveContext(sc)) #todo
 
   /**
    * Get Model Matrix instance transformations for given model instance id
@@ -110,7 +105,9 @@ class ModelMatrix(sqlContext: SQLContext) extends ModelMatrixCatalogAccess with 
    * @param labeling row labeling
    * @return RDD of featurized vectors
    */
-  def featurize[L](modelInstanceId: Int, df: DataFrame, labeling: Labeling[L]): RDD[(L, Vector)] = {
+  def featurize[L](modelInstanceId: Int, df: DataFrame, labeling: Labeling[L])
+                  (implicit labelEncoder : Encoder[L], tagL : TypeTag[(L, Vector)])
+    : Dataset[(L, Vector)] = {
 
     log.info(s"Featurization data frame using Model Matrix instance: $modelInstanceId")
 
@@ -129,7 +126,9 @@ class ModelMatrix(sqlContext: SQLContext) extends ModelMatrixCatalogAccess with 
    * @param labeling row labeling
    * @return RDD of featurized vectors
    */
-  def featurize[L](features: Seq[ModelInstanceFeature], df: DataFrame, labeling: Labeling[L]): RDD[(L, Vector)] = {
+  def featurize[L](features: Seq[ModelInstanceFeature], df: DataFrame, labeling: Labeling[L])
+                  (implicit labelEncoder: Encoder[L], tagL : TypeTag[(L, Vector)])
+    : Dataset[(L, Vector)] = {
 
     require(features.nonEmpty, s"Can't do featurization without features")
 
@@ -236,7 +235,7 @@ class ModelMatrix(sqlContext: SQLContext) extends ModelMatrixCatalogAccess with 
     name: Option[String],
     comment: Option[String],
     concurrencyLevel: Int
-  ): Int = {
+  )(implicit session: SparkSession): Int = {
 
     log.info(s"Create new Model Matrix instance for definition: $modelDefinitionId. " +
       s"Name: $name. Comment: $comment. Concurrency: $concurrencyLevel")

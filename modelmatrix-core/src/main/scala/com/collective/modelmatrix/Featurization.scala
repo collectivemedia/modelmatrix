@@ -1,19 +1,17 @@
 package com.collective.modelmatrix
 
-import java.nio.ByteBuffer
-
 import com.collective.modelmatrix.CategoricalColumn.{AllOther, CategoricalValue}
 import com.collective.modelmatrix.catalog._
 import com.collective.modelmatrix.transform.Transformer.{Features, LabeledFeatures}
 import org.apache.spark.mllib.linalg.{Vector, Vectors}
-import org.apache.spark.rdd.RDD
+import org.apache.spark.sql._
 import org.apache.spark.sql.functions._
 import org.apache.spark.sql.types._
-import org.apache.spark.sql.{Column, DataFrame, Row}
 import org.slf4j.LoggerFactory
-
 import scalaz._
 import scalaz.syntax.either._
+
+import scala.reflect.runtime.universe.TypeTag
 
 sealed trait FeaturizationError {
   def feature: String
@@ -38,6 +36,10 @@ object FeaturizationError {
 class Featurization(features: Seq[ModelInstanceFeature]) extends Serializable {
 
   private val log = LoggerFactory.getLogger(classOf[Featurization])
+
+  import org.apache.spark.sql.catalyst.encoders.ExpressionEncoder
+
+  implicit val vectorEncoder : Encoder[Vector] = ExpressionEncoder[Vector]()
 
   import FeaturizationError._
 
@@ -117,21 +119,27 @@ class Featurization(features: Seq[ModelInstanceFeature]) extends Serializable {
     validation.collect { case \/-(column) => column }
   }
 
-  def featurize[L](input: DataFrame @@ Features): RDD[Vector] = {
+  def featurize[L](input: DataFrame @@ Features) : Dataset[Vector] = {
+
     log.info(s"Extract features from input DataFrame. Total number of columns: $totalNumberOfColumns")
 
     val df = scalaz.Tag.unwrap(input)
     val featureColumns = validateColumns(df)
+
     df.select(featureColumns: _*).map { row =>
       // Read feature columns
       val featureValues = readColumns(row)
       // Column values 1-based and Vector values are 0-based
       val vectorValues = featureValues.map { case (idx, v) => (idx - 1, v) }
+
       Vectors.sparse(totalNumberOfColumns, vectorValues)
     }
   }
 
-  def featurize[L](input: DataFrame @@ LabeledFeatures[L], labeling: Labeling[L]): RDD[(L, Vector)] = {
+  def featurize[L](input: DataFrame @@ LabeledFeatures[L], labeling: Labeling[L])
+    (implicit labelEncoder : Encoder[L], tagL : TypeTag[(L, Vector)])
+    : Dataset[(L, Vector)] = {
+
     log.info(s"Extract features from input DataFrame. Total number of columns: $totalNumberOfColumns")
 
     val df = scalaz.Tag.unwrap(input)
@@ -139,6 +147,8 @@ class Featurization(features: Seq[ModelInstanceFeature]) extends Serializable {
     val labelingColumns = labeling.expressions.map(col)
     val labelingIdx = labelingColumns.zipWithIndex.map(_._2)
     val featureColumns = validateColumns(df)
+
+    implicit val dse : Encoder[(L, Vector)] = Encoders.tuple(labelEncoder, vectorEncoder) // #todo
 
     df.select(labelingColumns ++ featureColumns: _*).map { row =>
       // Read labeling columns

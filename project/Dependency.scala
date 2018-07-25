@@ -7,15 +7,15 @@ object Dependency {
   object V {
 
     val Slf4j              = "1.7.12"
-    val Config             = "1.3.0"
+    val Config             = "1.3.3"
     val Scopt              = "3.3.0"
-    val ScodecBits         = "1.0.6"
+    val ScodecBits         = "1.1.6"
     val Flyway             = "3.2.1"
-    val Argonaut           = "6.1-M4"
+    val Argonaut           = "6.2.0"
     val Guava              = "14.0.1" // match to Spark Guava version
 
     // Spark
-    val Spark              = "1.3.0-cdh5.4.2"
+    val Spark              = "2.3.0"
 
     // Database
     val Slick              = "3.0.0"
@@ -23,8 +23,8 @@ object Dependency {
     val HikariCP           = "2.3.5"
 
     // Scalaz
-    val Scalaz             = "7.1.1"
-    val ScalazStream       = "0.7a"
+    val Scalaz             = "7.2.25"
+    val ScalazStream       = "0.8.5"
 
     // Test libraries
     val H2                 = "1.4.187"
